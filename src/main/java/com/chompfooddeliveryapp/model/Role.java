@@ -1,5 +1,5 @@
 package com.chompfooddeliveryapp.model;
 
+public class Role {
 
-public class User {
 }
