@@ -12,7 +12,7 @@ import javax.persistence.Table;
 
 @Entity
 @Data
-@NoArgsConstructor
+//@NoArgsConstructor
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Table(name = "wallets")
