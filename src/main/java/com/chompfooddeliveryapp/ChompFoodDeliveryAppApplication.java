@@ -19,26 +19,4 @@ public class ChompFoodDeliveryAppApplication {
         SpringApplication.run(ChompFoodDeliveryAppApplication.class, args);
     }
 
-//    @Bean
-//    public Docket SwagggerConfiguration() {
-//        return new Docket(DocumentationType.SWAGGER_2)
-//                .select()
-//                .apis(RequestHandlerSelectors.basePackage("com.chompfooddeliveryapp"))
-//                .build()
-//                .apiInfo(apiDetails());
-//    }
-//
-//    private ApiInfo apiDetails(){
-//        return new ApiInfo(
-//                "Chomp Food Delivery App",
-//                "Food delivery app, Group A",
-//                "1.0",
-//                "Free to use",
-//                new springfox.documentation.service.Contact("Group A", " ", "chompfood@gmail.com"),
-//                "API Licence",
-//                "http://chompfood.com",
-//                Collections.emptyList()
-//        );
-//    }
-
 }
