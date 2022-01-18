@@ -6,7 +6,27 @@ on:
     branches: [ main, develop ]
 jobs:
   build-test:
+    name:  Build and Test
     runs-on: ubuntu-latest
+
+    services:
+      #Label used to access the service container
+      postgres:
+        # Docker Hub image
+        image: postgres
+        ports:
+          - "5432:5432"
+        env:
+          POSTGRES_HOST: "localhost"
+          POSTGRES_USER: "admin"
+          POSTGRES_PASSWORD: "admin"
+          POSTGRES_DB: "chompapp"
+        # Set Health Checks to wait until postgress has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK 16 for x64
@@ -26,9 +46,3 @@ jobs:
       - name: Build and Test with Maven
         run: |
           mvn -B package --file pom.xml -Dspring.profiles.active=test
-      - name: Setup PostgreSQL
-        uses: Harmon758/postgresql-action@v1.0.0
-        with:
-          postgresql db: chompapp
-          postgresql user: postgres
-          postgresql host: localhost
