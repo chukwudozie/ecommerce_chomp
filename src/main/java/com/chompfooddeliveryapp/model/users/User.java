@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 import javax.persistence.*;
+import java.sql.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -35,6 +36,8 @@ public class User {
 
     @NotNull
     private String password;
+
+    private Date dob;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "gender_id")
