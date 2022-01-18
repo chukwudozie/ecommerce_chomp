@@ -1,4 +1,4 @@
-version: '3.3'
+version: '3.3git'
 services:
   app:
     container_name: springboot-postgresql
@@ -13,6 +13,6 @@ services:
     ports:
       - "5432:5432"
     environment:
-      - POSTGRES_PASSWORD=patricia
-      - POSTGRES_USER=postgres
-      - POSTGRES_DB=chompfood
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_USER=admin
+      - POSTGRES_DB=chompadmin
