@@ -20,7 +20,7 @@ jobs:
           POSTGRES_HOST: "localhost"
           POSTGRES_USER: "admin"
           POSTGRES_PASSWORD: "admin"
-          POSTGRESS_DB: "chompapp"
+          POSTGRES_DB: "chompapp"
         # Set Health Checks to wait until postgress has started
         options: >-
           --health-cmd pg_isready
