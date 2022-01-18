@@ -16,7 +16,7 @@ import javax.persistence.*;
 @Table(name = "favorite_meals")
 public class FavoriteMeal {
     @Id
-    @Column(name = "id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = User.class)
