@@ -18,7 +18,7 @@ import java.sql.Timestamp;
 @Table(name = "orders")
 public class Order {
     @Id
-    @Column(name = "id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = User.class)
