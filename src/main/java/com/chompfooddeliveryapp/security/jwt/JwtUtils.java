@@ -6,25 +6,26 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 
 
-@Service
 @Slf4j
+@Component
 public class JwtUtils {
+    private final String jwtSecret;
+    private final int jwtExpirationMs;
 
-    @Value("${chompfood.app.jwtSecret}")
-    private String jwtSecret;
-
-    @Value("${chompfood.app.jwtExpirationMs}")
-    private int jwtExpirationMs;
+    public JwtUtils(@Value("${chompfood.app.jwtSecret}") String jwtSecret, @Value("${chompfood.app.jwtExpirationMs}") int jwtExpirationMs) {
+        this.jwtSecret = jwtSecret;
+        this.jwtExpirationMs = jwtExpirationMs;
+    }
 
     public String generateJwtToken(Authentication authentication) {
 
         UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
-
         return Jwts.builder()
                 .setSubject((userPrincipal.getUsername()))
                 .setIssuedAt(new Date())
