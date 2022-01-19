@@ -8,6 +8,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,34 +29,32 @@ public class UserDetailsImpl implements UserDetails {
     private Collection<? extends GrantedAuthority> authorities;
 
     public UserDetailsImpl(Long id, String firstName, String lastName, String password,
-                           String email,Collection<? extends GrantedAuthority> authorities) {
+                           String email) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.password = password;
         this.email = email;
-        this.authorities = authorities;
     }
 
 
+
+
     public static UserDetails build(User user) {
-        List<GrantedAuthority> authorities = user.getRoles().stream()
-                .map(role -> new SimpleGrantedAuthority(role.getRole().name()))
-                .collect(Collectors.toList());
         return new UserDetailsImpl(
                 user.getId(),
                 user.getFirstName(),
                 user.getLastName(),
                 user.getPassword(),
-                user.getEmail(),
-                authorities
+                user.getEmail()
         );
     }
 
 
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return authorities;
+    public Collection<? extends GrantedAuthority> getAuthorities()
+    {
+        return new ArrayList<>();
     }
 
     public Long getId() {return id;}
