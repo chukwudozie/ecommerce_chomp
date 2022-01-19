@@ -28,7 +28,8 @@ public class MenuItem {
     @NotNull
     private Long price;
 
-    @NotNull
+    @Column(name = "category")
+    @Enumerated(EnumType.STRING)
     private MenuCategory category;
 
     @NotNull
