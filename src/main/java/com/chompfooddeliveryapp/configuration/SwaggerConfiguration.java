@@ -72,7 +72,7 @@ public class SwaggerConfiguration implements WebMvcConfigurer {
         );
     }
 
-        private ApiKey apiKey() {
+    private ApiKey apiKey() {
         return new ApiKey("Bearer", "Authorization", "header");
     }
 }
