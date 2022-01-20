@@ -1,4 +1,4 @@
-package com.chompfooddeliveryapp.Configuration;
+package com.chompfooddeliveryapp.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

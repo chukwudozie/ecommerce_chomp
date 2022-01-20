@@ -1,11 +1,11 @@
-version: '3.3git'
+version: '3.3'
 services:
   app:
     container_name: springboot-postgresql
     image: springboot-postgresql
     build: ./
     ports:
-      - "9000:8080"
+      - "9020:8080"
     depends_on:
       - postgresqldb
   postgresqldb:
@@ -15,4 +15,4 @@ services:
     environment:
       - POSTGRES_PASSWORD=admin
       - POSTGRES_USER=admin
-      - POSTGRES_DB=chompadmin
+      - POSTGRES_DB=chompapp
