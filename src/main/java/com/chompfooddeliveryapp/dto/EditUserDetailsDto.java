@@ -1,6 +1,6 @@
 package com.chompfooddeliveryapp.dto;
 
-import com.chompfooddeliveryapp.model.users.Gender;
+import com.chompfooddeliveryapp.model.enums.UserGender;
 import lombok.*;
 
 import java.sql.Date;
@@ -13,7 +13,7 @@ public class EditUserDetailsDto {
     private String firstname;
     private String lastname;
     private String email;
-//    private Gender gender;
+    private UserGender gender;
     private Date dateOfBirth;
 
 }
