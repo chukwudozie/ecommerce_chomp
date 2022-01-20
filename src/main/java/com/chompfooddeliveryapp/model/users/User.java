@@ -39,24 +39,30 @@ public class User {
 
     private Date dob;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "gender_id")
-    private Gender gender;
+    @Column(name = "gender")
+    @Enumerated(EnumType.STRING)
+    private  UserGender userGender;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "user_roles",
-    joinColumns = @JoinColumn(name = "user_id"),
-    inverseJoinColumns = @JoinColumn(name = "role_id"))
-    @NotNull
-    private Set<Role> roles = new HashSet<>();
+
+    @Column(name = "role")
+    @Enumerated(EnumType.STRING)
+    private UserRole userRole;
 
     @NotNull
-    private Boolean subscribed;
+    private Boolean subscribed = false;
 
     public User(String email, String firstName, String lastName, String password) {
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
         this.password = password;
+    }
+
+    public User(String firstName, String lastName, String email, String password, UserRole userRole) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.password = password;
+        this.userRole = userRole;
     }
 }

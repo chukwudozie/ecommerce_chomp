@@ -1,8 +1,6 @@
 package com.chompfooddeliveryapp.security.jwt;
 
 import com.chompfooddeliveryapp.security.service.UserDetailsServiceImpl;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,22 +19,15 @@ import java.io.IOException;
 
 @Component
 @Slf4j
-@Data
 public class AuthTokenFilter extends OncePerRequestFilter {
-
-    private  UserDetailsServiceImpl userDetailsService;
-    private  JwtUtils utils;
-
+    private final UserDetailsServiceImpl userDetailsService;
+    private final JwtUtils utils;
 
     @Autowired
-    public AuthTokenFilter(UserDetailsServiceImpl userDetailsService, JwtUtils utils) {
+    public AuthTokenFilter(final UserDetailsServiceImpl userDetailsService, final JwtUtils utils) {
         this.userDetailsService = userDetailsService;
         this.utils = utils;
     }
-
-    public AuthTokenFilter(){}
-
-
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -57,6 +48,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
             }
         } catch (Exception e) {
             log.error("Cannot set User Authentication");
+            e.printStackTrace();
         }
         filterChain.doFilter(request, response);
     }
@@ -65,7 +57,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         String headerAuth = request.getHeader("Authorization");
 
         if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {
-            return headerAuth.substring(7, headerAuth.length());
+            return headerAuth.substring(7);
         }
 
         return null;
