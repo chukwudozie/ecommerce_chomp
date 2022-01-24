@@ -29,19 +29,19 @@ public class MailServiceImpl implements MailService{
                 .property(Emailv31.MESSAGES, new JSONArray()
                         .put(new JSONObject()
                                 .put(Emailv31.Message.FROM, new JSONObject()
-                                        .put("Email", email)
+                                        .put("Email", "enoch.oghene@decagon.dev")
                                         .put("Name", "Chomp delivery App"))
                                 .put(Emailv31.Message.TO, new JSONArray()
                                         .put(new JSONObject()
-                                                .put("Email", "ahangba.marve@decagon.dev")
+                                                .put("Email", email)
                                                 .put("Name", "Customer")))
                                 .put(Emailv31.Message.SUBJECT, title)
                                 .put(Emailv31.Message.TEXTPART, "Welcome to CHOMP")
                                 .put(Emailv31.Message.HTMLPART, text)
                                 .put(Emailv31.Message.CUSTOMID, "Mail Verification")));
         response = client.post(request);
-        System.out.println(response.getStatus());
-        System.out.println(response.getData());
+        response.getStatus();
+        response.getData();
 
     }
 
