@@ -10,19 +10,16 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
-@RequestMapping("/")
+@RequestMapping("/user")
 @RequiredArgsConstructor
 public class UserController {
 
     private final UserServiceImpl userService;
-    
-    @GetMapping("/test")
-    public String test(){
-        return "Test passed.";
-    }
+//    Remove @GetMapping("/test") and its method from the UserController.
+//            Add path ="/user" to the RequestMapping of the UserController
+//    Test, commit and push in order to update your PR.
 
-
-@PostMapping("/profile/edit")
+    @PostMapping("/profile/edit")
     public void updateUserDetails(@RequestBody EditUserDetailsDto userDetailsDto){
         userService.updateUser(userDetailsDto);
     }
