@@ -2,12 +2,10 @@ package com.chompfooddeliveryapp.controller;
 
 import com.chompfooddeliveryapp.dto.SignupDto;
 import com.chompfooddeliveryapp.dto.UserDto;
-
 import com.chompfooddeliveryapp.service.serviceImpl.UserServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-
 import org.springframework.web.bind.annotation.*;
 
 
@@ -32,11 +30,17 @@ public class AuthController {
 
     }
 
-        @PostMapping("/login")
-        public ResponseEntity<?> loginUser (@RequestBody UserDto loginRequest) throws Exception {
-
-            return userServiceImpl.loginUser(loginRequest);
-
+    @GetMapping("/confirm")
+    public String confirm(@RequestParam("token") String token) {
+        return userServiceImpl.confirmToken(token);
     }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> loginUser (@RequestBody UserDto loginRequest) throws Exception {
+
+        return userServiceImpl.loginUser(loginRequest);
+     }
+
+
 
 }

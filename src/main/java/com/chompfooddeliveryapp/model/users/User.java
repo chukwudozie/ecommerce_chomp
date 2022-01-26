@@ -39,6 +39,8 @@ public class User {
 
     private Date dob;
 
+    private Boolean enabled = false;
+
     @Column(name = "gender")
     @Enumerated(EnumType.STRING)
     private  UserGender userGender;

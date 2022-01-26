@@ -39,11 +39,11 @@ class UserServiceImplTest {
 
     private TestEntityManager entityManager;
 
-    @BeforeEach
-
-    void setUp() {
-        userService = new UserServiceImpl(utils, authenticationManager, userDetailsService, userRepository, encoder);
-    }
+//    @BeforeEach
+//
+//    void setUp() {
+//        userService = new UserServiceImpl(utils, authenticationManager, userDetailsService, userRepository, encoder);
+//    }
 
     @Test
     public void testCreateUserIsFalse(){
