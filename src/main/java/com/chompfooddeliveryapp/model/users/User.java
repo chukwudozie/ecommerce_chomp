@@ -3,10 +3,7 @@ package com.chompfooddeliveryapp.model.users;
 import com.chompfooddeliveryapp.model.enums.UserGender;
 import com.chompfooddeliveryapp.model.enums.UserRole;
 import com.sun.istack.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.sql.Date;
@@ -15,6 +12,8 @@ import java.util.Set;
 
 @Entity
 @Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "users")
@@ -38,6 +37,8 @@ public class User {
     private String password;
 
     private Date dob;
+
+    private Boolean enabled = false;
 
     @Column(name = "gender")
     @Enumerated(EnumType.STRING)

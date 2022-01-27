@@ -6,7 +6,5 @@ import org.springframework.stereotype.Service;
 
 @Service
 public interface MailService {
-    default void sendMail(String email, String text, String title)  throws MailjetException, MailjetSocketTimeoutException {
-
-    }
+    void sendMail(String email, String text, String title) throws MailjetException, MailjetSocketTimeoutException;
 }

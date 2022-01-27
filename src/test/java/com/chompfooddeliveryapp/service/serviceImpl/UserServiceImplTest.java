@@ -1,5 +1,9 @@
 package com.chompfooddeliveryapp.service.serviceImpl;
 
+
+import com.chompfooddeliveryapp.Mail.MailService;
+import com.chompfooddeliveryapp.dto.SignupDto;
+import com.chompfooddeliveryapp.dto.token.ConfirmationTokenService;
 import com.chompfooddeliveryapp.dto.ChangePasswordDto;
 import com.chompfooddeliveryapp.dto.EditUserDetailsDto;
 import com.chompfooddeliveryapp.dto.SignupDto;
@@ -14,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -39,6 +44,10 @@ class UserServiceImplTest {
     AuthenticationManager authenticationManager;
     @Mock
     UserDetailsService userDetailsService;
+    @Mock
+    ConfirmationTokenService confirmationTokenService;
+    @Mock
+    MailService mailService;
 
 
 
@@ -49,7 +58,7 @@ class UserServiceImplTest {
     @BeforeEach
 
     void setUp() {
-        userService = new UserServiceImpl(utils, authenticationManager, userDetailsService, userRepository, encoder);
+        userService = new UserServiceImpl(utils, authenticationManager, userDetailsService, userRepository, encoder, confirmationTokenService, mailService);
     }
 
     @Test
