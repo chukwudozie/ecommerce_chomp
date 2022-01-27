@@ -1,6 +1,8 @@
 package com.chompfooddeliveryapp.service.serviceImpl;
 
+import com.chompfooddeliveryapp.Mail.MailService;
 import com.chompfooddeliveryapp.dto.SignupDto;
+import com.chompfooddeliveryapp.dto.token.ConfirmationTokenService;
 import com.chompfooddeliveryapp.model.enums.UserRole;
 import com.chompfooddeliveryapp.repository.UserRepository;
 import com.chompfooddeliveryapp.security.jwt.JwtUtils;
@@ -10,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -32,6 +35,10 @@ class UserServiceImplTest {
     AuthenticationManager authenticationManager;
     @Mock
     UserDetailsService userDetailsService;
+    @Mock
+    ConfirmationTokenService confirmationTokenService;
+    @Mock
+    MailService mailService;
 
 
 
@@ -39,11 +46,11 @@ class UserServiceImplTest {
 
     private TestEntityManager entityManager;
 
-//    @BeforeEach
-//
-//    void setUp() {
-//        userService = new UserServiceImpl(utils, authenticationManager, userDetailsService, userRepository, encoder);
-//    }
+    @BeforeEach
+
+    void setUp() {
+        userService = new UserServiceImpl(utils, authenticationManager, userDetailsService, userRepository, encoder, confirmationTokenService, mailService);
+    }
 
     @Test
     public void testCreateUserIsFalse(){

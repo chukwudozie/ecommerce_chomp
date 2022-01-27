@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
-@RequestMapping("/")
+@RequestMapping("/auth")
 public class UserController {
     
     @GetMapping("/test")

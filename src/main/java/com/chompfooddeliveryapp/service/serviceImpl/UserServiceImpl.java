@@ -76,11 +76,11 @@ public class UserServiceImpl implements UserServiceInterface {
         // TODO: Send confirmation token
         String token = UUID.randomUUID().toString();
         LocalDateTime createdAt = LocalDateTime.now();
-        LocalDateTime expiresAt = createdAt.plusMinutes(30) ;
+        LocalDateTime expiresAt = createdAt.plusHours(24) ;
         ConfirmationToken confirmationToken = new ConfirmationToken(
                 token,
                 LocalDateTime.now(),
-                LocalDateTime.now().plusMinutes(30),
+                LocalDateTime.now().plusHours(24),
                 user
         );
 
@@ -138,7 +138,11 @@ public class UserServiceImpl implements UserServiceInterface {
             UserRole roles = user.getUserRole();
 
             String jwt = utils.generateJwtToken(authentication);
-            return ResponseEntity.ok(new JwtResponse(jwt, userDetails.getUsername(), user.getId(), roles));
+            if(user.getEnabled()) {
+                return ResponseEntity.ok(new JwtResponse(jwt, userDetails.getUsername(), user.getId(), roles));
+            }else {
+                return ResponseEntity.badRequest().body("Email has not been verified");
+            }
 
         } catch (BadCredentialsException e) {
             throw new Exception("incorrect username or password!");
