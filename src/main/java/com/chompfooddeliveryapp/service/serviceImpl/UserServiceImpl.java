@@ -1,6 +1,11 @@
 package com.chompfooddeliveryapp.service.serviceImpl;
 
+
 import com.chompfooddeliveryapp.Mail.MailService;
+
+import com.chompfooddeliveryapp.dto.ChangePasswordDto;
+import com.chompfooddeliveryapp.dto.EditUserDetailsDto;
+
 import com.chompfooddeliveryapp.dto.SignupDto;
 import com.chompfooddeliveryapp.dto.UserDto;
 import com.chompfooddeliveryapp.dto.token.ConfirmationToken;
@@ -27,10 +32,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
+
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.Locale;
 import java.util.UUID;
+import java.util.Optional;
 //@AllArgsConstructor
 //@RequiredArgsConstructor
 @Service
@@ -127,7 +134,7 @@ public class UserServiceImpl implements UserServiceInterface {
     }
 
     @Override
-    public ResponseEntity<?> loginUser (@RequestBody UserDto loginRequest) throws Exception {
+    public ResponseEntity<?> loginUser(@RequestBody UserDto loginRequest) throws Exception {
         try {
             Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
 
@@ -149,4 +156,28 @@ public class UserServiceImpl implements UserServiceInterface {
         }
     }
 
+    @Override
+    public void changePassword(ChangePasswordDto changePasswordDto) {
+        Optional<User> currentUser = userRepository.getUserByPassword(changePasswordDto.getOldPassword());
+        String newPassword = changePasswordDto.getNewPassword();
+        String confirmPassword = changePasswordDto.getConfirmPassword();
+        if (currentUser.isPresent() && newPassword.equals(confirmPassword)) {
+            currentUser.get().setPassword(newPassword);
+            userRepository.save(currentUser.get());
+
+        }
+    }
+
+    @Override
+    public void updateUser(EditUserDetailsDto editUserDetailsDto) {
+        Optional<User> loggedInUser = userRepository.findByEmail(editUserDetailsDto.getEmail());
+        if (loggedInUser.isPresent()) {
+            loggedInUser.get().setFirstName(editUserDetailsDto.getFirstname());
+            loggedInUser.get().setLastName(editUserDetailsDto.getLastname());
+            loggedInUser.get().setEmail(editUserDetailsDto.getEmail());
+            loggedInUser.get().setUserGender(editUserDetailsDto.getGender());
+            loggedInUser.get().setDob(editUserDetailsDto.getDateOfBirth());
+            userRepository.save(loggedInUser.get());
+        }
+    }
 }

@@ -1,9 +1,15 @@
 package com.chompfooddeliveryapp.service.serviceImpl;
 
+
 import com.chompfooddeliveryapp.Mail.MailService;
 import com.chompfooddeliveryapp.dto.SignupDto;
 import com.chompfooddeliveryapp.dto.token.ConfirmationTokenService;
+import com.chompfooddeliveryapp.dto.ChangePasswordDto;
+import com.chompfooddeliveryapp.dto.EditUserDetailsDto;
+import com.chompfooddeliveryapp.dto.SignupDto;
+import com.chompfooddeliveryapp.model.enums.UserGender;
 import com.chompfooddeliveryapp.model.enums.UserRole;
+import com.chompfooddeliveryapp.model.users.User;
 import com.chompfooddeliveryapp.repository.UserRepository;
 import com.chompfooddeliveryapp.security.jwt.JwtUtils;
 import org.junit.jupiter.api.Assertions;
@@ -17,6 +23,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.sql.Date;
+import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -81,4 +90,30 @@ class UserServiceImplTest {
         userService.createUser(signupDto);
         verify(userRepository, times(1)).save(any());
     }
+
+
+    @Test
+    public void testChangePassword(){
+        ChangePasswordDto changePasswordDto = new ChangePasswordDto("one", "two", "two");
+        userService = mock(UserServiceImpl.class);
+        doNothing().when(userService).changePassword(any());
+        userService.changePassword(changePasswordDto);
+        verify(userService, times(1)).changePassword(changePasswordDto);
+    }
+
+
+    @Test
+    public void testUpdateUser(){
+
+        EditUserDetailsDto editUserDetailsDto = new EditUserDetailsDto(
+                "Amara", "Ojiakor", "amara@gmail.com",
+                UserGender.FEMALE, new Date(2000-12-11)
+        );
+        userService = mock(UserServiceImpl.class);
+        doNothing().when(userService).updateUser(any());
+        userService.updateUser(editUserDetailsDto);
+        verify(userService, times(1)).updateUser(editUserDetailsDto);
+
+    }
+
 }
