@@ -2,8 +2,10 @@ package com.chompfooddeliveryapp.configuration.security;
 
 import com.chompfooddeliveryapp.security.jwt.AuthEntryPointJwt;
 import com.chompfooddeliveryapp.security.jwt.AuthTokenFilter;
+import com.chompfooddeliveryapp.security.jwt.JwtUtils;
 import com.chompfooddeliveryapp.security.service.UserDetailsServiceImpl;
 import com.chompfooddeliveryapp.utils.SecurityConstant;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,15 +27,17 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
         prePostEnabled = true
 )
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
-
-    @Autowired
     private  UserDetailsServiceImpl userDetailsService;
-    @Autowired
+
     private  AuthEntryPointJwt authEntryPointJwt;
 
-    @Bean
-    public AuthTokenFilter authenticationJwtTokenFilter(){
-        return new AuthTokenFilter();
+    private AuthTokenFilter authenticationJwtTokenFilter;
+
+    @Autowired
+    public SecurityConfiguration(UserDetailsServiceImpl userDetailsService, AuthEntryPointJwt authEntryPointJwt, AuthTokenFilter authenticationJwtTokenFilter) {
+        this.userDetailsService = userDetailsService;
+        this.authEntryPointJwt = authEntryPointJwt;
+        this.authenticationJwtTokenFilter = authenticationJwtTokenFilter;
     }
 
     @Override
@@ -57,7 +61,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .authorizeRequests().antMatchers(SecurityConstant.PUBLIC_URI)
                 .permitAll()
                 .anyRequest().authenticated();
-        http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(authenticationJwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
     @Bean
