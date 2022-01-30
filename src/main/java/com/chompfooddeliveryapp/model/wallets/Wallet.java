@@ -2,6 +2,7 @@ package com.chompfooddeliveryapp.model.wallets;
 
 import com.chompfooddeliveryapp.model.enums.Currency;
 import com.chompfooddeliveryapp.model.users.User;
+import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,7 +23,11 @@ public class Wallet {
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User userId;
 
+    @NotNull
     private Long accountBalance;
 
+    @Column(name = "base_currency")
+    @Enumerated(EnumType.STRING)
+    @NotNull
     private Currency baseCurrency;
 }

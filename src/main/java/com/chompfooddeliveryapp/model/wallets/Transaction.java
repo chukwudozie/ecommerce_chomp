@@ -26,10 +26,16 @@ public class Transaction {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Long walletId;
 
+    @Column(name = "payment_method")
+    @Enumerated(EnumType.STRING)
     private PaymentMethod paymentMethod;
 
+    @Column(name = "transaction_type")
+    @Enumerated(EnumType.STRING)
     private TransactionType transactionType;
 
+    @Column(name = "transaction_status")
+    @Enumerated(EnumType.STRING)
     private TransactionStatus transactionStatus;
 
 }
