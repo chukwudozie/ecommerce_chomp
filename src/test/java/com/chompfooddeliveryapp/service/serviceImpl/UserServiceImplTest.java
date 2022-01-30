@@ -95,10 +95,11 @@ class UserServiceImplTest {
     @Test
     public void testChangePassword(){
         ChangePasswordDto changePasswordDto = new ChangePasswordDto("one", "two", "two");
+        Long id = 1L;
         userService = mock(UserServiceImpl.class);
-        doNothing().when(userService).changePassword(any());
-        userService.changePassword(changePasswordDto);
-        verify(userService, times(1)).changePassword(changePasswordDto);
+        doNothing().when(userService).changePassword(any(), any());        //changePassword(any());
+        userService.changePassword(changePasswordDto, id);      //changePasswordDto
+        verify(userService, times(1)).changePassword(changePasswordDto, id);
     }
 
 
@@ -109,10 +110,11 @@ class UserServiceImplTest {
                 "Amara", "Ojiakor", "amara@gmail.com",
                 UserGender.FEMALE, new Date(2000-12-11)
         );
+        Long id = 1L;
         userService = mock(UserServiceImpl.class);
-        doNothing().when(userService).updateUser(any());
-        userService.updateUser(editUserDetailsDto);
-        verify(userService, times(1)).updateUser(editUserDetailsDto);
+        doNothing().when(userService).updateUser(any(), any());
+        userService.updateUser(editUserDetailsDto, id);
+        verify(userService, times(1)).updateUser(editUserDetailsDto, id);
 
     }
 
