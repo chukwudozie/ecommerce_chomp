@@ -1,14 +1,13 @@
 package com.chompfooddeliveryapp.model.wallets;
 
+import com.chompfooddeliveryapp.model.enums.Currency;
+import com.chompfooddeliveryapp.model.users.User;
+import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Data
@@ -19,4 +18,16 @@ public class Wallet {
     @Id
     @Column(name = "id", nullable = false)
     private Long id;
+
+    @OneToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private User userId;
+
+    @NotNull
+    private Long accountBalance;
+
+    @Column(name = "base_currency")
+    @Enumerated(EnumType.STRING)
+    @NotNull
+    private Currency baseCurrency;
 }
