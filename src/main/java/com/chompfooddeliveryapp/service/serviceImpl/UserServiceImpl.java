@@ -31,6 +31,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
+import springfox.documentation.swagger2.mappers.ModelMapper;
 
 
 import javax.transaction.Transactional;
@@ -157,20 +158,26 @@ public class UserServiceImpl implements UserServiceInterface {
     }
 
     @Override
-    public void changePassword(ChangePasswordDto changePasswordDto) {
-        Optional<User> currentUser = userRepository.getUserByPassword(changePasswordDto.getOldPassword());
+    public void changePassword(ChangePasswordDto changePasswordDto, Long id) {
+
+        Optional<User> currentUser = userRepository.findUserById(id);
+
+         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(currentUser
+                 .get().getEmail(), changePasswordDto.getOldPassword()));
         String newPassword = changePasswordDto.getNewPassword();
         String confirmPassword = changePasswordDto.getConfirmPassword();
-        if (currentUser.isPresent() && newPassword.equals(confirmPassword)) {
-            currentUser.get().setPassword(newPassword);
-            userRepository.save(currentUser.get());
 
+        if (currentUser.isPresent()&& newPassword.equals(confirmPassword)) {
+            currentUser.get().setPassword(encoder.encode(newPassword));
+            userRepository.save(currentUser.get());
+        } else {
+            throw new UsernameNotFoundException("Unauthorized Operation");
         }
     }
 
     @Override
-    public void updateUser(EditUserDetailsDto editUserDetailsDto) {
-        Optional<User> loggedInUser = userRepository.findByEmail(editUserDetailsDto.getEmail());
+    public void updateUser(EditUserDetailsDto editUserDetailsDto, Long id) {
+        Optional<User> loggedInUser = userRepository.findUserById(id);
         if (loggedInUser.isPresent()) {
             loggedInUser.get().setFirstName(editUserDetailsDto.getFirstname());
             loggedInUser.get().setLastName(editUserDetailsDto.getLastname());
@@ -178,6 +185,7 @@ public class UserServiceImpl implements UserServiceInterface {
             loggedInUser.get().setUserGender(editUserDetailsDto.getGender());
             loggedInUser.get().setDob(editUserDetailsDto.getDateOfBirth());
             userRepository.save(loggedInUser.get());
+            System.out.println("User updated "+loggedInUser.get().getEmail());
         }
     }
 }
