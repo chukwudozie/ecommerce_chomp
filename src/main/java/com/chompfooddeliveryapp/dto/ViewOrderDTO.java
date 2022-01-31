@@ -12,7 +12,6 @@ import java.sql.Timestamp;
 public class ViewOrderDTO {
     private Long orderId;
     private Long quantity;
-    private Order order;
     private String status;
     private String name;
     private String image;
