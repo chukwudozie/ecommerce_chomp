@@ -161,7 +161,6 @@ public class UserServiceImpl implements UserServiceInterface {
     public void changePassword(ChangePasswordDto changePasswordDto, Long id) {
 
         User currentUser = userRepository.findUserById(id).orElseThrow(
-//                ()-> new PersonNotFoundException("User not found")
         ()-> new GlobalException("User Not Found")
 
         );
@@ -176,7 +175,6 @@ public class UserServiceImpl implements UserServiceInterface {
             currentUser.setPassword(encoder.encode(newPassword));
             userRepository.save(currentUser);
         } else {
-//            throw new IncorrectPasswordException("Incorrect password");
             throw new GlobalException("Incorrect password");
 
         }
