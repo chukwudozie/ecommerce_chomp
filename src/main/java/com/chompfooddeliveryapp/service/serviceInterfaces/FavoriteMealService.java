@@ -1,11 +1,12 @@
 package com.chompfooddeliveryapp.service.serviceInterfaces;
 
 import com.chompfooddeliveryapp.model.meals.FavoriteMeal;
+import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
+@Repository
 public interface FavoriteMealService {
     FavoriteMeal createFavoriteMeal(FavoriteMeal favoriteMeal);
 
@@ -13,5 +14,6 @@ public interface FavoriteMealService {
 
     public List<FavoriteMeal> getAllFavoriteMealsByAUser(Long userId);
 
+    public FavoriteMeal getAParticularFavoriteMeal(Long userId, Long mealId);
 
 }

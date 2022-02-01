@@ -6,9 +6,11 @@ import com.chompfooddeliveryapp.model.meals.FavoriteMeal;
 import com.chompfooddeliveryapp.repository.FavoriteMealRepository;
 import com.chompfooddeliveryapp.service.serviceInterfaces.FavoriteMealService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class FavoriteMenuServiceImpl implements FavoriteMealService {
 
     private final FavoriteMealRepository favoriteMealRepository;
