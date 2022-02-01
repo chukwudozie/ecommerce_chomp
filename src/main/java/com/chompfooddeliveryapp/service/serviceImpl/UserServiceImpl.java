@@ -87,8 +87,12 @@ public class UserServiceImpl implements UserServiceInterface {
         user.setUserRole(role);
 
     //addng a wallet to a user by team D
-        Wallet wallet = new Wallet(userRepository.save(user));
+        Wallet wallet = new Wallet();
         Wallet savedWallet = walletRepository.save(wallet);
+
+        user.setWalletId(savedWallet);
+       userRepository.save(user);
+
 
     //adding wallet ends here
 

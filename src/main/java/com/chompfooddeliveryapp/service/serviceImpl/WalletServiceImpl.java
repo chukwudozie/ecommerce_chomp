@@ -20,7 +20,6 @@ import java.util.Optional;
 @Service
 public class WalletServiceImpl {
 
-    private final String secret_key = "sk_test_2d5c43445c023f91a8f13334df77580390a395c9";
 
     @Autowired
     private WebClient.Builder webCLientBuilder;
@@ -42,26 +41,26 @@ public class WalletServiceImpl {
 
 
 
-    public String initializeFundWallet(long userId, long walletId){
+    public String setFundWalletTransactionReference(long userId){
 
         //fund wallet validation
         Optional<User> user = userRepository.findById(userId);
-        Optional<Wallet> wallet = walletRepository.findById(walletId);
-        if (user.equals(null) || wallet.equals(null)){
-            return "The User or the wallet cannot be null";
+
+        if (user.equals(null)){
+            return "The User  cannot be null";
         }
-       if (!user.get().getId().equals(walletId)){
-           return "You cannot fund another person's wallet";
-       }
+
+        Optional<Wallet> wallet = walletRepository.findById(user.get().getWalletId().getId());
 
        //transaction creation
         Transaction transaction = new Transaction();
         System.out.println(transaction.getId());
         transaction.setTransactionType(TransactionType.CREDIT);
         transaction.setTransactionStatus(TransactionStatus.PENDING);
-        transaction.setWalletId(walletId);
+        transaction.setWallet(wallet.get());
         transaction.setPaymentMethod(PaymentMethod.PAYSTACK);
         transactionRepository.save(transaction);
+
         return transaction.getId();
 
     }

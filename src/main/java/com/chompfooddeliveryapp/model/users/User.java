@@ -56,10 +56,6 @@ public class User {
     @NotNull
     private Boolean subscribed = false;
 
-    @OneToOne
-    @JoinColumn(name = "wallet_id", referencedColumnName = "id")
-    private Wallet wallet;
-
 
     public User(String email, String firstName, String lastName, String password) {
         this.email = email;

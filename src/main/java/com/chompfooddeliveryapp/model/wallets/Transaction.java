@@ -25,7 +25,7 @@ public class Transaction {
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = Wallet.class)
     @JoinColumn(name = "wallet_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private Long walletId;
+    private Wallet wallet;
 
     @Column(name = "payment_method")
     @Enumerated(EnumType.STRING)
