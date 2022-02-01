@@ -26,8 +26,6 @@ public class UserController {
     }
 
 
-
-
     @PostMapping("/change_password/{id}")
     public ResponseEntity<?> updatePassword(@RequestBody ChangePasswordDto changePasswordDto, @PathVariable Long id){
          userService.changePassword(changePasswordDto, id);
