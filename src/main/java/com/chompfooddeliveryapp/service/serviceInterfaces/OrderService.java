@@ -5,5 +5,5 @@ import org.springframework.stereotype.Service;
 
 public interface OrderService {
 
-    ViewOrderDTO getOrderDetails(Long OrderId);
+    ViewOrderDTO getOrderDetails(Long userId, Long orderId);
 }
