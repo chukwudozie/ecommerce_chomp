@@ -2,6 +2,7 @@ package com.chompfooddeliveryapp.model.users;
 
 import com.chompfooddeliveryapp.model.enums.UserGender;
 import com.chompfooddeliveryapp.model.enums.UserRole;
+import com.chompfooddeliveryapp.model.wallets.Wallet;
 import com.sun.istack.NotNull;
 import lombok.*;
 
@@ -51,6 +52,11 @@ public class User {
 
     @NotNull
     private Boolean subscribed = false;
+
+    @OneToOne
+    @JoinColumn(name = "wallet_id", referencedColumnName = "id")
+    private Wallet wallet;
+
 
     public User(String email, String firstName, String lastName, String password) {
         this.email = email;

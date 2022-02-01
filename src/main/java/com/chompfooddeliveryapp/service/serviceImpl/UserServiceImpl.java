@@ -12,9 +12,11 @@ import com.chompfooddeliveryapp.dto.token.ConfirmationToken;
 import com.chompfooddeliveryapp.dto.token.ConfirmationTokenService;
 import com.chompfooddeliveryapp.model.enums.UserRole;
 import com.chompfooddeliveryapp.model.users.User;
+import com.chompfooddeliveryapp.model.wallets.Wallet;
 import com.chompfooddeliveryapp.payload.JwtResponse;
 import com.chompfooddeliveryapp.payload.MessageResponse;
 import com.chompfooddeliveryapp.repository.UserRepository;
+import com.chompfooddeliveryapp.repository.WalletRepository;
 import com.chompfooddeliveryapp.security.jwt.JwtUtils;
 import com.chompfooddeliveryapp.service.serviceInterfaces.UserServiceInterface;
 import com.mailjet.client.errors.MailjetException;
@@ -50,11 +52,15 @@ public class UserServiceImpl implements UserServiceInterface {
     private final PasswordEncoder encoder;
     private final ConfirmationTokenService confirmationTokenService;
     private final MailService mailService;
+    private final WalletRepository walletRepository;
+
+    @Autowired
+    private final WalletServiceImpl walletService;
 
     @Autowired
     public UserServiceImpl(JwtUtils utils, AuthenticationManager authenticationManager,
                            UserDetailsService userDetailsService, UserRepository userRepository,
-                           PasswordEncoder encoder, ConfirmationTokenService confirmationTokenService, MailService mailService) {
+                           PasswordEncoder encoder, ConfirmationTokenService confirmationTokenService, MailService mailService, WalletRepository walletRepository, WalletServiceImpl walletService) {
         this.utils = utils;
         this.authenticationManager = authenticationManager;
         this.userDetailsService = userDetailsService;
@@ -62,6 +68,8 @@ public class UserServiceImpl implements UserServiceInterface {
         this.encoder = encoder;
         this.confirmationTokenService = confirmationTokenService;
         this.mailService = mailService;
+        this.walletRepository = walletRepository;
+        this.walletService = walletService;
     }
 
     @Override
@@ -73,12 +81,18 @@ public class UserServiceImpl implements UserServiceInterface {
                 signupDto.getFirstName(), signupDto.getLastName(),
                 encoder.encode(signupDto.getPassword()));
 
-
         UserRole role = signupDto.getRoles();
         System.out.println(role);
 
         user.setUserRole(role);
-        userRepository.save(user);
+
+    //addng a wallet to a user by team D
+        Wallet wallet = new Wallet(userRepository.save(user));
+        Wallet savedWallet = walletRepository.save(wallet);
+
+    //adding wallet ends here
+
+
 
         // TODO: Send confirmation token
         String token = UUID.randomUUID().toString();

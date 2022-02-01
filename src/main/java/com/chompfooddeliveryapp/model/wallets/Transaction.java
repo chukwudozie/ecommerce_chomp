@@ -10,6 +10,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
+import java.util.UUID;
 
 @Entity
 @Data
@@ -19,7 +20,7 @@ import javax.persistence.*;
 public class Transaction {
     @Id
     @Column(name = "id", nullable = false)
-    private Long id;
+    private String id = "chompT" + UUID.randomUUID().toString();
 
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = Wallet.class)
     @JoinColumn(name = "wallet_id", nullable = false)

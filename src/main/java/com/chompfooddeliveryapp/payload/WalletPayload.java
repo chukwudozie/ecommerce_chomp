@@ -9,7 +9,7 @@ import lombok.Data;
 @AllArgsConstructor
 public class WalletPayload {
     private long id;
-    private User userId;
+    private User user;
     private Currency currency;
     private long accountBalance;
 }

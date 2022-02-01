@@ -25,7 +25,7 @@ public class MenuItem {
     @NotNull
     private String image;
 
-    private String desc;
+    private String desciption;
 
     @NotNull
     private Long price;
