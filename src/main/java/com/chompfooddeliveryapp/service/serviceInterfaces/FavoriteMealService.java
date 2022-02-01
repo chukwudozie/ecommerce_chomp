@@ -10,7 +10,7 @@ import java.util.List;
 public interface FavoriteMealService {
     FavoriteMeal createFavoriteMeal(FavoriteMeal favoriteMeal);
 
-    String deleteFavoriteMeal(Long mealId);
+    String removeFromFavoriteMeal(Long mealId);
 
     public List<FavoriteMeal> getAllFavoriteMealsByAUser(Long userId);
 

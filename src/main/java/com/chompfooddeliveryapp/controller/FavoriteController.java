@@ -32,7 +32,7 @@ public class FavoriteController {
 
     @PostMapping("/deleteFavoriteMeal")
     public ResponseEntity<String> deleteFavoriteMeal(@RequestBody Long mealId){
-        favoriteMealService.deleteFavoriteMeal(mealId);
+        favoriteMealService.removeFromFavoriteMeal(mealId);
 
         return new ResponseEntity<>("favorite meal with " + mealId + " has been deleted.", HttpStatus.OK);
     }

@@ -42,10 +42,10 @@ class FavoriteMenuServiceImplTest {
 
     }
 
-//    @Test
-//    void deleteFavoriteMeal() {
-//    }
-//
+    @Test
+    void deleteFavoriteMeal() {
+    }
+
 //    @Test
 //    void getAllFavoriteMealsByAUser() {
 //    }
