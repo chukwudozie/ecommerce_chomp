@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.UUID;
 
 @Entity
 @Data
@@ -17,11 +18,7 @@ import javax.persistence.*;
 public class Wallet {
     @Id
     @Column(name = "id", nullable = false)
-    private Long id;
-
-    @OneToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
-    private User userId;
+    private String id = "chompW" + UUID.randomUUID().toString();
 
     @NotNull
     private Long accountBalance;

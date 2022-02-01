@@ -2,6 +2,7 @@ package com.chompfooddeliveryapp.model.users;
 
 import com.chompfooddeliveryapp.model.enums.UserGender;
 import com.chompfooddeliveryapp.model.enums.UserRole;
+import com.chompfooddeliveryapp.model.wallets.Wallet;
 import com.sun.istack.NotNull;
 import lombok.*;
 
@@ -44,6 +45,9 @@ public class User {
     @Enumerated(EnumType.STRING)
     private  UserGender userGender;
 
+    @OneToOne
+    @JoinColumn(name = "wallet_id", referencedColumnName = "id")
+    private Wallet walletId;
 
     @Column(name = "role")
     @Enumerated(EnumType.STRING)
