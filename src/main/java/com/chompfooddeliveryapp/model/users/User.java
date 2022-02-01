@@ -45,6 +45,9 @@ public class User {
     @Enumerated(EnumType.STRING)
     private  UserGender userGender;
 
+    @OneToOne
+    @JoinColumn(name = "wallet_id", referencedColumnName = "id")
+    private Wallet walletId;
 
     @Column(name = "role")
     @Enumerated(EnumType.STRING)

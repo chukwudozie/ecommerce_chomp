@@ -19,8 +19,11 @@ public class Wallet {
     @Id
     @Column(name = "id", nullable = false)
     private String id = "chompW" + UUID.randomUUID().toString();
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> 92a274e82f82e8b3edf2091766f9fdf01b7a815c
 
     @NotNull
     private long accountBalance;
