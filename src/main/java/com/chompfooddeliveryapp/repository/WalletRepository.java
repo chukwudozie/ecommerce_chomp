@@ -9,8 +9,8 @@ import java.util.Optional;
 
 public interface WalletRepository extends JpaRepository<Wallet, String> {
 
-    @Query("select c from Wallet c where c.user.id = ?1")
-    Wallet findByUserId(Long user_id);
+//    @Query("select c from Wallet c where c.user.id = ?1")
+//    Wallet findByUserId(Long user_id);
 //    Boolean findByUserIdIsNull(long userid);
 //    Optional<Wallet> findWalletByUserId(long userid);
 }
