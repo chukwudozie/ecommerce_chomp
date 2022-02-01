@@ -163,7 +163,7 @@ public class UserServiceImpl implements UserServiceInterface {
     public void changePassword(ChangePasswordDto changePasswordDto, Long id) {
 
         User currentUser = userRepository.findUserById(id).orElseThrow(
-                ()-> new PersonNotFoundException("Person not found")
+                ()-> new PersonNotFoundException("User not found")
         );
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 currentUser.getEmail(), changePasswordDto.getOldPassword())
