@@ -10,8 +10,7 @@ import com.chompfooddeliveryapp.dto.SignupDto;
 import com.chompfooddeliveryapp.dto.UserDto;
 import com.chompfooddeliveryapp.dto.token.ConfirmationToken;
 import com.chompfooddeliveryapp.dto.token.ConfirmationTokenService;
-import com.chompfooddeliveryapp.exception.IncorrectPasswordException;
-import com.chompfooddeliveryapp.exception.PersonNotFoundException;
+import com.chompfooddeliveryapp.exception.GlobalException;
 import com.chompfooddeliveryapp.model.enums.UserRole;
 import com.chompfooddeliveryapp.model.users.User;
 import com.chompfooddeliveryapp.payload.JwtResponse;
@@ -33,7 +32,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
-import springfox.documentation.swagger2.mappers.ModelMapper;
 
 
 import javax.transaction.Transactional;
@@ -163,7 +161,9 @@ public class UserServiceImpl implements UserServiceInterface {
     public void changePassword(ChangePasswordDto changePasswordDto, Long id) {
 
         User currentUser = userRepository.findUserById(id).orElseThrow(
-                ()-> new PersonNotFoundException("User not found")
+//                ()-> new PersonNotFoundException("User not found")
+        ()-> new GlobalException("User Not Found")
+
         );
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 currentUser.getEmail(), changePasswordDto.getOldPassword())
@@ -176,7 +176,9 @@ public class UserServiceImpl implements UserServiceInterface {
             currentUser.setPassword(encoder.encode(newPassword));
             userRepository.save(currentUser);
         } else {
-            throw new IncorrectPasswordException("Incorrect password");
+//            throw new IncorrectPasswordException("Incorrect password");
+            throw new GlobalException("Incorrect password");
+
         }
     }
 
