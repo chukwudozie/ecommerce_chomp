@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/auth")
 @RequiredArgsConstructor
 public class UserController {
 
@@ -26,4 +26,5 @@ public class UserController {
     public void updatePassword(@RequestBody ChangePasswordDto changePasswordDto){
         userService.changePassword(changePasswordDto);
     }
+
 }
