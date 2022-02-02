@@ -24,4 +24,10 @@ public class Cart {
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = MenuItem.class)
+    @JoinColumn(name = "menu_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Long menuId;
+
+    private Long quantity;
 }
