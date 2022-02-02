@@ -6,6 +6,7 @@ import com.chompfooddeliveryapp.model.enums.TransactionType;
 import com.chompfooddeliveryapp.model.users.User;
 import com.chompfooddeliveryapp.model.wallets.Transaction;
 import com.chompfooddeliveryapp.model.wallets.Wallet;
+import com.chompfooddeliveryapp.payload.WalletPayload;
 import com.chompfooddeliveryapp.repository.TransactionRepository;
 import com.chompfooddeliveryapp.repository.UserRepository;
 import com.chompfooddeliveryapp.repository.WalletRepository;
@@ -14,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.Optional;
 
@@ -22,8 +22,6 @@ import java.util.Optional;
 public class WalletServiceImpl{
 
 
-    @Autowired
-    private WebClient.Builder webCLientBuilder;
     @Autowired
     private final WalletRepository walletRepository;
     @Autowired
@@ -54,12 +52,44 @@ public class WalletServiceImpl{
         transaction.setTransactionStatus(TransactionStatus.PENDING);
         transaction.setWallet(wallet.get());
         transaction.setPaymentMethod(PaymentMethod.PAYSTACK);
+        transaction.setUser(user.get());
         transactionRepository.save(transaction);
 
         return transaction.getId();
 
     }
 
+    public ResponseEntity<?> fundUsersWallet(String transactionId, String status, String dataStatus, String amount){
+        Transaction transaction = transactionRepository.findById(transactionId).get();
+        Optional<User> user = userRepository.findById(transaction.getUser().getId());
+        if (user.equals(null)){
+            return new ResponseEntity<>("must fund a wallet attached to this user", HttpStatus.BAD_REQUEST );
+        }
+
+        if (!(status.equals("true") && dataStatus.equals("success"))){
+            transaction.setTransactionStatus(TransactionStatus.FAILED);
+            transactionRepository.save(transaction);
+        }
+
+        Wallet wallet = walletRepository.findById(user.get().getWalletId().getId()).get();
+        long creditAmount = Long.parseLong(amount);
+        creditAmount /= 100;
+
+
+        wallet.setAccountBalance(wallet.getAccountBalance() + creditAmount);
+        walletRepository.save(wallet);
+
+        transaction.setTransactionStatus(TransactionStatus.SUCCESSFUL);
+        transactionRepository.save(transaction);
+
+        WalletPayload walletPayload = new WalletPayload();
+        walletPayload.setAccountBalance(wallet.getAccountBalance());
+        walletPayload.setAmountcredited(creditAmount);
+        walletPayload.setWalletId(wallet.getId());
+        walletPayload.setUser_id(user.get().getId());
+
+        return new ResponseEntity<>(walletPayload, HttpStatus.OK);
+    }
 
     public String getWalletBalance(Long userId) {
         User user  = userRepository.findById(userId).get();
@@ -71,9 +101,5 @@ public class WalletServiceImpl{
         Wallet wallet = walletRepository.findById(user.getWalletId().getId()).get();
         return "Account Balance: "+ wallet.getAccountBalance();
     }
-
-
-
-
 
 }

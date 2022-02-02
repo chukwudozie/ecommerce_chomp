@@ -3,6 +3,7 @@ package com.chompfooddeliveryapp.model.wallets;
 import com.chompfooddeliveryapp.model.enums.PaymentMethod;
 import com.chompfooddeliveryapp.model.enums.TransactionStatus;
 import com.chompfooddeliveryapp.model.enums.TransactionType;
+import com.chompfooddeliveryapp.model.users.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -38,5 +39,11 @@ public class Transaction {
     @Column(name = "transaction_status")
     @Enumerated(EnumType.STRING)
     private TransactionStatus transactionStatus;
+
+    @JoinColumn(name = "user_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = User.class)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private User user;
+
 
 }
