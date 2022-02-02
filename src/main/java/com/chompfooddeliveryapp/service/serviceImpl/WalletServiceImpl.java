@@ -66,7 +66,7 @@ public class WalletServiceImpl{
             return new ResponseEntity<>("must fund a wallet attached to this user", HttpStatus.BAD_REQUEST );
         }
 
-        if (!(status.equals("true") && dataStatus.equals("success"))){
+        if (!(status.equals("true") || dataStatus.equals("success"))){
             transaction.setTransactionStatus(TransactionStatus.FAILED);
             transactionRepository.save(transaction);
         }
