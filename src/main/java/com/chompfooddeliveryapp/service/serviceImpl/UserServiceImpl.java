@@ -10,7 +10,7 @@ import com.chompfooddeliveryapp.dto.SignupDto;
 import com.chompfooddeliveryapp.dto.UserDto;
 import com.chompfooddeliveryapp.dto.token.ConfirmationToken;
 import com.chompfooddeliveryapp.dto.token.ConfirmationTokenService;
-import com.chompfooddeliveryapp.exception.GlobalException;
+import com.chompfooddeliveryapp.exception.BadRequestException;
 import com.chompfooddeliveryapp.model.enums.UserRole;
 import com.chompfooddeliveryapp.model.users.Role;
 import com.chompfooddeliveryapp.model.users.User;
@@ -168,7 +168,7 @@ public class UserServiceImpl implements UserServiceInterface {
     public void changePassword(ChangePasswordDto changePasswordDto, Long id) {
 
         User currentUser = userRepository.findUserById(id).orElseThrow(
-        ()-> new GlobalException("User Not Found")
+        ()-> new BadRequestException("User Not Found")
 
         );
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
@@ -182,7 +182,7 @@ public class UserServiceImpl implements UserServiceInterface {
             currentUser.setPassword(encoder.encode(newPassword));
             userRepository.save(currentUser);
         } else {
-            throw new GlobalException("Incorrect password");
+            throw new BadRequestException("Incorrect password");
 
         }
     }

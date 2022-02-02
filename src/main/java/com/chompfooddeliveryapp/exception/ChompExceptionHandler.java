@@ -9,8 +9,8 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 @ControllerAdvice
 public class ChompExceptionHandler {
-    @ExceptionHandler(value = GlobalException.class)
-    public ResponseEntity<Object> apiRequestHandler(GlobalException e){
+    @ExceptionHandler(value = BadRequestException.class)
+    public ResponseEntity<Object> apiRequestHandler(BadRequestException e){
         HttpStatus badRequest = HttpStatus.BAD_REQUEST;
        ExceptionPayLoad exception =  new ExceptionPayLoad(e.getMessage(),
                 e,
