@@ -30,5 +30,7 @@ public class Order {
 
     private Timestamp delivered_date;
 
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
     private OrderStatus status;
 }

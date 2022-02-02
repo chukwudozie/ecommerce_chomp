@@ -26,9 +26,13 @@ public class MenuItem {
     private String image;
 
     @NotNull
-    private Long price;
+    private String description;
 
     @NotNull
+    private Long price;
+
+    @Column(name = "category")
+    @Enumerated(EnumType.STRING)
     private MenuCategory category;
 
     @NotNull

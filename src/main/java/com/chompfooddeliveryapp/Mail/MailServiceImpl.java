@@ -8,10 +8,15 @@ import com.mailjet.client.MailjetResponse;
 import com.mailjet.client.errors.MailjetException;
 import com.mailjet.client.errors.MailjetSocketTimeoutException;
 import com.mailjet.client.resource.Emailv31;
+import lombok.AllArgsConstructor;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.LoggerFactory;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+
+import java.util.logging.Logger;
 
 import static com.chompfooddeliveryapp.Mail.API.API_KEY;
 import static com.chompfooddeliveryapp.Mail.API.API_SECRET;
@@ -19,7 +24,16 @@ import static com.chompfooddeliveryapp.Mail.API.API_SECRET;
 
 @Service
 @Async
+@AllArgsConstructor
 public class MailServiceImpl implements MailService{
+
+//    private final static Logger LOGGER = (Logger) LoggerFactory
+//            .getLogger(MailServiceImpl.class);
+//
+//    private final JavaMailSender mailSender;
+
+//    @Async
+//    @Override
     public void sendMail (String email, String text, String title)  throws MailjetException, MailjetSocketTimeoutException {
         MailjetClient client;
         MailjetRequest request;

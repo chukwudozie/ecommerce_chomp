@@ -2,12 +2,16 @@ package com.chompfooddeliveryapp.dto;
 
 import com.chompfooddeliveryapp.model.enums.UserGender;
 import com.chompfooddeliveryapp.model.enums.UserRole;
-import lombok.Data;
+import lombok.*;
 
 import java.util.List;
 import java.util.Set;
 
 @Data
+@AllArgsConstructor
+@EqualsAndHashCode
+@Getter
+@ToString
 public class SignupDto {
 
     private String email;
@@ -18,6 +22,9 @@ public class SignupDto {
 
     private String password;
 
-    private UserRole roles;
+//    private UserRole roles;
 
+    public SignupDto() {
+
+    }
 }

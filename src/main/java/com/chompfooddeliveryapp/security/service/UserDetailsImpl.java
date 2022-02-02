@@ -3,17 +3,20 @@ package com.chompfooddeliveryapp.security.service;
 
 import com.chompfooddeliveryapp.model.users.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
+@EqualsAndHashCode
+@Getter
+@Setter
 public class UserDetailsImpl implements UserDetails {
 
     private Long id;
@@ -26,27 +29,37 @@ public class UserDetailsImpl implements UserDetails {
 
     private String email;
 
+    private Boolean locked = false;
+
+    private Boolean enabled = false;
+
     private Collection<? extends GrantedAuthority> authorities;
 
     public UserDetailsImpl(Long id, String firstName, String lastName, String password,
-                           String email) {
+                           String email, Boolean enabled,Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.password = password;
         this.email = email;
+        this.enabled = enabled;
+        this.authorities = authorities;
     }
 
 
 
 
     public static UserDetails build(User user) {
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + user.getRole().getName().name()));
         return new UserDetailsImpl(
                 user.getId(),
                 user.getFirstName(),
                 user.getLastName(),
                 user.getPassword(),
-                user.getEmail()
+                user.getEmail(),
+                user.getEnabled(),
+                authorities
         );
     }
 
@@ -54,7 +67,7 @@ public class UserDetailsImpl implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities()
     {
-        return new ArrayList<>();
+        return authorities;
     }
 
     public Long getId() {return id;}
@@ -78,7 +91,7 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return !locked;
     }
 
     @Override
@@ -88,6 +101,6 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return enabled;
     }
 }

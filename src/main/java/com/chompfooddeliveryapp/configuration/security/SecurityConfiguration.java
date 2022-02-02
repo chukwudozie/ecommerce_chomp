@@ -5,6 +5,7 @@ import com.chompfooddeliveryapp.security.jwt.AuthTokenFilter;
 import com.chompfooddeliveryapp.security.jwt.JwtUtils;
 import com.chompfooddeliveryapp.security.service.UserDetailsServiceImpl;
 import com.chompfooddeliveryapp.utils.SecurityConstant;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -57,8 +58,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http.cors().and().csrf().disable()
                 .exceptionHandling().authenticationEntryPoint(authEntryPointJwt).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-                .authorizeRequests().antMatchers(SecurityConstant.PUBLIC_URI)
-                .permitAll()
+                .authorizeRequests()
+                .antMatchers("/user/**").hasRole("USER")
+                .antMatchers(SecurityConstant.PUBLIC_URI).permitAll()
                 .anyRequest().authenticated();
         http.addFilterBefore(authenticationJwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
     }
