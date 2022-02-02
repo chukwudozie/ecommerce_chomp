@@ -10,6 +10,7 @@ import com.chompfooddeliveryapp.dto.SignupDto;
 import com.chompfooddeliveryapp.dto.UserDto;
 import com.chompfooddeliveryapp.dto.token.ConfirmationToken;
 import com.chompfooddeliveryapp.dto.token.ConfirmationTokenService;
+import com.chompfooddeliveryapp.exception.GlobalException;
 import com.chompfooddeliveryapp.model.enums.UserRole;
 import com.chompfooddeliveryapp.model.users.User;
 import com.chompfooddeliveryapp.payload.JwtResponse;
@@ -157,20 +158,31 @@ public class UserServiceImpl implements UserServiceInterface {
     }
 
     @Override
-    public void changePassword(ChangePasswordDto changePasswordDto) {
-        Optional<User> currentUser = userRepository.getUserByPassword(changePasswordDto.getOldPassword());
+    public void changePassword(ChangePasswordDto changePasswordDto, Long id) {
+
+        User currentUser = userRepository.findUserById(id).orElseThrow(
+        ()-> new GlobalException("User Not Found")
+
+        );
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                currentUser.getEmail(), changePasswordDto.getOldPassword())
+        );
+
         String newPassword = changePasswordDto.getNewPassword();
         String confirmPassword = changePasswordDto.getConfirmPassword();
-        if (currentUser.isPresent() && newPassword.equals(confirmPassword)) {
-            currentUser.get().setPassword(newPassword);
-            userRepository.save(currentUser.get());
+
+        if (newPassword.equals(confirmPassword)) {
+            currentUser.setPassword(encoder.encode(newPassword));
+            userRepository.save(currentUser);
+        } else {
+            throw new GlobalException("Incorrect password");
 
         }
     }
 
     @Override
-    public void updateUser(EditUserDetailsDto editUserDetailsDto) {
-        Optional<User> loggedInUser = userRepository.findByEmail(editUserDetailsDto.getEmail());
+    public void updateUser(EditUserDetailsDto editUserDetailsDto, Long id) {
+        Optional<User> loggedInUser = userRepository.findUserById(id);
         if (loggedInUser.isPresent()) {
             loggedInUser.get().setFirstName(editUserDetailsDto.getFirstname());
             loggedInUser.get().setLastName(editUserDetailsDto.getLastname());
@@ -178,6 +190,7 @@ public class UserServiceImpl implements UserServiceInterface {
             loggedInUser.get().setUserGender(editUserDetailsDto.getGender());
             loggedInUser.get().setDob(editUserDetailsDto.getDateOfBirth());
             userRepository.save(loggedInUser.get());
+            System.out.println("User updated "+loggedInUser.get().getEmail());
         }
     }
 }
