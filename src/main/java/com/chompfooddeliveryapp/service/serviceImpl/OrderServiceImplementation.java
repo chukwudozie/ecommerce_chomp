@@ -12,7 +12,9 @@ import com.chompfooddeliveryapp.service.serviceInterfaces.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class OrderServiceImplementation implements OrderService {
@@ -31,25 +33,33 @@ public class OrderServiceImplementation implements OrderService {
     }
 
     @Override
-    public ViewOrderDTO getOrderDetails(Long userId, Long orderId) {
+    public List<ViewOrderDTO > getOrderDetails(Long userId, Long orderId) {
         Optional<Order> order = orderRepository.findOrderByIdAndAndUserId(userId, orderId);
         if (order.isPresent()) {
-            Optional<OrderDetail> orderDetail = orderDetailsRepository
-                    .findOrderDetailById(order.get().getId());
-            Optional<MenuItem> menuItem = menuItemRepository
-                    .findById(orderDetail.get().getMenuId());
+            var orderDetail = orderDetailsRepository
+                    .findAllByOrderId(order.get().getId());
+            var listOfMenuIds = orderDetail.stream()
+                    .map(OrderDetail::getMenuId)
+                    .collect(Collectors.toList());
+            var listOfMenuItems = menuItemRepository.findAllById(listOfMenuIds);
 
-            ViewOrderDTO viewOrderDetails = new ViewOrderDTO();
-            viewOrderDetails.setImage(menuItem.get().getImage());
-            viewOrderDetails.setName(menuItem.get().getName());
-            viewOrderDetails.setDescription(menuItem.get().getDescription());
-            viewOrderDetails.setPrice(menuItem.get().getPrice());
-            viewOrderDetails.setQuantity(orderDetail.get().getQuantity());
-            viewOrderDetails.setOrderDate(order.get().getOrder_date());
-            viewOrderDetails.setDeliveredDate(order.get().getDelivered_date());
-            viewOrderDetails.setStatus(order.get().getStatus());
+            var listViewOrderDTO = listOfMenuItems.stream()
+                    .map(menuItem -> {
+                        ViewOrderDTO viewOrderDetails = new ViewOrderDTO();
+                        viewOrderDetails.setImage(menuItem.getImage());
+                        viewOrderDetails.setName(menuItem.getName());
+                        viewOrderDetails.setDescription(menuItem.getDescription());
+                        viewOrderDetails.setPrice(menuItem.getPrice());
+                        viewOrderDetails.setOrderDate(order.get().getOrder_date());
+                        viewOrderDetails.setDeliveredDate(order.get().getDelivered_date());
+                        viewOrderDetails.setStatus(order.get().getStatus());
+                        viewOrderDetails.setQuantity(orderDetail.stream().mapToLong(OrderDetail::getQuantity).count());
+                        return viewOrderDetails;
+                    })
+                    .collect(Collectors.toList());
 
-            return viewOrderDetails;
+
+            return listViewOrderDTO;
 
 
         } else {

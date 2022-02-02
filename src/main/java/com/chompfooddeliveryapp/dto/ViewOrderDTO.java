@@ -7,11 +7,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class ViewOrderDTO {
-    private Long orderId;
+//    private Long orderId;
     private Long quantity;
     private OrderStatus status;
     private String name;
