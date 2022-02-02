@@ -12,9 +12,11 @@ import com.chompfooddeliveryapp.dto.token.ConfirmationToken;
 import com.chompfooddeliveryapp.dto.token.ConfirmationTokenService;
 import com.chompfooddeliveryapp.exception.GlobalException;
 import com.chompfooddeliveryapp.model.enums.UserRole;
+import com.chompfooddeliveryapp.model.users.Role;
 import com.chompfooddeliveryapp.model.users.User;
 import com.chompfooddeliveryapp.payload.JwtResponse;
 import com.chompfooddeliveryapp.payload.MessageResponse;
+import com.chompfooddeliveryapp.repository.RoleRepository;
 import com.chompfooddeliveryapp.repository.UserRepository;
 import com.chompfooddeliveryapp.security.jwt.JwtUtils;
 import com.chompfooddeliveryapp.service.serviceInterfaces.UserServiceInterface;
@@ -48,6 +50,7 @@ public class UserServiceImpl implements UserServiceInterface {
     private final AuthenticationManager authenticationManager;
     private final UserDetailsService userDetailsService;
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
     private final PasswordEncoder encoder;
     private final ConfirmationTokenService confirmationTokenService;
     private final MailService mailService;
@@ -55,7 +58,8 @@ public class UserServiceImpl implements UserServiceInterface {
     @Autowired
     public UserServiceImpl(JwtUtils utils, AuthenticationManager authenticationManager,
                            UserDetailsService userDetailsService, UserRepository userRepository,
-                           PasswordEncoder encoder, ConfirmationTokenService confirmationTokenService, MailService mailService) {
+                           PasswordEncoder encoder, ConfirmationTokenService confirmationTokenService,
+                           MailService mailService,RoleRepository roleRepository ) {
         this.utils = utils;
         this.authenticationManager = authenticationManager;
         this.userDetailsService = userDetailsService;
@@ -63,6 +67,7 @@ public class UserServiceImpl implements UserServiceInterface {
         this.encoder = encoder;
         this.confirmationTokenService = confirmationTokenService;
         this.mailService = mailService;
+        this.roleRepository = roleRepository;
     }
 
     @Override
@@ -74,11 +79,11 @@ public class UserServiceImpl implements UserServiceInterface {
                 signupDto.getFirstName(), signupDto.getLastName(),
                 encoder.encode(signupDto.getPassword()));
 
+        Role role = roleRepository.findByName(UserRole.USER).get();
 
-        UserRole role = signupDto.getRoles();
+        user.setRole(role);
+        userRepository.save(user);
         System.out.println(role);
-
-        user.setUserRole(role);
         userRepository.save(user);
 
         // TODO: Send confirmation token
@@ -143,9 +148,11 @@ public class UserServiceImpl implements UserServiceInterface {
 
             User user = userRepository.findByEmail(loginRequest.getEmail()).orElseThrow(() -> new UsernameNotFoundException("User not found with Email: " + loginRequest.getEmail()));
 
-            UserRole roles = user.getUserRole();
+            UserRole roles = user.getRole().getName();
 
             String jwt = utils.generateJwtToken(authentication);
+            System.out.println(jwt);
+            System.out.println(authentication);
             if(user.getEnabled()) {
                 return ResponseEntity.ok(new JwtResponse(jwt, userDetails.getUsername(), user.getId(), roles));
             }else {

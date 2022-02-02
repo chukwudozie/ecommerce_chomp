@@ -10,6 +10,7 @@ import com.chompfooddeliveryapp.dto.SignupDto;
 import com.chompfooddeliveryapp.model.enums.UserGender;
 import com.chompfooddeliveryapp.model.enums.UserRole;
 import com.chompfooddeliveryapp.model.users.User;
+import com.chompfooddeliveryapp.repository.RoleRepository;
 import com.chompfooddeliveryapp.repository.UserRepository;
 import com.chompfooddeliveryapp.security.jwt.JwtUtils;
 import org.junit.jupiter.api.Assertions;
@@ -40,6 +41,9 @@ class UserServiceImplTest {
     PasswordEncoder encoder;
     @Mock
     JwtUtils utils;
+
+    @Mock
+    RoleRepository roleRepository;
     @Mock
     AuthenticationManager authenticationManager;
     @Mock
@@ -58,7 +62,7 @@ class UserServiceImplTest {
     @BeforeEach
 
     void setUp() {
-        userService = new UserServiceImpl(utils, authenticationManager, userDetailsService, userRepository, encoder, confirmationTokenService, mailService);
+        userService = new UserServiceImpl(utils, authenticationManager, userDetailsService, userRepository, encoder, confirmationTokenService, mailService,roleRepository);
     }
 
     @Test
@@ -69,7 +73,7 @@ class UserServiceImplTest {
         signupDto.setPassword("hshjsfjhsfhjs");
         signupDto.setFirstName("MunaMuna");
         signupDto.setLastName("OnyeOnye");
-        signupDto.setRoles(UserRole.ADMIN);
+//        signupDto.setRoles(UserRole.ADMIN);
 
         when(userRepository.existsByEmail(any())).thenReturn(true);
         userService.createUser(signupDto);
@@ -84,7 +88,7 @@ class UserServiceImplTest {
         signupDto.setPassword("hshjsfjhsfhjs");
         signupDto.setFirstName("MunaMuna");
         signupDto.setLastName("OnyeOnye");
-        signupDto.setRoles(UserRole.ADMIN);
+//        signupDto.setRoles(UserRole.ADMIN);
 
         when(userRepository.existsByEmail(any())).thenReturn(false);
         userService.createUser(signupDto);

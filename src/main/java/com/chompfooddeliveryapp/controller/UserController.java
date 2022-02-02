@@ -17,11 +17,13 @@ public class UserController {
 
     private final UserServiceImpl userService;
 
+
     @PostMapping("/edit/{id}")
 
     public ResponseEntity<?> updateUserDetails(@RequestBody EditUserDetailsDto userDetailsDto, @PathVariable Long id){
         userService.updateUser(userDetailsDto, id);
            return new ResponseEntity<>(HttpStatus.OK);
+
     }
 
     @PostMapping("/change_password/{id}")
