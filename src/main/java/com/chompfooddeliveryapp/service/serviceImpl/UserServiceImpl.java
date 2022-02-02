@@ -11,6 +11,8 @@ import com.chompfooddeliveryapp.dto.UserDto;
 import com.chompfooddeliveryapp.dto.token.ConfirmationToken;
 import com.chompfooddeliveryapp.dto.token.ConfirmationTokenService;
 import com.chompfooddeliveryapp.exception.BadRequestException;
+import com.chompfooddeliveryapp.model.carts.Cart;
+import com.chompfooddeliveryapp.model.carts.CartRepository;
 import com.chompfooddeliveryapp.model.enums.UserRole;
 import com.chompfooddeliveryapp.model.users.Role;
 import com.chompfooddeliveryapp.model.users.User;
@@ -54,6 +56,7 @@ public class UserServiceImpl implements UserServiceInterface {
     private final UserDetailsService userDetailsService;
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final CartRepository cartRepository;
     private final PasswordEncoder encoder;
     private final ConfirmationTokenService confirmationTokenService;
     private final MailService mailService;
@@ -65,13 +68,14 @@ public class UserServiceImpl implements UserServiceInterface {
     @Autowired
     public UserServiceImpl(JwtUtils utils, AuthenticationManager authenticationManager,
                            UserDetailsService userDetailsService, UserRepository userRepository,
-
-                           PasswordEncoder encoder, ConfirmationTokenService confirmationTokenService, MailService mailService, WalletRepository walletRepository, WalletServiceImpl walletService, RoleRepository roleRepository ) {
-
+                           PasswordEncoder encoder, ConfirmationTokenService confirmationTokenService,
+                           MailService mailService, WalletRepository walletRepository, WalletServiceImpl walletService,
+                           RoleRepository roleRepository, CartRepository cartRepository) {
         this.utils = utils;
         this.authenticationManager = authenticationManager;
         this.userDetailsService = userDetailsService;
         this.userRepository = userRepository;
+        this.cartRepository = cartRepository;
         this.encoder = encoder;
         this.confirmationTokenService = confirmationTokenService;
         this.mailService = mailService;
@@ -101,10 +105,15 @@ public class UserServiceImpl implements UserServiceInterface {
 
         user.setRole(role);
         userRepository.save(user);
+
 //        System.out.println(role);
 //        userRepository.save(user);
 
+        System.out.println(role);
 
+        Cart cart = new Cart();
+
+        userRepository.save(user);
         // TODO: Send confirmation token
         String token = UUID.randomUUID().toString();
         LocalDateTime createdAt = LocalDateTime.now();
