@@ -1,9 +1,9 @@
 package com.chompfooddeliveryapp.service.serviceImpl;
 
-import com.chompfooddeliveryapp.dto.OrderSummaryDTO;
-import com.chompfooddeliveryapp.dto.ViewUserOrdersDTO;
+import com.chompfooddeliveryapp.dto.*;
 import com.chompfooddeliveryapp.model.meals.MenuItem;
 import com.chompfooddeliveryapp.model.orders.OrderDetail;
+import com.chompfooddeliveryapp.model.users.ShippingAddress;
 import com.chompfooddeliveryapp.repository.*;
 import com.chompfooddeliveryapp.service.serviceInterfaces.CheckoutService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,8 +69,8 @@ public class CheckoutServiceImpl implements CheckoutService {
         return listOfMenuItems;
     }
 
-
-    public List<ViewUserOrdersDTO> getAllOrdersByUserId(Long userId) {
+    @Override
+    public ResponseViewUserOrdersDTO getAllOrdersByUserId(Long userId) {
         //get all Orders with User ID
         var opUser = userRepository.findById(userId);
         var user = opUser.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
@@ -88,7 +88,56 @@ public class CheckoutServiceImpl implements CheckoutService {
                 }).collect(Collectors.toList());
         var userShippingAddress =
                 shippingAddressRepository.findByUserAndDefaultAddress(user, true);
+        //ShippingDTO
+        ShippingAddressDTO shippingAddressDTO = new ShippingAddressDTO();
+        userShippingAddress.ifPresent(shippingAddress -> {
+            shippingAddressDTO.setEmail(shippingAddress.getEmail());
+            shippingAddressDTO.setFullName(shippingAddress.getFullName());
+            shippingAddressDTO.setCity(shippingAddress.getCity());
+            shippingAddressDTO.setState(shippingAddress.getState());
+            shippingAddressDTO.setStreet(shippingAddress.getStreet());
+            shippingAddressDTO.setPhone(shippingAddress.getPhone());
+            shippingAddressDTO.setDefaultAddress(shippingAddress.getDefaultAddress());
+        });
 
-        return listOfUserOrdersDto;
+        List<MenuItem> menuItemsList = getOrderSummary(userId);
+
+        long itemsTotal = menuItemsList.stream().mapToLong(MenuItem::getPrice).reduce(0L, Long::sum);
+        long VAT = 10L;
+        long deliveryFee = VAT * menuItemsList.size() * 300;
+
+        PaymentDetailsDTO paymentDetailsDTO = new PaymentDetailsDTO();
+        paymentDetailsDTO.setItemsTotal(itemsTotal);
+        paymentDetailsDTO.setDeliveryFee(deliveryFee);
+        paymentDetailsDTO.setTotal(itemsTotal + deliveryFee);
+
+
+        return new ResponseViewUserOrdersDTO(listOfUserOrdersDto, shippingAddressDTO, paymentDetailsDTO);
+    }
+
+    @Override
+    public String saveShippingAddress(long userId, ShippingAddressDTO shippingAddressDTO) {
+        var opUser = userRepository.findById(userId);
+        ShippingAddress shippingAddress = new ShippingAddress();
+        String responseText = "";
+        if (opUser.isPresent()) {
+            shippingAddress.setEmail(shippingAddressDTO.getEmail());
+            shippingAddress.setFullName(shippingAddressDTO.getFullName());
+            shippingAddress.setDefaultAddress(shippingAddressDTO.getDefaultAddress());
+            shippingAddress.setCity(shippingAddressDTO.getCity());
+            shippingAddress.setPhone(shippingAddressDTO.getPhone());
+            shippingAddress.setStreet(shippingAddressDTO.getStreet());
+            shippingAddress.setState(shippingAddressDTO.getState());
+            shippingAddress.setUser(opUser.get());
+
+            var sAddress = shippingAddressRepository.save(shippingAddress);
+
+            responseText = "Address: " + sAddress.getFullName() + " has been saved!";
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The user with id " + userId + " was not found");
+        }
+
+
+        return responseText;
     }
 }
