@@ -18,7 +18,7 @@ public interface UserServiceInterface {
 
     public ResponseEntity<?> loginUser (@RequestBody UserDto loginRequest, HttpServletResponse response) throws Exception;
 
-    void changePassword(ChangePasswordDto changePasswordDto);
+    void changePassword(ChangePasswordDto changePasswordDto, Long id);
 
-    void updateUser(EditUserDetailsDto editUserDetailsDto);
+    void updateUser(EditUserDetailsDto editUserDetailsDto, Long id);
 }
