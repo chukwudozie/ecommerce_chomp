@@ -10,6 +10,7 @@ import com.chompfooddeliveryapp.dto.SignupDto;
 import com.chompfooddeliveryapp.dto.UserDto;
 import com.chompfooddeliveryapp.dto.token.ConfirmationToken;
 import com.chompfooddeliveryapp.dto.token.ConfirmationTokenService;
+import com.chompfooddeliveryapp.exception.GlobalException;
 import com.chompfooddeliveryapp.model.enums.UserRole;
 import com.chompfooddeliveryapp.model.users.User;
 import com.chompfooddeliveryapp.payload.JwtResponse;
@@ -31,7 +32,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
-import springfox.documentation.swagger2.mappers.ModelMapper;
 
 
 import javax.transaction.Transactional;
@@ -160,18 +160,23 @@ public class UserServiceImpl implements UserServiceInterface {
     @Override
     public void changePassword(ChangePasswordDto changePasswordDto, Long id) {
 
-        Optional<User> currentUser = userRepository.findUserById(id);
+        User currentUser = userRepository.findUserById(id).orElseThrow(
+        ()-> new GlobalException("User Not Found")
 
-         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(currentUser
-                 .get().getEmail(), changePasswordDto.getOldPassword()));
+        );
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                currentUser.getEmail(), changePasswordDto.getOldPassword())
+        );
+
         String newPassword = changePasswordDto.getNewPassword();
         String confirmPassword = changePasswordDto.getConfirmPassword();
 
-        if (currentUser.isPresent()&& newPassword.equals(confirmPassword)) {
-            currentUser.get().setPassword(encoder.encode(newPassword));
-            userRepository.save(currentUser.get());
+        if (newPassword.equals(confirmPassword)) {
+            currentUser.setPassword(encoder.encode(newPassword));
+            userRepository.save(currentUser);
         } else {
-            throw new UsernameNotFoundException("Unauthorized Operation");
+            throw new GlobalException("Incorrect password");
+
         }
     }
 
