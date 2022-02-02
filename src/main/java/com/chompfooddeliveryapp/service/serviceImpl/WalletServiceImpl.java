@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.Optional;
 
@@ -22,8 +21,7 @@ import java.util.Optional;
 public class WalletServiceImpl {
 
 
-    @Autowired
-    private WebClient.Builder webCLientBuilder;
+
 
     @Autowired
     private final WalletRepository walletRepository;
@@ -67,12 +65,13 @@ public class WalletServiceImpl {
 
     }
 
-    public Object fundUsersWallet(String transactionId, String status, String dataStatus, String amount){
+    public ResponseEntity<?> fundUsersWallet(String transactionId, String status, String dataStatus, String amount){
         Transaction transaction = transactionRepository.findById(transactionId).get();
         Optional<User> user = userRepository.findById(transaction.getUser().getId());
         if (user.equals(null)){
             return new ResponseEntity<>("must fund a wallet attached to this user", HttpStatus.BAD_REQUEST );
         }
+
         if (!(status.equals("true") && dataStatus.equals("success"))){
             transaction.setTransactionStatus(TransactionStatus.FAILED);
             transactionRepository.save(transaction);
@@ -94,23 +93,7 @@ public class WalletServiceImpl {
         walletPayload.setWalletId(wallet.getId());
         walletPayload.setUser_id(user.get().getId());
 
-        return walletPayload;
+        return new ResponseEntity<>(walletPayload, HttpStatus.OK);
     }
-
-
-
-//    public Wallet createUserWallet (Long user_id) throws EntityExistsException {
-//        User user = userRepository.findById(user_id).orElseThrow(() -> new EntityNotFoundException("User not found"));
-//        if (!walletRepository.findByUserId(user_id).equals(null)){
-//            throw  new EntityExistsException("This user already has a wallet");
-//        }
-//            Wallet userWallet = new Wallet(user);
-//            walletRepository.save(userWallet);
-//
-//        Wallet savedWallet = walletRepository.findByUserId(user_id);
-//
-//        return savedWallet;
-//    }
-
 
 }

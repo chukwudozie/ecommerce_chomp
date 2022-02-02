@@ -32,7 +32,9 @@ public class WalletController {
     private final UserRepository userRepository;
     private final ObjectMapper objectMapper;
 
-    public WalletController(WebClient.Builder webClient, WalletServiceImpl walletService, TransactionRepository transactionRepository, UserRepository userRepository, ObjectMapper objectMapper) {
+    public WalletController(WebClient.Builder webClient, WalletServiceImpl walletService,
+                            TransactionRepository transactionRepository, UserRepository userRepository,
+                            ObjectMapper objectMapper) {
         this.webClient = webClient;
         this.walletService = walletService;
         this.transactionRepository = transactionRepository;
@@ -44,6 +46,7 @@ public class WalletController {
     @PostMapping("/fundwallet/{userId}")
     public Object initializeWalletTransaction(@RequestBody WalletDto walletDto, @PathVariable long userId){
         String transactionReference = walletService.setFundWalletTransactionReference(userId);
+
         if (!transactionReference.contains("chompT")){
             return new ResponseEntity<>(transactionReference, HttpStatus.BAD_REQUEST );
         }
@@ -54,19 +57,28 @@ public class WalletController {
         walletDto.setEmail(user.getEmail());
         walletDto.setChannels(channels);
 
-        return webClient.build().post().uri("https://api.paystack.co/transaction/initialize").header("Authorization", "Bearer " + secret_key ).bodyValue(walletDto)
+        return webClient.build().post().uri("https://api.paystack.co/transaction/initialize").
+                header("Authorization", "Bearer " + secret_key ).bodyValue(walletDto)
                 .retrieve().bodyToMono(Object.class).block();
 
     }
 
     @GetMapping("/verifytransaction")
-    public Object PayStackDto(@RequestBody VerifyTransactionDto verifyTransactionDto) throws IOException {
-        String paystackObject =  webClient.build().get().uri("https://api.paystack.co/transaction/verify/" + verifyTransactionDto.getTransactionReference()).header("Authorization", "Bearer " + secret_key)
+    public ResponseEntity<?> PayStackDto(@RequestBody VerifyTransactionDto verifyTransactionDto) throws IOException {
+
+        //verifying the transaction with the transaction ID from paystack's API
+        String paystackObject =  webClient.build().get().
+                uri("https://api.paystack.co/transaction/verify/" + verifyTransactionDto.getTransactionReference()).
+                header("Authorization", "Bearer " + secret_key)
                 .retrieve().bodyToMono(String.class).block();
+
+        //mapping the response from paystack's API to a DTO object
         PayStackDto payStackDto = objectMapper.readValue( paystackObject, PayStackDto.class);
         System.out.println(payStackDto.getData().get("amount"));
+
        return walletService.fundUsersWallet(verifyTransactionDto.getTransactionReference(),
-               payStackDto.getStatus(), payStackDto.getData().get("status").toString(), payStackDto.getData().get("amount").toString());
+               payStackDto.getStatus(), payStackDto.getData().get("status").toString(),
+               payStackDto.getData().get("amount").toString());
 
 
 
