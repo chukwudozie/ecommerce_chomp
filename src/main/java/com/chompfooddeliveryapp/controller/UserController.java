@@ -19,6 +19,7 @@ public class UserController {
 
     @PostMapping("/profile/edit")
     public void updateUserDetails(@RequestBody EditUserDetailsDto userDetailsDto){
+        System.out.println("i am here");
         userService.updateUser(userDetailsDto);
     }
 
