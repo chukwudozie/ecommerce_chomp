@@ -13,4 +13,5 @@ public class WalletDto {
     private long amount;
     private String[] channels;
     private String reference;
+//    private String callback_url;
 }

@@ -1,5 +1,6 @@
 package com.chompfooddeliveryapp.configuration;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.config.EnableWebFlux;
@@ -12,4 +13,6 @@ public class ChompConfiguration {
     public WebClient.Builder webClientBuilder() {
         return WebClient.builder();
     }
+
+
 }
