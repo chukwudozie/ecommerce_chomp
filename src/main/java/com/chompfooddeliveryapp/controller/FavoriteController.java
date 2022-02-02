@@ -31,10 +31,10 @@ public class FavoriteController {
     }
 
     @PostMapping("/deleteFavoriteMeal")
-    public ResponseEntity<String> deleteFavoriteMeal(@RequestBody Long mealId){
-        favoriteMealService.removeFromFavoriteMeal(mealId);
+    public ResponseEntity<String> deleteFavoriteMeal(@RequestBody Long userId, Long menuId){
+        favoriteMealService.removeFromFavoriteMeal(userId, menuId);
 
-        return new ResponseEntity<>("favorite meal with " + mealId + " has been deleted.", HttpStatus.OK);
+        return new ResponseEntity<>("favorite meal with " + menuId + " has been deleted.", HttpStatus.OK);
     }
 
     @PostMapping("/allfavoritemeals")

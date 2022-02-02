@@ -1,6 +1,7 @@
 package com.chompfooddeliveryapp.service.serviceImpl;
 
 import com.chompfooddeliveryapp.dto.SignupDto;
+import com.chompfooddeliveryapp.exception.FavoriteNotFoundException;
 import com.chompfooddeliveryapp.model.enums.UserRole;
 import com.chompfooddeliveryapp.model.meals.FavoriteMeal;
 import com.chompfooddeliveryapp.repository.FavoriteMealRepository;
@@ -27,11 +28,12 @@ class FavoriteMenuServiceImplTest {
     void setUp() {
         favoriteMenuService = new FavoriteMenuServiceImpl(favoriteMealRepository);
     }
+    FavoriteMeal favoriteMeal = new FavoriteMeal();
 
     @Test
     void createFavoriteMeal() {
 
-        FavoriteMeal favoriteMeal = new FavoriteMeal();
+
         favoriteMeal.setId(1L);
         favoriteMeal.setUser_id(1L);
         favoriteMeal.setMenu_id(23L);
@@ -42,9 +44,19 @@ class FavoriteMenuServiceImplTest {
 
     }
 
-    @Test
-    void deleteFavoriteMeal() {
-    }
+//    @Test
+//    void deleteFavoriteMeal() {
+//        favoriteMeal.setId(1L);
+//        favoriteMeal.setUser_id(1L);
+//        favoriteMeal.setMenu_id(23L);
+//
+//        when(favoriteMealRepository.findByMenu_idAndUser_id(favoriteMeal.getMenu_id(),favoriteMeal.getUser_id())).thenReturn(false);
+//        favoriteMenuService.createFavoriteMeal(favoriteMeal);
+//        when(favoriteMealRepository.findByMenu_idAndUser_id(favoriteMeal.getMenu_id(),favoriteMeal.getUser_id())).thenReturn(true);
+//        favoriteMenuService.removeFromFavoriteMeal(favoriteMeal.getMenu_id(),favoriteMeal.getUser_id());
+//        verify(favoriteMealRepository, times(1)).delete(favoriteMeal);
+//
+//    }
 
 //    @Test
 //    void getAllFavoriteMealsByAUser() {

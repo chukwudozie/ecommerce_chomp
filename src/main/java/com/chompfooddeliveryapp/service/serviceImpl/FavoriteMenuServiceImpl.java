@@ -30,10 +30,11 @@ public class FavoriteMenuServiceImpl implements FavoriteMealService {
     }
 
     @Override
-    public String removeFromFavoriteMeal(Long mealId) {
-        FavoriteMeal favoriteMeal = favoriteMealRepository.findById(mealId).orElseThrow(()->new FavoriteNotFoundException("favorite meal with id: " + mealId + " does not exist"));
+    public String removeFromFavoriteMeal(Long userId, Long menuId) {
+        FavoriteMeal favoriteMeal = favoriteMealRepository.findFavoriteMealByUser_idAndMenu_id(userId, menuId)
+                .orElseThrow(()->new FavoriteNotFoundException("favorite meal with id: " + menuId + " does not exist"));
         favoriteMealRepository.delete(favoriteMeal);
-        return "favorite meal with " + mealId + " has been removed from favorite.";
+        return "favorite meal with " + menuId + " has been removed from favorite.";
     }
 
     public List<FavoriteMeal> getAllFavoriteMealsByAUser(Long userId) {

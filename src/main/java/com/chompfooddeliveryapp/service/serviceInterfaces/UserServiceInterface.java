@@ -9,12 +9,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import javax.servlet.http.HttpServletResponse;
+
 @Service
 public interface UserServiceInterface {
 
     public ResponseEntity<MessageResponse> createUser(SignupDto signupDto);
 
-    public ResponseEntity<?> loginUser (@RequestBody UserDto loginRequest) throws Exception;
+    public ResponseEntity<?> loginUser (@RequestBody UserDto loginRequest, HttpServletResponse response) throws Exception;
 
     void changePassword(ChangePasswordDto changePasswordDto);
 

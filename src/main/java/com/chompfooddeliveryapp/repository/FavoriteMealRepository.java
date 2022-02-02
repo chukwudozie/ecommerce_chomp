@@ -18,4 +18,8 @@ public interface FavoriteMealRepository extends JpaRepository<FavoriteMeal, Long
 
     @Query("select u from FavoriteMeal u where u.user_id = ?1 and u.menu_id = ?2")
    Optional<FavoriteMeal> findFavoriteMealByUser_idAndMenu_id(Long userId, long mealId);
+
+
+
+
 }
