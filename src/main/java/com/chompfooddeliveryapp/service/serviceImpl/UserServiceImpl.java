@@ -10,11 +10,14 @@ import com.chompfooddeliveryapp.dto.SignupDto;
 import com.chompfooddeliveryapp.dto.UserDto;
 import com.chompfooddeliveryapp.dto.token.ConfirmationToken;
 import com.chompfooddeliveryapp.dto.token.ConfirmationTokenService;
+import com.chompfooddeliveryapp.exception.BadRequestException;
 import com.chompfooddeliveryapp.model.enums.UserRole;
+import com.chompfooddeliveryapp.model.users.Role;
 import com.chompfooddeliveryapp.model.users.User;
 import com.chompfooddeliveryapp.model.wallets.Wallet;
 import com.chompfooddeliveryapp.payload.JwtResponse;
 import com.chompfooddeliveryapp.payload.MessageResponse;
+import com.chompfooddeliveryapp.repository.RoleRepository;
 import com.chompfooddeliveryapp.repository.UserRepository;
 import com.chompfooddeliveryapp.repository.WalletRepository;
 import com.chompfooddeliveryapp.security.jwt.JwtUtils;
@@ -49,6 +52,7 @@ public class UserServiceImpl implements UserServiceInterface {
     private final AuthenticationManager authenticationManager;
     private final UserDetailsService userDetailsService;
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
     private final PasswordEncoder encoder;
     private final ConfirmationTokenService confirmationTokenService;
     private final MailService mailService;
@@ -60,7 +64,9 @@ public class UserServiceImpl implements UserServiceInterface {
     @Autowired
     public UserServiceImpl(JwtUtils utils, AuthenticationManager authenticationManager,
                            UserDetailsService userDetailsService, UserRepository userRepository,
-                           PasswordEncoder encoder, ConfirmationTokenService confirmationTokenService, MailService mailService, WalletRepository walletRepository, WalletServiceImpl walletService) {
+
+                           PasswordEncoder encoder, ConfirmationTokenService confirmationTokenService, MailService mailService, WalletRepository walletRepository, WalletServiceImpl walletService, RoleRepository roleRepository ) {
+
         this.utils = utils;
         this.authenticationManager = authenticationManager;
         this.userDetailsService = userDetailsService;
@@ -70,6 +76,8 @@ public class UserServiceImpl implements UserServiceInterface {
         this.mailService = mailService;
         this.walletRepository = walletRepository;
         this.walletService = walletService;
+        this.roleRepository = roleRepository;
+
     }
 
     @Override
@@ -81,21 +89,18 @@ public class UserServiceImpl implements UserServiceInterface {
                 signupDto.getFirstName(), signupDto.getLastName(),
                 encoder.encode(signupDto.getPassword()));
 
-        UserRole role = signupDto.getRoles();
-        System.out.println(role);
-
-        user.setUserRole(role);
+        Role role = roleRepository.findByName(UserRole.USER).get();
 
     //addng a wallet to a user by team D
         Wallet wallet = new Wallet();
         Wallet savedWallet = walletRepository.save(wallet);
-
         user.setWalletId(savedWallet);
-       userRepository.save(user);
-
-
     //adding wallet ends here
 
+        user.setRole(role);
+        userRepository.save(user);
+        System.out.println(role);
+        userRepository.save(user);
 
 
         // TODO: Send confirmation token
@@ -160,9 +165,11 @@ public class UserServiceImpl implements UserServiceInterface {
 
             User user = userRepository.findByEmail(loginRequest.getEmail()).orElseThrow(() -> new UsernameNotFoundException("User not found with Email: " + loginRequest.getEmail()));
 
-            UserRole roles = user.getUserRole();
+            UserRole roles = user.getRole().getName();
 
             String jwt = utils.generateJwtToken(authentication);
+            System.out.println(jwt);
+            System.out.println(authentication);
             if(user.getEnabled()) {
                 return ResponseEntity.ok(new JwtResponse(jwt, userDetails.getUsername(), user.getId(), roles));
             }else {
@@ -175,20 +182,31 @@ public class UserServiceImpl implements UserServiceInterface {
     }
 
     @Override
-    public void changePassword(ChangePasswordDto changePasswordDto) {
-        Optional<User> currentUser = userRepository.getUserByPassword(changePasswordDto.getOldPassword());
+    public void changePassword(ChangePasswordDto changePasswordDto, Long id) {
+
+        User currentUser = userRepository.findUserById(id).orElseThrow(
+        ()-> new BadRequestException("User Not Found")
+
+        );
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                currentUser.getEmail(), changePasswordDto.getOldPassword())
+        );
+
         String newPassword = changePasswordDto.getNewPassword();
         String confirmPassword = changePasswordDto.getConfirmPassword();
-        if (currentUser.isPresent() && newPassword.equals(confirmPassword)) {
-            currentUser.get().setPassword(newPassword);
-            userRepository.save(currentUser.get());
+
+        if (newPassword.equals(confirmPassword)) {
+            currentUser.setPassword(encoder.encode(newPassword));
+            userRepository.save(currentUser);
+        } else {
+            throw new BadRequestException("Incorrect password");
 
         }
     }
 
     @Override
-    public void updateUser(EditUserDetailsDto editUserDetailsDto) {
-        Optional<User> loggedInUser = userRepository.findByEmail(editUserDetailsDto.getEmail());
+    public void updateUser(EditUserDetailsDto editUserDetailsDto, Long id) {
+        Optional<User> loggedInUser = userRepository.findUserById(id);
         if (loggedInUser.isPresent()) {
             loggedInUser.get().setFirstName(editUserDetailsDto.getFirstname());
             loggedInUser.get().setLastName(editUserDetailsDto.getLastname());
@@ -196,6 +214,7 @@ public class UserServiceImpl implements UserServiceInterface {
             loggedInUser.get().setUserGender(editUserDetailsDto.getGender());
             loggedInUser.get().setDob(editUserDetailsDto.getDateOfBirth());
             userRepository.save(loggedInUser.get());
+            System.out.println("User updated "+loggedInUser.get().getEmail());
         }
     }
 }

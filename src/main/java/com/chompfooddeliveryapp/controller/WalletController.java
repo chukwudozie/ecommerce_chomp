@@ -20,7 +20,7 @@ import java.io.StringReader;
 import java.util.Arrays;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/user")
 public class WalletController {
 
 

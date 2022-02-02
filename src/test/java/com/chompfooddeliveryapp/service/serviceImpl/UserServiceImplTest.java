@@ -10,6 +10,7 @@ import com.chompfooddeliveryapp.dto.SignupDto;
 import com.chompfooddeliveryapp.model.enums.UserGender;
 import com.chompfooddeliveryapp.model.enums.UserRole;
 import com.chompfooddeliveryapp.model.users.User;
+import com.chompfooddeliveryapp.repository.RoleRepository;
 import com.chompfooddeliveryapp.repository.UserRepository;
 import com.chompfooddeliveryapp.repository.WalletRepository;
 import com.chompfooddeliveryapp.security.jwt.JwtUtils;
@@ -41,6 +42,9 @@ class UserServiceImplTest {
     PasswordEncoder encoder;
     @Mock
     JwtUtils utils;
+
+    @Mock
+    RoleRepository roleRepository;
     @Mock
     AuthenticationManager authenticationManager;
     @Mock
@@ -65,7 +69,7 @@ class UserServiceImplTest {
     @BeforeEach
 
     void setUp() {
-        userService = new UserServiceImpl(utils, authenticationManager, userDetailsService, userRepository, encoder, confirmationTokenService, mailService, walletRepository, walletService);
+        userService = new UserServiceImpl(utils, authenticationManager, userDetailsService, userRepository, encoder, confirmationTokenService, mailService,walletRepository,walletService,roleRepository);
     }
 
     @Test
@@ -76,7 +80,7 @@ class UserServiceImplTest {
         signupDto.setPassword("hshjsfjhsfhjs");
         signupDto.setFirstName("MunaMuna");
         signupDto.setLastName("OnyeOnye");
-        signupDto.setRoles(UserRole.ADMIN);
+//        signupDto.setRoles(UserRole.ADMIN);
 
         when(userRepository.existsByEmail(any())).thenReturn(true);
         userService.createUser(signupDto);
@@ -91,7 +95,7 @@ class UserServiceImplTest {
         signupDto.setPassword("hshjsfjhsfhjs");
         signupDto.setFirstName("MunaMuna");
         signupDto.setLastName("OnyeOnye");
-        signupDto.setRoles(UserRole.ADMIN);
+//        signupDto.setRoles(UserRole.ADMIN);
 
         when(userRepository.existsByEmail(any())).thenReturn(false);
         userService.createUser(signupDto);
@@ -102,10 +106,11 @@ class UserServiceImplTest {
     @Test
     public void testChangePassword(){
         ChangePasswordDto changePasswordDto = new ChangePasswordDto("one", "two", "two");
+        Long id = 1L;
         userService = mock(UserServiceImpl.class);
-        doNothing().when(userService).changePassword(any());
-        userService.changePassword(changePasswordDto);
-        verify(userService, times(1)).changePassword(changePasswordDto);
+        doNothing().when(userService).changePassword(any(), any());        //changePassword(any());
+        userService.changePassword(changePasswordDto, id);      //changePasswordDto
+        verify(userService, times(1)).changePassword(changePasswordDto, id);
     }
 
 
@@ -116,10 +121,11 @@ class UserServiceImplTest {
                 "Amara", "Ojiakor", "amara@gmail.com",
                 UserGender.FEMALE, new Date(2000-12-11)
         );
+        Long id = 1L;
         userService = mock(UserServiceImpl.class);
-        doNothing().when(userService).updateUser(any());
-        userService.updateUser(editUserDetailsDto);
-        verify(userService, times(1)).updateUser(editUserDetailsDto);
+        doNothing().when(userService).updateUser(any(), any());
+        userService.updateUser(editUserDetailsDto, id);
+        verify(userService, times(1)).updateUser(editUserDetailsDto, id);
 
     }
 
