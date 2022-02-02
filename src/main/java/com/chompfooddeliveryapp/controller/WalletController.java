@@ -13,7 +13,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import java.util.Arrays;
 
 @RestController
-@RequestMapping("/wallet")
+@RequestMapping("/auth")
 public class WalletController {
 
 
@@ -46,6 +46,12 @@ public class WalletController {
 
         return webClient.build().post().uri("https://api.paystack.co/transaction/initialize").header("Authorization", "Bearer " + secret_key ).bodyValue(walletDto)
                 .retrieve().bodyToMono(Object.class).block();
+
+    }
+
+    @GetMapping("/walletBalance/{userId}")
+    public String checkWalletBalance(@PathVariable Long userId){
+        return walletService.getWalletBalance(userId);
 
     }
 

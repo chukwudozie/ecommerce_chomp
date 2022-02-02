@@ -11,6 +11,7 @@ import com.chompfooddeliveryapp.model.enums.UserGender;
 import com.chompfooddeliveryapp.model.enums.UserRole;
 import com.chompfooddeliveryapp.model.users.User;
 import com.chompfooddeliveryapp.repository.UserRepository;
+import com.chompfooddeliveryapp.repository.WalletRepository;
 import com.chompfooddeliveryapp.security.jwt.JwtUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -48,6 +49,12 @@ class UserServiceImplTest {
     ConfirmationTokenService confirmationTokenService;
     @Mock
     MailService mailService;
+    @Mock
+    WalletRepository walletRepository;
+    @Mock
+    WalletServiceImpl walletService;
+
+
 
 
 
@@ -58,7 +65,7 @@ class UserServiceImplTest {
     @BeforeEach
 
     void setUp() {
-        userService = new UserServiceImpl(utils, authenticationManager, userDetailsService, userRepository, encoder, confirmationTokenService, mailService);
+        userService = new UserServiceImpl(utils, authenticationManager, userDetailsService, userRepository, encoder, confirmationTokenService, mailService, walletRepository, walletService);
     }
 
     @Test
