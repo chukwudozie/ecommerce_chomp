@@ -46,20 +46,3 @@ public class MenuServiceImplementation implements MenuItemService {
     }
 }
 
-//
-//
-//    public MenuItem addItem(MenuItemDto menuItemDto){
-//        Optional<MenuItem> usersOptional = menuItemRepository.findByName(menuItemDto.getName());
-//        if(usersOptional.isPresent()){
-//            return true;
-//        }
-//        MenuItem newMenuItem = new MenuItem();
-//
-//        newMenuItem.setName(menuItemDto.getName());
-//        newMenuItem.setImage(menuItemDto.getImage());
-//        newMenuItem.setPrice(menuItemDto.getPrice());
-//        newMenuItem.setCategory(menuItemDto.getCategory());
-//        newMenuItem.setDateCreated(menuItemDto.getDateCreated());
-//        menuItemRepository.save(newMenuItem);
-//        return false;
-//    }
