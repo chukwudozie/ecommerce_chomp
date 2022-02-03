@@ -42,7 +42,7 @@ public class MenuServiceImplementation implements MenuItemService {
 
     @Override
     public void deleteMenuItemById(Long id) {
-        menuItemRepository.deleteById(id);
+        menuItemRepository.deleteMenuItemById(id);
     }
 }
 
