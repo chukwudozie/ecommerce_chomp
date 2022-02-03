@@ -73,7 +73,6 @@ class UserServiceImplTest {
         signupDto.setPassword("hshjsfjhsfhjs");
         signupDto.setFirstName("MunaMuna");
         signupDto.setLastName("OnyeOnye");
-//        signupDto.setRoles(UserRole.ADMIN);
 
         when(userRepository.existsByEmail(any())).thenReturn(true);
         userService.createUser(signupDto);
@@ -88,7 +87,6 @@ class UserServiceImplTest {
         signupDto.setPassword("hshjsfjhsfhjs");
         signupDto.setFirstName("MunaMuna");
         signupDto.setLastName("OnyeOnye");
-//        signupDto.setRoles(UserRole.ADMIN);
 
         when(userRepository.existsByEmail(any())).thenReturn(false);
         userService.createUser(signupDto);

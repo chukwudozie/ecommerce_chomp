@@ -8,7 +8,5 @@ import java.util.Optional;
 @Repository
 public interface MenuItemRepository extends JpaRepository<MenuItem, Long> {
 
-    Optional<MenuItem> findMenuItemById(Long id);
-    void deleteEmployeeById(Long id);
 }
 

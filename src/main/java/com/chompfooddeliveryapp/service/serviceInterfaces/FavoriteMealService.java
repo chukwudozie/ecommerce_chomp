@@ -6,14 +6,15 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Repository
+@Service
 public interface FavoriteMealService {
-    FavoriteMeal createFavoriteMeal(FavoriteMeal favoriteMeal);
+//    FavoriteMeal createFavoriteMeal(Long userId, Long menuId);
+    FavoriteMeal createFavoriteMeal(Long userId, Long menuId);
 
     String removeFromFavoriteMeal(Long userId, Long menuId);
 
     public List<FavoriteMeal> getAllFavoriteMealsByAUser(Long userId);
 
-    public FavoriteMeal getAParticularFavoriteMeal(Long userId, Long mealId);
+    public FavoriteMeal getAParticularFavoriteMeal(Long userId, Long menuId);
 
 }

@@ -81,11 +81,12 @@ public class UserServiceImpl implements UserServiceInterface {
                 encoder.encode(signupDto.getPassword()));
 
         Role role = roleRepository.findByName(UserRole.USER).get();
+        System.out.println(role+"....................");
 
         user.setRole(role);
         userRepository.save(user);
-        System.out.println(role);
-        userRepository.save(user);
+//        System.out.println(role);
+//        userRepository.save(user);
 
         // TODO: Send confirmation token
         String token = UUID.randomUUID().toString();

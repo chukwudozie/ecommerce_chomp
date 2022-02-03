@@ -1,7 +1,6 @@
 package com.chompfooddeliveryapp.controller;
 
 
-import com.chompfooddeliveryapp.exception.FavoriteNotFoundException;
 import com.chompfooddeliveryapp.model.meals.FavoriteMeal;
 import com.chompfooddeliveryapp.service.serviceInterfaces.FavoriteMealService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = "*",maxAge = 3600)
 @RequestMapping("/auth")
 public class FavoriteController {
     private final FavoriteMealService favoriteMealService;
@@ -22,30 +20,28 @@ public class FavoriteController {
         this.favoriteMealService = favoriteMealService;
     }
 
-
-    @PostMapping("/addfavoritemeal")
-    public ResponseEntity<FavoriteMeal> createFavoriteMeal(@RequestBody FavoriteMeal favoriteMeal){
-        final FavoriteMeal favoriteMeal1 = favoriteMealService.createFavoriteMeal(favoriteMeal);
+    @PostMapping("/addfavoritemeal/{userId}/{menuId}")
+    public ResponseEntity<FavoriteMeal> createFavoriteMeal(@PathVariable Long userId, @PathVariable Long menuId){
+        final FavoriteMeal favoriteMeal1 = favoriteMealService.createFavoriteMeal(userId, menuId);
 
         return new ResponseEntity<>(favoriteMeal1, HttpStatus.OK);
     }
 
-    @PostMapping("/deleteFavoriteMeal")
-    public ResponseEntity<String> deleteFavoriteMeal(@RequestBody Long userId, Long menuId){
+    @PostMapping("/deletefavoritemeal/{userId}/{menuId}")
+    public ResponseEntity<String> deleteFavoriteMeal(@PathVariable Long userId, @PathVariable Long menuId){
         favoriteMealService.removeFromFavoriteMeal(userId, menuId);
 
-        return new ResponseEntity<>("favorite meal with " + menuId + " has been deleted.", HttpStatus.OK);
+        return new ResponseEntity<>("favorite meal with " + menuId + " has been removed from favorite.", HttpStatus.OK);
     }
 
-    @PostMapping("/allfavoritemeals")
-    public ResponseEntity<List<FavoriteMeal>> getAllFavoriteMealsByAUser(Long userId) {
+    @GetMapping("/allfavoritemeals/{userId}")
+    public ResponseEntity<List<FavoriteMeal>> getAllFavoriteMealsByAUser(@PathVariable Long userId) {
         return new ResponseEntity<>(favoriteMealService.getAllFavoriteMealsByAUser(userId), HttpStatus.OK);
     }
 
-    @PostMapping("/getparticularfavoritemeal")
-    public ResponseEntity<FavoriteMeal> getParticularFavoriteMeal(Long userId, Long mealId){
-        return new ResponseEntity<>(favoriteMealService.getAParticularFavoriteMeal(userId, mealId), HttpStatus.OK);
+    @GetMapping("/getparticularfavoritemeal/{userId}/{menuId}")
+    public ResponseEntity<FavoriteMeal> getParticularFavoriteMeal(@PathVariable Long userId, @PathVariable Long menuId){
+        return new ResponseEntity<>(favoriteMealService.getAParticularFavoriteMeal(userId, menuId), HttpStatus.OK);
     }
-
 
 }
