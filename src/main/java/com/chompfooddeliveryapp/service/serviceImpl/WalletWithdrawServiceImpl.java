@@ -62,7 +62,6 @@ public class WalletWithdrawServiceImpl {
 
             walletRepository.save(wallet);
 
-
             transaction.setTransactionStatus(TransactionStatus.SUCCESSFUL);
             transaction.setTransactionType(TransactionType.DEBIT);
             transaction.setPaymentMethod(PaymentMethod.EWALLET);
