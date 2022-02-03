@@ -29,5 +29,5 @@ public class CartItem {
     @JoinColumn(name = "menu_id", nullable = false)
     private MenuItem menuId;
 
-    private Long quantity;
+    private Integer quantity;
 }
