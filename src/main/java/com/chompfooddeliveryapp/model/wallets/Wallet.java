@@ -21,10 +21,12 @@ public class Wallet {
     private String id = "chompW" + UUID.randomUUID().toString();
 
     @NotNull
-    private Long accountBalance;
+    private long accountBalance;
 
     @Column(name = "base_currency")
     @Enumerated(EnumType.STRING)
     @NotNull
-    private Currency baseCurrency;
+    private Currency baseCurrency = Currency.NGN;
+
+
 }

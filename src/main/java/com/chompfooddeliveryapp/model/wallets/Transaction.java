@@ -3,6 +3,7 @@ package com.chompfooddeliveryapp.model.wallets;
 import com.chompfooddeliveryapp.model.enums.PaymentMethod;
 import com.chompfooddeliveryapp.model.enums.TransactionStatus;
 import com.chompfooddeliveryapp.model.enums.TransactionType;
+import com.chompfooddeliveryapp.model.users.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,6 +11,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
+import java.util.UUID;
 
 @Entity
 @Data
@@ -19,12 +21,12 @@ import javax.persistence.*;
 public class Transaction {
     @Id
     @Column(name = "id", nullable = false)
-    private Long id;
+    private String id = "chompT" + UUID.randomUUID().toString();
 
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = Wallet.class)
     @JoinColumn(name = "wallet_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private Long walletId;
+    private Wallet wallet;
 
     @Column(name = "payment_method")
     @Enumerated(EnumType.STRING)
@@ -37,5 +39,11 @@ public class Transaction {
     @Column(name = "transaction_status")
     @Enumerated(EnumType.STRING)
     private TransactionStatus transactionStatus;
+
+    @JoinColumn(name = "user_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = User.class)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private User user;
+
 
 }
