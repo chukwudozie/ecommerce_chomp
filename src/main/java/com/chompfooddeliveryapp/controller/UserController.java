@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/auth")
 @RequiredArgsConstructor
 public class UserController {
 
@@ -33,4 +33,5 @@ public class UserController {
          userService.changePassword(changePasswordDto, id);
             return new ResponseEntity<>(HttpStatus.OK);
     }
+
 }

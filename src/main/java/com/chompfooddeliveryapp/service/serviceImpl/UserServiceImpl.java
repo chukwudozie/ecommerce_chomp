@@ -38,6 +38,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
 
+import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.Locale;
@@ -90,6 +91,7 @@ public class UserServiceImpl implements UserServiceInterface {
                 encoder.encode(signupDto.getPassword()));
 
         Role role = roleRepository.findByName(UserRole.USER).get();
+        System.out.println(role+"....................");
 
     //addng a wallet to a user by team D
         Wallet wallet = new Wallet();
@@ -99,8 +101,8 @@ public class UserServiceImpl implements UserServiceInterface {
 
         user.setRole(role);
         userRepository.save(user);
-        System.out.println(role);
-        userRepository.save(user);
+//        System.out.println(role);
+//        userRepository.save(user);
 
 
         // TODO: Send confirmation token
@@ -157,7 +159,7 @@ public class UserServiceImpl implements UserServiceInterface {
     }
 
     @Override
-    public ResponseEntity<?> loginUser(@RequestBody UserDto loginRequest) throws Exception {
+    public ResponseEntity<?> loginUser(@RequestBody UserDto loginRequest, HttpServletResponse response) throws Exception {
         try {
             Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
 
@@ -171,6 +173,7 @@ public class UserServiceImpl implements UserServiceInterface {
             System.out.println(jwt);
             System.out.println(authentication);
             if(user.getEnabled()) {
+                response.addHeader("Authorization", "Bearer " + jwt);
                 return ResponseEntity.ok(new JwtResponse(jwt, userDetails.getUsername(), user.getId(), roles));
             }else {
                 return ResponseEntity.badRequest().body("Email has not been verified");
