@@ -13,6 +13,7 @@ import com.chompfooddeliveryapp.dto.token.ConfirmationTokenService;
 import com.chompfooddeliveryapp.exception.BadRequestException;
 import com.chompfooddeliveryapp.model.carts.Cart;
 import com.chompfooddeliveryapp.model.carts.CartRepository;
+import com.chompfooddeliveryapp.model.carts.CartService;
 import com.chompfooddeliveryapp.model.enums.UserRole;
 import com.chompfooddeliveryapp.model.users.Role;
 import com.chompfooddeliveryapp.model.users.User;
@@ -56,7 +57,7 @@ public class UserServiceImpl implements UserServiceInterface {
     private final UserDetailsService userDetailsService;
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
-    private final CartRepository cartRepository;
+    private final CartService cartService;
     private final PasswordEncoder encoder;
     private final ConfirmationTokenService confirmationTokenService;
     private final MailService mailService;
@@ -70,12 +71,12 @@ public class UserServiceImpl implements UserServiceInterface {
                            UserDetailsService userDetailsService, UserRepository userRepository,
                            PasswordEncoder encoder, ConfirmationTokenService confirmationTokenService,
                            MailService mailService, WalletRepository walletRepository, WalletServiceImpl walletService,
-                           RoleRepository roleRepository, CartRepository cartRepository) {
+                           RoleRepository roleRepository,CartService cartService) {
         this.utils = utils;
         this.authenticationManager = authenticationManager;
         this.userDetailsService = userDetailsService;
         this.userRepository = userRepository;
-        this.cartRepository = cartRepository;
+        this.cartService = cartService;
         this.encoder = encoder;
         this.confirmationTokenService = confirmationTokenService;
         this.mailService = mailService;
@@ -103,16 +104,15 @@ public class UserServiceImpl implements UserServiceInterface {
         user.setWalletId(savedWallet);
     //adding wallet ends here
 
-        user.setRole(role);
-        userRepository.save(user);
 
-//        System.out.println(role);
-//        userRepository.save(user);
+
 
         System.out.println(role);
 
         Cart cart = new Cart();
 
+
+        cartService.createCartForUser(user);
         userRepository.save(user);
         // TODO: Send confirmation token
         String token = UUID.randomUUID().toString();
@@ -143,23 +143,21 @@ public class UserServiceImpl implements UserServiceInterface {
         return ResponseEntity.ok(new MessageResponse("Complete your registration with the token", token, createdAt, expiresAt));
     }
 
+
+
     @Transactional
     public String confirmToken(String token) {
         ConfirmationToken confirmationToken = confirmationTokenService
                 .getToken(token)
                 .orElseThrow(() ->
                         new IllegalStateException("token not found"));
-
         if (confirmationToken.getConfirmedAt() != null) {
             throw new IllegalStateException("email already confirmed");
         }
-
         LocalDateTime expiredAt = confirmationToken.getExpiresAt();
-
         if(expiredAt.isBefore(LocalDateTime.now())) {
             throw new IllegalStateException("token expired");
         }
-
         confirmationTokenService.setConfirmedAt(token);
         userRepository.enableAppUser(confirmationToken.getUser().getEmail());
 

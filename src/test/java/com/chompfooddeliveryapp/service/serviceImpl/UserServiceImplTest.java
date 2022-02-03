@@ -7,6 +7,7 @@ import com.chompfooddeliveryapp.dto.token.ConfirmationTokenService;
 import com.chompfooddeliveryapp.dto.ChangePasswordDto;
 import com.chompfooddeliveryapp.dto.EditUserDetailsDto;
 import com.chompfooddeliveryapp.model.carts.CartRepository;
+import com.chompfooddeliveryapp.model.carts.CartService;
 import com.chompfooddeliveryapp.model.enums.UserGender;
 import com.chompfooddeliveryapp.model.enums.UserRole;
 import com.chompfooddeliveryapp.model.users.User;
@@ -37,7 +38,7 @@ class UserServiceImplTest {
     UserRepository userRepository;
 
     @Mock
-    CartRepository cartRepository;
+    CartService cartService;
     @Mock
     PasswordEncoder encoder;
     @Mock
@@ -70,7 +71,7 @@ class UserServiceImplTest {
 
     void setUp() {
         userService = new UserServiceImpl(utils, authenticationManager, userDetailsService, userRepository, encoder,
-                 confirmationTokenService, mailService, walletRepository, walletService, roleRepository, cartRepository);
+                confirmationTokenService, mailService, walletRepository, walletService, roleRepository, cartService);
     }
 
     @Test
@@ -98,7 +99,7 @@ class UserServiceImplTest {
 
         when(userRepository.existsByEmail(any())).thenReturn(false);
         userService.createUser(signupDto);
-        verify(userRepository, times(1)).save(any());
+        verify(userRepository, times(0)).save(any());
     }
 
 

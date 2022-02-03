@@ -27,6 +27,9 @@ public class CartServiceImpl implements CartService{
 
 
     public ResponseEntity<?> addToCart(Long userId, Long menuId, int qty){
+        if(cartRepository.getByUser_Id(userId) != null){
+
+        }
         //todo get the user cart with the user id
         //todo check if the product is in existence
         //todo check if the qty the user wants to add to cart is available(Optional)
