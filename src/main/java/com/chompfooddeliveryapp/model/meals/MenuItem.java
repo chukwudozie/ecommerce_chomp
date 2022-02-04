@@ -38,4 +38,13 @@ public class MenuItem {
 
     @NotNull
     private Timestamp dateCreated;
+
+    public MenuItem(String name, String image, String description, Long price, MenuCategory category, Timestamp dateCreated) {
+        this.name = name;
+        this.image = image;
+        this.description = description;
+        this.price = price;
+        this.category = category;
+        this.dateCreated = dateCreated;
+    }
 }
