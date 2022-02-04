@@ -1,7 +1,10 @@
 package com.chompfooddeliveryapp.model.meals;
 
+import com.chompfooddeliveryapp.model.users.User;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 
 import javax.persistence.*;
@@ -14,15 +17,18 @@ public class FavoriteMeal {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = User.class)
+    @JoinColumn(name = "user_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private User userid;
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = MenuItem.class)
+    @JoinColumn(name = "menu_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private MenuItem menuid;
 
-    private Long user_id;
-
-    @Column(unique = true)
-    private Long menu_id;
-
-    public FavoriteMeal(Long user_id, Long menu_id) {
-        this.user_id = user_id;
-        this.menu_id = menu_id;
+    public FavoriteMeal(User userid, MenuItem menuid) {
+        this.userid = userid;
+        this.menuid = menuid;
     }
 }
 
