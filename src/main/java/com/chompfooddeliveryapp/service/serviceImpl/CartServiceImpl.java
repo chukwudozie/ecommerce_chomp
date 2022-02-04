@@ -2,7 +2,6 @@ package com.chompfooddeliveryapp.service.serviceImpl;
 
 import com.chompfooddeliveryapp.exception.BadRequestException;
 import com.chompfooddeliveryapp.model.carts.Cart;
-import com.chompfooddeliveryapp.model.carts.CartDTO;
 import com.chompfooddeliveryapp.model.carts.CartItem;
 import com.chompfooddeliveryapp.model.carts.ViewCartResponse;
 import com.chompfooddeliveryapp.repository.CartItemRepository;
@@ -10,9 +9,20 @@ import com.chompfooddeliveryapp.service.serviceInterfaces.CartService;
 import com.chompfooddeliveryapp.model.enums.UserRole;
 import com.chompfooddeliveryapp.model.meals.MenuItem;
 import com.chompfooddeliveryapp.model.users.User;
+import com.chompfooddeliveryapp.dto.CartDTO;
+import com.chompfooddeliveryapp.model.carts.CartItem;
+import com.chompfooddeliveryapp.model.enums.UserRole;
+import com.chompfooddeliveryapp.model.meals.MenuItem;
+import com.chompfooddeliveryapp.model.users.User;
+import com.chompfooddeliveryapp.payload.AllCartItems;
+import com.chompfooddeliveryapp.payload.CartResponse;
+import com.chompfooddeliveryapp.payload.ViewCartResponse;
+import com.chompfooddeliveryapp.repository.CartItemRepository;
 import com.chompfooddeliveryapp.repository.CartRepository;
 import com.chompfooddeliveryapp.repository.MenuItemRepository;
+import com.chompfooddeliveryapp.service.serviceInterfaces.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -52,7 +62,7 @@ public class CartServiceImpl implements CartService {
                 .orElseThrow((() -> new BadRequestException("Product not available")));
         Cart cart = cartRepository.getByUser_Id(userId)
                 .orElseThrow(() -> new BadRequestException("Only users can add to cart"));
-        List<CartItem> userCartItems = cartItemRepository.findAllByCartId(cart);
+        List<CartItem> userCartItems = cartItemRepository.findAllByCart(cart);
 
         if(userCartItems.isEmpty()){
             addNewCartItem(cart,product, cartDTO.getQty());
@@ -60,7 +70,7 @@ public class CartServiceImpl implements CartService {
             return  ResponseEntity.ok(new CartResponse(total,product.getName()+" added!"));
         }
 
-        Optional<CartItem> cartItem = cartItemRepository.findByMenuIdAndCartId(product, cart);
+        Optional<CartItem> cartItem = cartItemRepository.findByMenuIdAndCart(product, cart);
         if(cartItem.isPresent()){
 //             increase qty
             cartItem.get().setQuantity(cartDTO.getQty() + cartItem.get().getQuantity());
@@ -82,13 +92,13 @@ public class CartServiceImpl implements CartService {
                 .orElseThrow((() -> new BadRequestException("Product not available, "+menuId+" invalid")));
         Cart cart = cartRepository.getByUser_Id(userId)
                 .orElseThrow(() -> new BadRequestException("Only users can add to cart"));
-        List<CartItem> userCartItems = cartItemRepository.findAllByCartId(cart);
+        List<CartItem> userCartItems = cartItemRepository.findAllByCart(cart);
         if(userCartItems.isEmpty()){
             int total = getTotalProduct(cart);
             return  ResponseEntity.ok(new CartResponse(total,"No item In cart"));
         }
 
-        Optional<CartItem> cartItem = cartItemRepository.findByMenuIdAndCartId(product, cart);
+        Optional<CartItem> cartItem = cartItemRepository.findByMenuIdAndCart(product, cart);
         if(cartItem.isPresent()){
             if(cartItem.get().getQuantity() == 1){
                 cartItemRepository.delete(cartItem.get());
@@ -111,18 +121,26 @@ public class CartServiceImpl implements CartService {
                 .orElseThrow((() -> new BadRequestException("Product not available, "+menuId+" invalid")));
         Cart cart = cartRepository.getByUser_Id(userId)
                 .orElseThrow(() -> new BadRequestException("Only users can add to cart"));
-        List<CartItem> userCartItems = cartItemRepository.findAllByCartId(cart);
+        List<CartItem> userCartItems = cartItemRepository.findAllByCart(cart);
         List<CartItem> menuCartItems = cartItemRepository.findAllByMenuId_Id(menuId);
 
         if(userCartItems.isEmpty() || menuCartItems.isEmpty()){
           throw  new BadRequestException(product.getName()+" not in the Users cart");
         }
-        Optional<CartItem> cartItem = cartItemRepository.findByMenuIdAndCartId(product, cart);
+        Optional<CartItem> cartItem = cartItemRepository.findByMenuIdAndCart(product, cart);
         cartItemRepository.delete(cartItem.get());
         int total = getTotalProduct(cart);
         return  ResponseEntity.ok(new CartResponse(total,cartItem.get().getMenuId().getName()+" deleted"));
 
     }
+    @Override
+    public ResponseEntity<AllCartItems> findAllProductsByUser(Long userId){
+        AllCartItems allCartItems = new AllCartItems();
+        allCartItems.setUsersCartItems(getAllProductsByUser(userId));
+        return  new ResponseEntity<>(allCartItems, HttpStatus.OK);
+
+    }
+
 
     private void addNewCartItem( Cart cart, MenuItem product, Integer quantity){
         CartItem cartItem = new CartItem();
@@ -132,32 +150,35 @@ public class CartServiceImpl implements CartService {
         cartItemRepository.save(cartItem);
     }
 
-    @Override
-    public ResponseEntity<List<ViewCartResponse>> findAllProductsByUser(Long cartId){
 
-        List<ViewCartResponse> usersCartItem= new ArrayList<>();
-        List<CartItem> cartItems = cartItemRepository.findAllByCartId_Id(cartId);
-        if(cartRepository.existsById(cartId)) {
+
+    public List<ViewCartResponse> getAllProductsByUser( Long userId) {
+        Cart cart = cartRepository.getByUser_Id(userId)
+                .orElseThrow(() -> new BadRequestException("Only users can add to cart"));
+        List<ViewCartResponse> usersCartItem = new ArrayList<>();
+        List<CartItem> cartItems = cartItemRepository.findAllByCart_Id(cart.getId());
+        if (cartRepository.existsById(cart.getId())) {
             for (CartItem item : cartItems) {
                 ViewCartResponse cartResponse = new ViewCartResponse();
                 cartResponse.setCartItemId(item.getId());
                 cartResponse.setProductId(item.getMenuId().getId());
                 cartResponse.setProductImage(item.getMenuId().getImage());
                 cartResponse.setProductName(item.getMenuId().getName());
-                cartResponse.setUserLastName(item.getCart().getUser().getLastName());
+                cartResponse.setProductOwner(item.getCart().getUser()
+                .getLastName() + " " + item.getCart().getUser().getFirstName());
                 cartResponse.setProductPrice(item.getMenuId().getPrice());
                 cartResponse.setProductQuantity(item.getQuantity());
                 usersCartItem.add(cartResponse);
 
             }
-            return ResponseEntity.ok(usersCartItem);
+            return usersCartItem;
         }
-        throw new BadRequestException("Cart with id "+cartId+" doesnt't exist");
+        throw new BadRequestException("Cart with id "+cart.getId()+" doesn't exist");
     }
 
     private int getTotalProduct(Cart cart){
         int totalQuantity = 0;
-       List<CartItem> cartItems =  cartItemRepository.findAllByCartId_Id(cart.getId());
+       List<CartItem> cartItems =  cartItemRepository.findAllByCart_Id(cart.getId());
        for(CartItem cartItem: cartItems){
            totalQuantity += cartItem.getQuantity();
        }

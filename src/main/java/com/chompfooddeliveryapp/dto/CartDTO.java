@@ -1,4 +1,4 @@
-package com.chompfooddeliveryapp.model.carts;
+package com.chompfooddeliveryapp.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,6 +12,5 @@ import lombok.Setter;
 public class CartDTO {
 
     private Integer qty;
-//    private Long menuId;
 
 }
