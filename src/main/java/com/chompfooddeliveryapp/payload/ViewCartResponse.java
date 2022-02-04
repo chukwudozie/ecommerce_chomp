@@ -1,4 +1,4 @@
-package com.chompfooddeliveryapp.model.carts;
+package com.chompfooddeliveryapp.payload;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,10 +14,8 @@ public class ViewCartResponse {
     private Long productId;
     private Long cartItemId;
     private String productName;
-    private String UserLastName;
+    private String productOwner;
     private String productImage;
     private Integer productQuantity;
     private Long productPrice;
-
-//    private List<CartItem> usersCartItem;
 }
