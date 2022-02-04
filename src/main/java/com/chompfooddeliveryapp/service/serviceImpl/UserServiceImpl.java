@@ -10,10 +10,13 @@ import com.chompfooddeliveryapp.dto.SignupDto;
 import com.chompfooddeliveryapp.dto.UserDto;
 import com.chompfooddeliveryapp.dto.token.ConfirmationToken;
 import com.chompfooddeliveryapp.dto.token.ConfirmationTokenService;
+
+import com.chompfooddeliveryapp.service.serviceInterfaces.CartService;
+
 import com.chompfooddeliveryapp.exception.BadRequestException;
 import com.chompfooddeliveryapp.model.carts.Cart;
-import com.chompfooddeliveryapp.model.carts.CartRepository;
-import com.chompfooddeliveryapp.model.carts.CartService;
+import com.chompfooddeliveryapp.repository.CartRepository;
+import com.chompfooddeliveryapp.service.serviceInterfaces.CartService;
 import com.chompfooddeliveryapp.model.enums.UserRole;
 import com.chompfooddeliveryapp.model.users.Role;
 import com.chompfooddeliveryapp.model.users.User;

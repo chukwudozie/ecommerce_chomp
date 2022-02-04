@@ -3,7 +3,7 @@ package com.chompfooddeliveryapp.service.serviceImpl;
 import com.chompfooddeliveryapp.exception.BadRequestException;
 import com.chompfooddeliveryapp.model.carts.Cart;
 import com.chompfooddeliveryapp.model.carts.CartItem;
-import com.chompfooddeliveryapp.model.carts.ViewCartResponse;
+import com.chompfooddeliveryapp.payload.ViewCartResponse;
 import com.chompfooddeliveryapp.repository.CartItemRepository;
 import com.chompfooddeliveryapp.service.serviceInterfaces.CartService;
 import com.chompfooddeliveryapp.model.enums.UserRole;

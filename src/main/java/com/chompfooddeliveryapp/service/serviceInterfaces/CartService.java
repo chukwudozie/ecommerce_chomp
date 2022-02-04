@@ -1,8 +1,8 @@
 package com.chompfooddeliveryapp.service.serviceInterfaces;
 
 
-import com.chompfooddeliveryapp.model.carts.CartDTO;
-import com.chompfooddeliveryapp.model.carts.ViewCartResponse;
+import com.chompfooddeliveryapp.dto.CartDTO;
+import com.chompfooddeliveryapp.payload.ViewCartResponse;
 import com.chompfooddeliveryapp.dto.CartDTO;
 import com.chompfooddeliveryapp.model.users.User;
 import com.chompfooddeliveryapp.payload.AllCartItems;
