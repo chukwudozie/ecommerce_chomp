@@ -23,7 +23,7 @@ public class ChompFoodDeliveryAppApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(ChompFoodDeliveryAppApplication.class, args);
-        //to be removed
+
     }
 
 }
