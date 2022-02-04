@@ -19,6 +19,8 @@ import java.util.Collections;
 @EnableJpaRepositories(basePackageClasses = {UserRepository.class, ConfirmationTokenRepository.class})
 public class ChompFoodDeliveryAppApplication {
 
+    //to be removed
+
     public static void main(String[] args) {
         SpringApplication.run(ChompFoodDeliveryAppApplication.class, args);
     }
