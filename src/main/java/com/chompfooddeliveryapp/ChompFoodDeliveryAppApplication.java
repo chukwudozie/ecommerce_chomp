@@ -1,7 +1,7 @@
 package com.chompfooddeliveryapp;
 
 import com.chompfooddeliveryapp.dto.token.ConfirmationTokenRepository;
-import com.chompfooddeliveryapp.model.carts.CartRepository;
+import com.chompfooddeliveryapp.repository.CartRepository;
 import com.chompfooddeliveryapp.repository.UserRepository;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
