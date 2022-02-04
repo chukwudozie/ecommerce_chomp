@@ -1,12 +1,10 @@
 package com.chompfooddeliveryapp.controller;
 
-import com.chompfooddeliveryapp.model.carts.CartDTO;
+import com.chompfooddeliveryapp.dto.CartDTO;
 import com.chompfooddeliveryapp.service.serviceInterfaces.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/user")
@@ -34,9 +32,9 @@ public class CartController {
             return cartService.deleteCartItem(userId,menuId);
         }
 
-        @GetMapping("/viewCart/{cartId}")
-    public ResponseEntity<?> viewCartItems(@PathVariable Long cartId){
-        return cartService.findAllProductsByUser(cartId);
+        @GetMapping("/viewCart/{userId}")
+    public ResponseEntity<?> viewCartItems(@PathVariable Long userId){
+        return cartService.findAllProductsByUser(userId);
         }
     }
 
