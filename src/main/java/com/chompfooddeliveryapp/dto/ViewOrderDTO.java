@@ -22,4 +22,18 @@ public class ViewOrderDTO {
     private Timestamp orderDate;
     private Timestamp deliveredDate;
     private String description;
+
+    @Override
+    public String toString() {
+        return "ViewOrderDTO{" +
+                "quantity=" + quantity +
+                ", status=" + status +
+                ", name='" + name + '\'' +
+                ", image='" + image + '\'' +
+                ", price=" + price +
+                ", orderDate=" + orderDate +
+                ", deliveredDate=" + deliveredDate +
+                ", description='" + description + '\'' +
+                '}';
+    }
 }

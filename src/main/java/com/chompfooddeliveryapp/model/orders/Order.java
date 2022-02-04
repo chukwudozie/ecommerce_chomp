@@ -24,7 +24,7 @@ public class Order {
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = User.class)
     @JoinColumn(name = "user_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private Long userId;
+    private User user;
 
     private Timestamp order_date;
 

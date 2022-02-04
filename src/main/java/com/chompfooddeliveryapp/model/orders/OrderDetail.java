@@ -24,10 +24,10 @@ public class OrderDetail {
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = Order.class)
     @JoinColumn(name = "order_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private Long orderId;
+    private Order order;
 
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = MenuItem.class)
     @JoinColumn(name = "menu_id", nullable = false)
-    private Long menuId;
+    private MenuItem menu;
 
 }
