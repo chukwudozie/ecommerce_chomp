@@ -100,6 +100,7 @@ public class UserServiceImpl implements UserServiceInterface {
 
         Role role = roleRepository.findByName(UserRole.USER).get();
         System.out.println(role+"....................");
+        user.setRole(role);
 
     //addng a wallet to a user by team D
         Wallet wallet = new Wallet();
@@ -109,12 +110,7 @@ public class UserServiceImpl implements UserServiceInterface {
 
 
 
-
-
-        System.out.println(role);
-
-        Cart cart = new Cart();
-
+        userRepository.save(user);
 
         cartService.createCartForUser(user);
         userRepository.save(user);

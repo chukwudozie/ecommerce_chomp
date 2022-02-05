@@ -68,11 +68,5 @@ public class OrderServiceImplementation implements OrderService {
                 .collect(Collectors.toList());
 
         return listViewOrderDTO;
-
-//        } else {
-//            return var //new     List<BadRequestException> badRequest ("Order by userId: " + userId + "with orderID: " + orderId + "not found");
-//
-//            //"Order by: " + userId + "with orderID: " + orderId + "not found";
-//        }
     }
 }
