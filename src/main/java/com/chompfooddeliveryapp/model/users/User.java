@@ -62,6 +62,7 @@ public class User {
     @NotNull
     private Boolean subscribed = false;
 
+
     public User(String email, String firstName, String lastName, String password) {
         this.email = email;
         this.firstName = firstName;

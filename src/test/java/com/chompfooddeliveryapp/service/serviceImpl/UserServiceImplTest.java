@@ -6,27 +6,26 @@ import com.chompfooddeliveryapp.dto.SignupDto;
 import com.chompfooddeliveryapp.dto.token.ConfirmationTokenService;
 import com.chompfooddeliveryapp.dto.ChangePasswordDto;
 import com.chompfooddeliveryapp.dto.EditUserDetailsDto;
-import com.chompfooddeliveryapp.dto.SignupDto;
+import com.chompfooddeliveryapp.repository.CartRepository;
+import com.chompfooddeliveryapp.service.serviceInterfaces.CartService;
 import com.chompfooddeliveryapp.model.enums.UserGender;
 import com.chompfooddeliveryapp.model.enums.UserRole;
 import com.chompfooddeliveryapp.model.users.User;
 import com.chompfooddeliveryapp.repository.RoleRepository;
 import com.chompfooddeliveryapp.repository.UserRepository;
+import com.chompfooddeliveryapp.repository.WalletRepository;
 import com.chompfooddeliveryapp.security.jwt.JwtUtils;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.sql.Date;
-import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -37,6 +36,9 @@ class UserServiceImplTest {
 
     @Mock
     UserRepository userRepository;
+
+    @Mock
+    CartService cartService;
     @Mock
     PasswordEncoder encoder;
     @Mock
@@ -52,6 +54,12 @@ class UserServiceImplTest {
     ConfirmationTokenService confirmationTokenService;
     @Mock
     MailService mailService;
+    @Mock
+    WalletRepository walletRepository;
+    @Mock
+    WalletServiceImpl walletService;
+
+
 
 
 
@@ -62,7 +70,8 @@ class UserServiceImplTest {
     @BeforeEach
 
     void setUp() {
-        userService = new UserServiceImpl(utils, authenticationManager, userDetailsService, userRepository, encoder, confirmationTokenService, mailService,roleRepository);
+        userService = new UserServiceImpl(utils, authenticationManager, userDetailsService, userRepository, encoder,
+                confirmationTokenService, mailService, walletRepository, walletService, roleRepository, cartService);
     }
 
     @Test
@@ -73,7 +82,6 @@ class UserServiceImplTest {
         signupDto.setPassword("hshjsfjhsfhjs");
         signupDto.setFirstName("MunaMuna");
         signupDto.setLastName("OnyeOnye");
-//        signupDto.setRoles(UserRole.ADMIN);
 
         when(userRepository.existsByEmail(any())).thenReturn(true);
         userService.createUser(signupDto);
@@ -88,11 +96,10 @@ class UserServiceImplTest {
         signupDto.setPassword("hshjsfjhsfhjs");
         signupDto.setFirstName("MunaMuna");
         signupDto.setLastName("OnyeOnye");
-//        signupDto.setRoles(UserRole.ADMIN);
 
         when(userRepository.existsByEmail(any())).thenReturn(false);
         userService.createUser(signupDto);
-        verify(userRepository, times(1)).save(any());
+        verify(userRepository, times(0)).save(any());
     }
 
 

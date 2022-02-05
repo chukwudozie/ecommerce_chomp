@@ -22,7 +22,7 @@ public class SignupDto {
 
     private String password;
 
-//    private UserRole roles;
+    private UserRole role;
 
     public SignupDto() {
 

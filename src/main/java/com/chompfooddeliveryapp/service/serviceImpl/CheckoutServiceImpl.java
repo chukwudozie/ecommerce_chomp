@@ -50,7 +50,7 @@ public class CheckoutServiceImpl implements CheckoutService {
 
         var listOfMenuItems = listOfOrderDetailsOfListByOrderId.stream()
                 .flatMap(orderDetailList -> menuItemRepository.findAllById(orderDetailList.stream()
-                                                                                          .map(OrderDetail::getMenuId)
+                                                                                          .map(OrderDetail::getId)
                                                                                           .collect(Collectors.toList()))
                                                               .stream())
                 .collect(Collectors.toList());
