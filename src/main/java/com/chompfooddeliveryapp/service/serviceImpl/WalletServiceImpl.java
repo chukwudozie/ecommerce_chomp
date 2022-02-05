@@ -1,5 +1,6 @@
 package com.chompfooddeliveryapp.service.serviceImpl;
 
+import com.chompfooddeliveryapp.exception.BadRequestException;
 import com.chompfooddeliveryapp.model.enums.PaymentMethod;
 import com.chompfooddeliveryapp.model.enums.TransactionStatus;
 import com.chompfooddeliveryapp.model.enums.TransactionType;
@@ -38,11 +39,8 @@ public class WalletServiceImpl{
 
     public String setFundWalletTransactionReference(long userId){
         //fund wallet validation
-        Optional<User> user = userRepository.findById(userId);
-
-        if (user.equals(null)){
-            return "The User  cannot be null";
-        }
+        Optional<User> user = Optional.ofNullable(userRepository.findById(userId).
+                orElseThrow(() -> new BadRequestException("the user cannot be null")));
 
         Optional<Wallet> wallet = walletRepository.findById(user.get().getWalletId().getId());
 
@@ -61,10 +59,12 @@ public class WalletServiceImpl{
 
     public ResponseEntity<?> fundUsersWallet(String transactionId, String status, String dataStatus, String amount){
         Transaction transaction = transactionRepository.findById(transactionId).get();
-        Optional<User> user = userRepository.findById(transaction.getUser().getId());
-        if (user.equals(null)){
-            return new ResponseEntity<>("must fund a wallet attached to this user", HttpStatus.BAD_REQUEST );
+
+        if (!transaction.getTransactionStatus().equals(TransactionStatus.PENDING)){
+            throw new BadRequestException("This transaction has already been settled");
         }
+        Optional<User> user = Optional.ofNullable(userRepository.findById(transaction.getUser().getId()).orElseThrow(() -> new
+                BadRequestException("must fund a wallet attached to a user")));
 
         if (!(status.equals("true") || dataStatus.equals("success"))){
             transaction.setTransactionStatus(TransactionStatus.FAILED);
@@ -92,13 +92,11 @@ public class WalletServiceImpl{
     }
 
     public String getWalletBalance(Long userId) {
-        User user  = userRepository.findById(userId).get();
+        Optional<User> user  = Optional.ofNullable(userRepository.findById(userId).
+                orElseThrow(() -> new BadRequestException("the user cannot be null")));
 
-        if (user.equals(null)){
-            return "The User  cannot be null";
-        }
 
-        Wallet wallet = walletRepository.findById(user.getWalletId().getId()).get();
+        Wallet wallet = walletRepository.findById(user.get().getWalletId().getId()).get();
         return "Account Balance: "+ wallet.getAccountBalance();
     }
 
