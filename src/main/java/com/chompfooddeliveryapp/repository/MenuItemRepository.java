@@ -12,5 +12,5 @@ public interface MenuItemRepository extends JpaRepository<MenuItem, Long>{
     Optional<MenuItem> findMenuItemById(Long id);
     void deleteMenuItemById(Long id);
     Page<MenuItem> findAll(Pageable pageable);
-
+    boolean existsByName(String name);
 }
