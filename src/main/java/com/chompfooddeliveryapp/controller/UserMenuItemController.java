@@ -1,7 +1,6 @@
 package com.chompfooddeliveryapp.controller;
 
 import com.chompfooddeliveryapp.payload.UserFetchAllMealsResponse;
-import com.chompfooddeliveryapp.service.serviceInterfaces.MealService;
 import com.chompfooddeliveryapp.service.serviceInterfaces.MenuItemService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
