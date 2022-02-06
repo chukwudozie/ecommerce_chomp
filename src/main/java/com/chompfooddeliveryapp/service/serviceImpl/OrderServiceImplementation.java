@@ -37,13 +37,14 @@ public class OrderServiceImplementation implements OrderService {
         var userOp = userRepository.findUserById(userId);
 
         var user = userOp.orElseThrow(() -> new BadRequestException("No Such User"));
+
         System.out.println(user.toString());
 
         List<Order> orderList = orderRepository.findByUserId(userId);
         var order1 = orderRepository.getOrderByIdIsAndUserIdIs(orderId, userId);
         var ord = orderList.stream().filter(o -> Objects.equals(o.getId(), orderId)).findFirst();
 
-        var orders = order1.orElseThrow(() -> new BadRequestException("No order with Order id" + orderId + " found"));
+        var orders = order1.orElseThrow(() -> new BadRequestException("No order with Order id: " + orderId + " found"));
 
         var orderDetail = orderDetailsRepository
                 .findAllByOrderId(orders.getId());
@@ -51,6 +52,8 @@ public class OrderServiceImplementation implements OrderService {
                 .map(x -> x.getMenu().getId())
                 .collect(Collectors.toList());
         var listOfMenuItems = menuItemRepository.findAllById(listOfMenuIds);
+
+        System.out.println(listOfMenuIds);
 
         var listViewOrderDTO = listOfMenuItems.stream()
                 .map(menuItem -> {
