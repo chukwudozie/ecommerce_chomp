@@ -21,7 +21,7 @@ import java.util.UUID;
 public class Transaction {
     @Id
     @Column(name = "id", nullable = false)
-    private String id = "chompT" + UUID.randomUUID().toString();
+    private String id = "CHOMPT" + UUID.randomUUID().toString();
 
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = Wallet.class)
     @JoinColumn(name = "wallet_id", nullable = false)

@@ -8,7 +8,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class WalletDto {
+public class PayStackRequestDto {
     private String email;
     private long amount;
     private String[] channels;
