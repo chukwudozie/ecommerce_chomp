@@ -1,8 +1,8 @@
 package com.chompfooddeliveryapp.service.serviceImpl;
 
+import com.chompfooddeliveryapp.dto.PayStackResponseDto;
 import com.chompfooddeliveryapp.exception.BadRequestException;
 import com.chompfooddeliveryapp.model.enums.TransactionStatus;
-import com.chompfooddeliveryapp.model.enums.TransactionType;
 import com.chompfooddeliveryapp.model.users.User;
 import com.chompfooddeliveryapp.model.wallets.Transaction;
 import com.chompfooddeliveryapp.model.wallets.Wallet;
@@ -10,12 +10,15 @@ import com.chompfooddeliveryapp.payload.WalletPayload;
 import com.chompfooddeliveryapp.repository.TransactionRepository;
 import com.chompfooddeliveryapp.repository.UserRepository;
 import com.chompfooddeliveryapp.repository.WalletRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+
+import static com.chompfooddeliveryapp.model.enums.TransactionStatus.*;
 
 @Service
 public class WalletServiceImpl{
@@ -30,12 +33,14 @@ public class WalletServiceImpl{
 
     @Autowired
     private final TransactionServiceImpl transactionService;
+    private final ObjectMapper objectMapper;
 
-    public WalletServiceImpl(WalletRepository walletRepository, UserRepository userRepository, TransactionRepository transactionRepository, TransactionServiceImpl transactionService) {
+    public WalletServiceImpl(WalletRepository walletRepository, UserRepository userRepository, TransactionRepository transactionRepository, TransactionServiceImpl transactionService, ObjectMapper objectMapper) {
         this.walletRepository = walletRepository;
         this.userRepository = userRepository;
         this.transactionRepository = transactionRepository;
         this.transactionService = transactionService;
+        this.objectMapper = objectMapper;
     }
 
 
@@ -61,21 +66,29 @@ public class WalletServiceImpl{
 //
 //    }
 
-    public ResponseEntity<?> fundUsersWallet(String transactionId, String status, String dataStatus, String amount){
+    public WalletPayload fundUsersWallet(String transactionId, String status, String dataStatus, String amount){
         Transaction transaction = transactionRepository.findById(transactionId).get();
 
-        if (!transaction.getTransactionStatus().equals(TransactionStatus.PENDING)){
+        if (!transaction.getTransactionStatus().equals(PENDING)){
             throw new BadRequestException("This transaction has already been settled");
         }
         Optional<User> user = Optional.ofNullable(userRepository.findById(transaction.getUser().getId()).orElseThrow(() -> new
                 BadRequestException("must fund a wallet attached to a user")));
 
-        if (!(status.equals("true") || dataStatus.equals("success"))){
-            transaction.setTransactionStatus(TransactionStatus.FAILED);
+        Wallet wallet = walletRepository.findById(user.get().getWalletId().getId()).get();
+        WalletPayload walletPayload = new WalletPayload();
+
+
+        if (!(status.equals("true") && dataStatus.equals("success"))){
+            transaction.setTransactionStatus(FAILED);
+            walletPayload.setTransactionStatus(FAILED.toString());
+            walletPayload.setWalletId(wallet.getId());
+            walletPayload.setUser_id(user.get().getId());
+            walletPayload.setAccountBalance(wallet.getAccountBalance());
             transactionRepository.save(transaction);
+            return walletPayload;
         }
 
-        Wallet wallet = walletRepository.findById(user.get().getWalletId().getId()).get();
         long creditAmount = Long.parseLong(amount);
         creditAmount /= 100;
 
@@ -83,16 +96,17 @@ public class WalletServiceImpl{
         wallet.setAccountBalance(wallet.getAccountBalance() + creditAmount);
         walletRepository.save(wallet);
 
-        transaction.setTransactionStatus(TransactionStatus.SUCCESSFUL);
+        transaction.setTransactionStatus(SUCCESSFUL);
         transactionRepository.save(transaction);
 
-        WalletPayload walletPayload = new WalletPayload();
+
+        walletPayload.setTransactionStatus(SUCCESSFUL.toString());
         walletPayload.setAccountBalance(wallet.getAccountBalance());
-        walletPayload.setAmountcredited(creditAmount);
+        walletPayload.setAmountCredited(creditAmount);
         walletPayload.setWalletId(wallet.getId());
         walletPayload.setUser_id(user.get().getId());
 
-        return new ResponseEntity<>(walletPayload, HttpStatus.OK);
+        return walletPayload;
     }
 
     public String getWalletBalance(Long userId) {

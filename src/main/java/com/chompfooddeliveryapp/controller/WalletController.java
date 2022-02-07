@@ -6,12 +6,14 @@ import com.chompfooddeliveryapp.dto.PayStackRequestDto;
 import com.chompfooddeliveryapp.model.enums.PaymentMethod;
 import com.chompfooddeliveryapp.model.enums.TransactionType;
 import com.chompfooddeliveryapp.model.users.User;
+import com.chompfooddeliveryapp.payload.WalletPayload;
 import com.chompfooddeliveryapp.repository.TransactionRepository;
 import com.chompfooddeliveryapp.repository.UserRepository;
 import com.chompfooddeliveryapp.service.serviceImpl.PaystackServiceImpl;
 import com.chompfooddeliveryapp.service.serviceImpl.TransactionServiceImpl;
 import com.chompfooddeliveryapp.service.serviceImpl.WalletServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +26,7 @@ import static com.chompfooddeliveryapp.model.enums.TransactionType.*;
 
 @RestController
 @RequestMapping("/user")
+//@RequiredArgsConstructor
 public class WalletController {
 
 
@@ -63,19 +66,14 @@ public class WalletController {
     @PostMapping("/verifytransaction")
     public ResponseEntity<?> PayStackDto(@RequestBody VerifyTransactionDto verifyTransactionDto) throws IOException {
 
-        //verifying the transaction with the transaction ID from paystack's API
-        String paystackObject =  webClient.build().get().
-                uri("https://api.paystack.co/transaction/verify/" + verifyTransactionDto.getTransactionReference()).
-                header("Authorization", "Bearer " + secret_key)
-                .retrieve().bodyToMono(String.class).block();
+        PayStackResponseDto responseDto = paystackService.verifyPaystackTransaction(verifyTransactionDto);
 
-        //mapping the response from paystack's API to a DTO object
-        PayStackResponseDto payStackDto = objectMapper.readValue( paystackObject, PayStackResponseDto.class);
-        System.out.println(payStackDto.getData().get("amount"));
+       WalletPayload walletPayload =  walletService.fundUsersWallet(verifyTransactionDto.getTransactionReference(),
+               responseDto.getStatus(), responseDto.getData().get("status").toString(),
+               responseDto.getData().get("amount").toString());
+       walletPayload.setGatewayResponse(responseDto.getData().get("gateway_response").toString());
 
-       return walletService.fundUsersWallet(verifyTransactionDto.getTransactionReference(),
-               payStackDto.getStatus(), payStackDto.getData().get("status").toString(),
-               payStackDto.getData().get("amount").toString());
+       return new ResponseEntity<>(walletPayload, HttpStatus.OK);
 
     }
 
