@@ -1,5 +1,6 @@
 package com.chompfooddeliveryapp.configuration;
 
+import com.chompfooddeliveryapp.exception.BadRequestException;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import org.springframework.context.annotation.Configuration;
