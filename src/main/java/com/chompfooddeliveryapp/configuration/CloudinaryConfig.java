@@ -15,7 +15,7 @@ public class CloudinaryConfig {
     public String createImage(String imagename) throws IOException {
         Cloudinary cloudinary;
         Map<String, Object> config = new HashMap<>();
-        config.put("cloud_name", "dpksiubrb");
+        config.put("cloud_name", "chomp-food-app");
         config.put("api_key", "957191478298491");
         config.put("api_secret", "XSgjbMDGMFmkPwgraPQUKfj2Ubs");
         cloudinary = new Cloudinary(config);
