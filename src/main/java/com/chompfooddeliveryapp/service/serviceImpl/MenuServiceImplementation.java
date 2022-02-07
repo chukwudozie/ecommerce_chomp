@@ -1,5 +1,6 @@
 package com.chompfooddeliveryapp.service.serviceImpl;
 
+import com.chompfooddeliveryapp.exception.MenuException;
 import com.chompfooddeliveryapp.payload.UserFetchAllMealsResponse;
 import com.chompfooddeliveryapp.repository.MenuItemRepository;
 import com.chompfooddeliveryapp.service.serviceInterfaces.MenuItemService;
@@ -12,6 +13,8 @@ import org.springframework.stereotype.Service;
 import com.chompfooddeliveryapp.model.meals.MenuItem;
 
 
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -24,20 +27,39 @@ public class MenuServiceImplementation implements MenuItemService {
     }
 
 
+    Date date = new Date();
+    Long time = date.getTime();
+    Timestamp timestamp = new Timestamp(time);
+
+
     @Override
     public MenuItem addMenuItem(MenuItem menuItem) {
+        if(menuItemRepository.existsByName(menuItem.getName())){
+            throw new MenuException("Menu already exists");
+        }
+        menuItem.setDateCreated(timestamp);
         return menuItemRepository.save(menuItem);
     }
 
     @Override
-    public MenuItem updateMenuItem(MenuItem menuItem) {
-        return menuItemRepository.save(menuItem);
+    public MenuItem updateMenuItem(Long id, MenuItem menuItem) {
+
+        MenuItem menuItem2 = getMenuItemById(id);
+        if(menuItem2 == null){
+            throw new MenuNotFoundException("menu not found");
+        }
+        menuItem2.setName(menuItem.getName());
+        menuItem2.setDescription(menuItem.getDescription());
+        menuItem2.setCategory(menuItem.getCategory());
+        menuItem2.setImage(menuItem.getImage());
+        menuItem2.setPrice(menuItem.getPrice());
+        return menuItemRepository.save(menuItem2);
 
     }
 
     @Override
     public MenuItem getMenuItemById(Long id) {
-        return menuItemRepository.findMenuItemById(id).orElseThrow(()->new MenuNotFoundException("item by" +  id + "was not found"));
+        return menuItemRepository.findMenuItemById(id).orElseThrow(()->new MenuNotFoundException("item by " +  id + "was not found"));
     }
 
     @Override
@@ -47,9 +69,12 @@ public class MenuServiceImplementation implements MenuItemService {
 
     @Override
     public void deleteMenuItemById(Long id) {
-        menuItemRepository.deleteMenuItemById(id);
+        var menuItem1 = menuItemRepository.findById(id);
+        if(!menuItem1.isPresent()){
+            throw new MenuNotFoundException("menu not found");
+        }
+        menuItemRepository.deleteById(id);
     }
-
     @Override
     public UserFetchAllMealsResponse fetchAllMeals(Integer pageNo, Integer pageSize, String sortBy) {
         return getUserFetchAllMealsResponse(pageNo, pageSize, sortBy, menuItemRepository);
