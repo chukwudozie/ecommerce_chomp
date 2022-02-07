@@ -21,7 +21,7 @@ public class ImageController {
     public ImageController(ImageService imageService) {
         this.imageService = imageService;
     }
-@PostMapping("addimage")
+@PostMapping("/addimage")
     public ResponseEntity<Images> addAndSaveImages(@RequestBody ImageDTO imageDTO) throws IOException {
 
         final Images image = imageService.saveImages(imageDTO);
