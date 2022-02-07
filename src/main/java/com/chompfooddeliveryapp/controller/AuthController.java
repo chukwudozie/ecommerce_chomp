@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+
 
 @RestController
 @CrossOrigin(origins = "*",maxAge = 3600)
@@ -36,9 +38,9 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> loginUser (@RequestBody UserDto loginRequest) throws Exception {
+    public ResponseEntity<?> loginUser (@RequestBody UserDto loginRequest, HttpServletResponse response) throws Exception {
 
-        return userServiceImpl.loginUser(loginRequest);
+        return userServiceImpl.loginUser(loginRequest, response);
      }
 
 

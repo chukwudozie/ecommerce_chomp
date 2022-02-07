@@ -63,7 +63,7 @@ public class WalletController {
 
     }
 
-    @GetMapping("/verifytransaction")
+    @PostMapping("/verifytransaction")
     public ResponseEntity<?> PayStackDto(@RequestBody VerifyTransactionDto verifyTransactionDto) throws IOException {
 
         //verifying the transaction with the transaction ID from paystack's API

@@ -13,7 +13,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/order")
+@RequestMapping("/user")
 public class OrderController {
 
     private final OrderService orderService;
@@ -24,9 +24,8 @@ public class OrderController {
 
 
     @GetMapping("/viewOrderDetails/{userId}/{orderId}")
-    public ResponseEntity<?> viewOrderDetails(@PathVariable Long userId, @PathVariable Long orderId){
-        orderService.getOrderDetails(userId, orderId);
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<?> viewOrderDetails(@PathVariable("userId") Long userId, @PathVariable("orderId") Long orderId){
+        return new ResponseEntity<>(orderService.getOrderDetails(userId, orderId), HttpStatus.OK);
     }
 
 }
