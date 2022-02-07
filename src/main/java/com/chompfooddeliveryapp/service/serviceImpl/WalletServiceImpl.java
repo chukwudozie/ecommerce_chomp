@@ -73,6 +73,7 @@ public class WalletServiceImpl{
         if (!(status.equals("true") || dataStatus.equals("success"))){
             transaction.setTransactionStatus(TransactionStatus.FAILED);
             transactionRepository.save(transaction);
+
         }
 
         Wallet wallet = walletRepository.findById(user.get().getWalletId().getId()).get();
