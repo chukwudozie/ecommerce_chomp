@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/admin")
 public class AdminFetchProductsController {
     private final MenuItemService service;
     private final MenuItemRepository menuRepo;
