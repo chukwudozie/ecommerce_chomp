@@ -14,5 +14,7 @@ public class WalletPayload {
     private long user_id;
     private Currency currency = Currency.NGN;
     private long accountBalance;
-    private long amountcredited;
+    private long amountCredited;
+    private String transactionStatus;
+    private String gatewayResponse;
 }
