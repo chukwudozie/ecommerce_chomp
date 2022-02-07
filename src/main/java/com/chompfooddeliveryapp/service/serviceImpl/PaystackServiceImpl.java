@@ -10,7 +10,6 @@ import com.chompfooddeliveryapp.model.users.User;
 import com.chompfooddeliveryapp.repository.UserRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,16 +23,15 @@ public class PaystackServiceImpl {
     private final UserRepository userRepository;
     private final WebClient.Builder webClient;
     private final ObjectMapper objectMapper;
+    private final String secret;
 
-
-    @Value("${chompfood.app.paystackSecret}")
-    private String secret;
-
-    public PaystackServiceImpl(TransactionServiceImpl transactionService, UserRepository userRepository, WebClient.Builder webClient, ObjectMapper objectMapper) {
+    public PaystackServiceImpl(TransactionServiceImpl transactionService, UserRepository userRepository,
+                               WebClient.Builder webClient, ObjectMapper objectMapper,@Value("${paystack.Secret}") String secret) {
         this.transactionService = transactionService;
         this.userRepository = userRepository;
         this.webClient = webClient;
         this.objectMapper = objectMapper;
+        this.secret = secret;
     }
 
 
