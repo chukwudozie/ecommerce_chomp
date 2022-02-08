@@ -31,14 +31,11 @@ public class WalletController {
 
 
     private final WalletServiceImpl walletService;
-    private final TransactionServiceImpl transactionService;
     private final PaystackServiceImpl paystackService;
 
-    public WalletController( WalletServiceImpl walletService, TransactionServiceImpl transactionService,
-                             PaystackServiceImpl paystackService) {
+    public WalletController( WalletServiceImpl walletService, PaystackServiceImpl paystackService) {
 
         this.walletService = walletService;
-        this.transactionService = transactionService;
         this.paystackService = paystackService;
     }
 
@@ -47,8 +44,6 @@ public class WalletController {
     public Object initializeWalletTransaction(@RequestBody PayStackRequestDto payStackRequestDto,
                                               @PathVariable long userId){
 
-        String transactionReference = transactionService.getTransactionRefence(userId,
-                CREDIT, PAYSTACK);
         return paystackService.initializePaystackTransaction(payStackRequestDto, userId, CREDIT);
 
     }
@@ -69,6 +64,7 @@ public class WalletController {
 
     @GetMapping("/walletBalance/{userId}")
     public String checkWalletBalance(@PathVariable Long userId) {
+
         return walletService.getWalletBalance(userId);
     }
 

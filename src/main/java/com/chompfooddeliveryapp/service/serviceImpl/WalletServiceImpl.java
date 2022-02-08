@@ -31,40 +31,15 @@ public class WalletServiceImpl{
     @Autowired
     private final TransactionRepository transactionRepository;
 
-    @Autowired
-    private final TransactionServiceImpl transactionService;
-    private final ObjectMapper objectMapper;
 
-    public WalletServiceImpl(WalletRepository walletRepository, UserRepository userRepository, TransactionRepository transactionRepository, TransactionServiceImpl transactionService, ObjectMapper objectMapper) {
+    public WalletServiceImpl(WalletRepository walletRepository, UserRepository userRepository, TransactionRepository transactionRepository) {
         this.walletRepository = walletRepository;
         this.userRepository = userRepository;
         this.transactionRepository = transactionRepository;
-        this.transactionService = transactionService;
-        this.objectMapper = objectMapper;
+
     }
 
 
-//    public String setFundWalletTransactionReference(long userId){
-//        Transaction transaction =
-
-        //fund wallet validation
-//        Optional<User> user = Optional.ofNullable(userRepository.findById(userId).
-//                orElseThrow(() -> new BadRequestException("the user cannot be null")));
-//
-//        Optional<Wallet> wallet = walletRepository.findById(user.get().getWalletId().getId());
-//
-//       //transaction creation
-//        Transaction transaction = new Transaction();
-//        transaction.setTransactionStatus(TransactionStatus.PENDING);
-//        transaction.setPaymentMethod(PaymentMethod.PAYSTACK);
-//        transaction.setUser(user.get());
-//        transactionRepository.save(transaction);
-
-
-//
-//        return transaction.getId();
-//
-//    }
 
     public WalletPayload fundUsersWallet(String transactionId, String status, String dataStatus, String amount){
         Transaction transaction = transactionRepository.findById(transactionId).get();
@@ -108,6 +83,8 @@ public class WalletServiceImpl{
 
         return walletPayload;
     }
+
+
 
     public String getWalletBalance(Long userId) {
         Optional<User> user  = Optional.ofNullable(userRepository.findById(userId).
