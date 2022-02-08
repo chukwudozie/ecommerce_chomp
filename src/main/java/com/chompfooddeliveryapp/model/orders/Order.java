@@ -26,6 +26,8 @@ public class Order {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
+    private double amount;
+
     private Timestamp order_date;
 
     private Timestamp delivered_date;
