@@ -4,7 +4,10 @@ import com.chompfooddeliveryapp.dto.*;
 import com.chompfooddeliveryapp.model.meals.MenuItem;
 import com.chompfooddeliveryapp.model.orders.OrderDetail;
 import com.chompfooddeliveryapp.model.users.ShippingAddress;
+import com.chompfooddeliveryapp.payload.AllCartItems;
+import com.chompfooddeliveryapp.payload.ViewCartResponse;
 import com.chompfooddeliveryapp.repository.*;
+import com.chompfooddeliveryapp.service.serviceInterfaces.CartService;
 import com.chompfooddeliveryapp.service.serviceInterfaces.CheckoutService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,31 +25,30 @@ public class CheckoutServiceImpl implements CheckoutService {
     private final OrderDetailsRepository orderDetailsRepository;
     private final ShippingAddressRepository shippingAddressRepository;
     private final UserRepository userRepository;
+    private final CartService cartService;
 
     @Autowired
     public CheckoutServiceImpl(MenuItemRepository menuItemRepository,
                                OrderRepository orderRepository,
                                OrderDetailsRepository orderDetailsRepository,
                                ShippingAddressRepository shippingAddressRepository,
-                               UserRepository userRepository) {
+                               UserRepository userRepository, CartService cartService) {
         this.menuItemRepository = menuItemRepository;
         this.orderRepository = orderRepository;
         this.orderDetailsRepository = orderDetailsRepository;
         this.shippingAddressRepository = shippingAddressRepository;
         this.userRepository = userRepository;
+        this.cartService = cartService;
     }
 
     @Override
     public List<MenuItem> getOrderSummary(Long userId) {
-        // get order by UserId
-        var listOfOrdersByUser = orderRepository.findAllByUserId(userId);
 
-        // get order details by orderId
+        var listOfOrdersByUser = orderRepository.findAllByUserId(userId);
         List<List<OrderDetail>> listOfOrderDetailsOfListByOrderId = listOfOrdersByUser.stream()
                 .map(orderByUser -> orderDetailsRepository.findAllByOrderIdEquals(orderByUser.getId()))
                 .collect(Collectors.toList());
 
-        //get MenuItem
 
         var listOfMenuItems = listOfOrderDetailsOfListByOrderId.stream()
                 .flatMap(orderDetailList -> menuItemRepository.findAllById(orderDetailList.stream()
@@ -71,7 +73,7 @@ public class CheckoutServiceImpl implements CheckoutService {
 
     @Override
     public ResponseViewUserOrdersDTO getAllOrdersByUserId(Long userId) {
-        //get all Orders with User ID
+
         var opUser = userRepository.findById(userId);
         var user = opUser.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
                                 "User with " + userId + " not found"));
@@ -88,7 +90,7 @@ public class CheckoutServiceImpl implements CheckoutService {
                 }).collect(Collectors.toList());
         var userShippingAddress =
                 shippingAddressRepository.findByUserAndDefaultAddress(user, true);
-        //ShippingDTO
+
         ShippingAddressDTO shippingAddressDTO = new ShippingAddressDTO();
         userShippingAddress.ifPresent(shippingAddress -> {
             shippingAddressDTO.setEmail(shippingAddress.getEmail());
@@ -140,4 +142,14 @@ public class CheckoutServiceImpl implements CheckoutService {
 
         return responseText;
     }
+
+    @Override
+    public AllCartItems checkoutCartItems(Long userId) {
+        List<ViewCartResponse> checkoutDetails = cartService.getAllProductsByUser(userId);
+        AllCartItems allCartItems = new AllCartItems();
+        allCartItems.setUsersCartItems(checkoutDetails);
+        return allCartItems;
+    }
+
+
 }
