@@ -3,6 +3,7 @@ package com.chompfooddeliveryapp.configuration;
 import com.chompfooddeliveryapp.exception.BadRequestException;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
 import java.io.File;
@@ -13,12 +14,25 @@ import java.util.Map;
 @Configuration
 public class CloudinaryConfig {
 
+    @Value("${cloudinary_api_key}")
+    private String cloudinary_api_key;
+
+    @Value("${cloudinary_api_secret}")
+    private String cloudinary_api_secret;
+
+    @Value("${cloud_name}")
+    private String cloud_name;
+
+
+
     public String createImage(String imagename) throws IOException {
+
+
         Cloudinary cloudinary;
         Map<String, Object> config = new HashMap<>();
-        config.put("cloud_name", "chomp-food-app");
-        config.put("api_key", "957191478298491");
-        config.put("api_secret", "XSgjbMDGMFmkPwgraPQUKfj2Ubs");
+        config.put("cloud_name", cloud_name);
+        config.put("api_key", cloudinary_api_key);
+        config.put("api_secret", cloudinary_api_secret);
         cloudinary = new Cloudinary(config);
 
 
