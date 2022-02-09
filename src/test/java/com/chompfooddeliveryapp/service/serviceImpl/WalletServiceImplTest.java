@@ -1,7 +1,7 @@
 package com.chompfooddeliveryapp.service.serviceImpl;
 
 import static org.junit.jupiter.api.Assertions.*;
-import com.chompfooddeliveryapp.dto.WalletDto;
+
 import com.chompfooddeliveryapp.model.enums.*;
 import com.chompfooddeliveryapp.model.users.User;
 import com.chompfooddeliveryapp.model.wallets.Transaction;
@@ -12,19 +12,15 @@ import com.chompfooddeliveryapp.repository.UserRepository;
 import com.chompfooddeliveryapp.repository.WalletRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import static org.mockito.Mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import java.util.Optional;
-import java.util.UUID;
-import static org.junit.jupiter.api.Assertions.*;
+
 @ExtendWith(MockitoExtension.class)
 class WalletServiceImplTest {
     @Mock
@@ -63,16 +59,7 @@ class WalletServiceImplTest {
         transaction.setTransactionStatus(TransactionStatus.PENDING);
         transaction.setUser(user);
     }
-    @Test
-    void setFundWalletTransactionReference() {
-        when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
-        when(walletRepository.findById(user.getWalletId().getId())).thenReturn(Optional.of(wallet));
-        final String result = walletServiceImpl.setFundWalletTransactionReference(user.getId());
-        verify(userRepository, times(1)).findById(user.getId());
-        verify(walletRepository,times(1)).findById(user.getWalletId().getId());
-        assertEquals(result.contains("chompT"),
-                walletServiceImpl.setFundWalletTransactionReference(user.getId()).contains("chompT"));
-    }
+
     @Test
     void fundUsersWallet() {
         when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
@@ -81,15 +68,16 @@ class WalletServiceImplTest {
         WalletPayload walletPayload = new WalletPayload();
         walletPayload.setWalletId(wallet.getId());
         walletPayload.setUser_id(user.getId());
-        walletPayload.setAmountcredited(20);
+        walletPayload.setAmountCredited(20);
         walletPayload.setAccountBalance(15220);
         walletPayload.setCurrency(Currency.NGN);
-        final ResponseEntity<?> result = walletServiceImpl.
+        walletPayload.setTransactionStatus("SUCCESSFUL");
+        final WalletPayload result = walletServiceImpl.
                 fundUsersWallet(transaction.getId(),"true", "success", "2000");
         verify(userRepository, times(1)).findById(user.getId());
         verify(walletRepository, times(1)).findById(wallet.getId());
         verify(transactionRepository,times(1)).findById(transaction.getId());
-        assertEquals(result, new ResponseEntity<>(walletPayload, HttpStatus.OK));
+        assertEquals(result, walletPayload);
     }
     @Test
     void getWalletBalance() {

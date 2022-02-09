@@ -23,6 +23,7 @@ public interface CartService {
 
     ResponseEntity<?> deleteCartItem(Long userId, Long menuId);
     ResponseEntity<AllCartItems> findAllProductsByUser(Long userId);
+    List<ViewCartResponse> getAllProductsByUser( Long userId);
 
 //    public ResponseEntity<List<CartItem>> findAllProductsByUser(Long cartId);
 }

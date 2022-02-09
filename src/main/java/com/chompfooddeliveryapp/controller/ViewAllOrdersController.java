@@ -13,19 +13,15 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/user")
-public class CheckoutAndViewAllOrdersController {
+public class ViewAllOrdersController {
 
     private final CheckoutService checkoutService;
 
-    public CheckoutAndViewAllOrdersController(CheckoutService checkoutService) {
+    public ViewAllOrdersController(CheckoutService checkoutService) {
         this.checkoutService = checkoutService;
     }
 
-    @GetMapping("/{userId}/checkout")
-    public ResponseEntity<List<MenuItem>> checkoutOrders(@PathVariable("userId") long userId) {
-        var checkoutItems = checkoutService.getOrderSummary(userId);
-        return new ResponseEntity<>(checkoutItems, HttpStatus.OK);
-    }
+
 
 
     @PostMapping("/{userId}/shipping-address")
