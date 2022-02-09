@@ -11,12 +11,12 @@ import java.util.List;
 @Service
 public interface FavoriteMealService {
 
-    FavoriteMeal createFavoriteMeal(Long userId, Long menuId);
+    MenuItem createFavoriteMeal(Long userId, Long menuId);
 
     String removeFromFavoriteMeal(Long userId, Long menuId);
 
     public List<FavoriteMeal> getAllFavoriteMealsByAUser(Long userId);
 
-    public FavoriteMeal getAParticularFavoriteMeal(Long userId, Long menuId);
+    public MenuItem getAParticularFavoriteMeal(Long userId, Long menuId);
 
 }
