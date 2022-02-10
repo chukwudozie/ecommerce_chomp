@@ -1,6 +1,5 @@
 package com.chompfooddeliveryapp.dto;
 
-import com.chompfooddeliveryapp.model.enums.PaymentMethod;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
