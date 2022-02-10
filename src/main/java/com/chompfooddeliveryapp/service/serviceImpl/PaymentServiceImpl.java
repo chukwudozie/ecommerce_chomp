@@ -17,29 +17,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
+
 
 import java.util.Objects;
-import java.util.Optional;
+
 
 @Service
 public class PaymentServiceImpl implements PaymentService {
     private final PaystackServiceImpl payStackService;
     private final WalletWithdrawServiceImpl withdrawService;
-    private final String secret;
-    private final ObjectMapper objectMapper;
     private final TransactionRepository transactionRepository;
     private final OrderRepository orderRepository;
 
     @Autowired
     public PaymentServiceImpl(PaystackServiceImpl payStackService, WalletWithdrawServiceImpl withdrawService,
-               @Value("${paystack.Secret}") String secret, ObjectMapper objectMapper,
              TransactionRepository transactionRepository,OrderRepository orderRepository) {
 
         this.payStackService = payStackService;
         this.withdrawService = withdrawService;
-        this.secret = secret;
-        this.objectMapper = objectMapper;
         this.transactionRepository = transactionRepository;
         this.orderRepository = orderRepository;
     }
