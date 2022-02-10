@@ -38,11 +38,11 @@ public class ProcessPaymentController {
     this.transactionRepository = transactionRepository;
 }
 
-    @PostMapping("/process/{userId}")
+    @PostMapping("/process/{userId}/{orderId}")
     public ResponseEntity<?>processPayment(@RequestBody ProcessPaymentRequest processPaymentRequest,
-             @PathVariable Long userId){
+             @PathVariable Long userId, @PathVariable Long orderId){
         System.out.println("User here with Id "+userId);
-    Object output = paymentservice.processPayment(processPaymentRequest,userId);
+    Object output = paymentservice.processPayment(processPaymentRequest,userId, orderId);
     return new ResponseEntity<>(output, HttpStatus.ACCEPTED);
     //todo: Makera's Call back function from PayStack will redirect to the verifyPayStackPayment endpoint
     }
@@ -51,8 +51,8 @@ public class ProcessPaymentController {
     public ResponseEntity<?> verifyPayStackPayment(@RequestBody VerifyTransactionDto transactionDto)
             throws JsonProcessingException {
     return ResponseEntity.ok(paymentservice.verifyPayStackPayment(transactionDto));
-         //todo: change the state of the transaction to successful (done)
-       //todo: change the status of the user's order to confirmed(not done)
+         //todo: change the state of the transaction from ur service to successful (done)
+       //todo: change the status of the user's order from ur service to confirmed(not done)
 
     }
 }
