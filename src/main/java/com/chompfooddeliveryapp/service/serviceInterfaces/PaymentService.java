@@ -9,5 +9,6 @@ public interface PaymentService {
 
     Object processPayment(ProcessPaymentRequest request, Long userId, Long orderId);
 
-    VerificationResponse verifyPayStackPayment(VerifyTransactionDto transactionDto) throws JsonProcessingException;
+    VerificationResponse verifyPayStackPayment(VerifyTransactionDto transactionDto, Long userId, Long orderId)
+            throws JsonProcessingException;
 }
