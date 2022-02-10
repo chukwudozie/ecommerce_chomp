@@ -1,10 +1,58 @@
 package com.chompfooddeliveryapp.controller;
 
-import com.chompfooddeliveryapp.service.serviceInterfaces.Paymentservice;
-import org.springframework.web.bind.annotation.RestController;
+import com.chompfooddeliveryapp.dto.PayStackResponseDto;
+import com.chompfooddeliveryapp.dto.ProcessPaymentRequest;
+import com.chompfooddeliveryapp.dto.VerificationResponse;
+import com.chompfooddeliveryapp.dto.VerifyTransactionDto;
+import com.chompfooddeliveryapp.exception.BadRequestException;
+import com.chompfooddeliveryapp.model.enums.TransactionStatus;
+import com.chompfooddeliveryapp.model.wallets.Transaction;
+import com.chompfooddeliveryapp.repository.TransactionRepository;
+import com.chompfooddeliveryapp.service.serviceImpl.OrderServiceImplementation;
+import com.chompfooddeliveryapp.service.serviceImpl.PaystackServiceImpl;
+import com.chompfooddeliveryapp.service.serviceInterfaces.PaymentService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Objects;
+import java.util.Optional;
 
 @RestController
+@RequestMapping("/payment")
 public class ProcessPaymentController {
 
-    private Paymentservice paymentservice;
+    private final PaymentService paymentservice;
+    private final PaystackServiceImpl paystackService;
+    private final OrderServiceImplementation orderService;
+    private final TransactionRepository transactionRepository;
+
+@Autowired
+    public ProcessPaymentController(PaymentService paymentservice, PaystackServiceImpl paystackService,
+                                    OrderServiceImplementation orderService, TransactionRepository transactionRepository) {
+        this.paymentservice = paymentservice;
+        this.paystackService = paystackService;
+    this.orderService = orderService;
+    this.transactionRepository = transactionRepository;
+}
+
+    @PostMapping("/process/{userId}")
+    public ResponseEntity<?>processPayment(@RequestBody ProcessPaymentRequest processPaymentRequest,
+             @PathVariable Long userId){
+        System.out.println("User here with Id "+userId);
+    Object output = paymentservice.processPayment(processPaymentRequest,userId);
+    return new ResponseEntity<>(output, HttpStatus.ACCEPTED);
+    //todo: Makera's Call back function from PayStack will redirect to the verifyPayStackPayment endpoint
+    }
+
+    @PostMapping("/verifyPayment")
+    public ResponseEntity<?> verifyPayStackPayment(@RequestBody VerifyTransactionDto transactionDto)
+            throws JsonProcessingException {
+    return ResponseEntity.ok(paymentservice.verifyPayStackPayment(transactionDto));
+         //todo: change the state of the transaction to successful (done)
+       //todo: change the status of the user's order to confirmed(not done)
+
+    }
 }
