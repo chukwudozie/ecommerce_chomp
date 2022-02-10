@@ -7,7 +7,7 @@ import com.chompfooddeliveryapp.payload.AllCartItems;
 
 import java.util.List;
 
-public interface CheckoutService {
+public interface ViewOrderService {
     List<MenuItem> getOrderSummary(Long userId);
     ResponseViewUserOrdersDTO getAllOrdersByUserId(Long userId);
     String saveShippingAddress(long userId, ShippingAddressDTO shippingAddressDTO);

@@ -8,7 +8,7 @@ import com.chompfooddeliveryapp.payload.AllCartItems;
 import com.chompfooddeliveryapp.payload.ViewCartResponse;
 import com.chompfooddeliveryapp.repository.*;
 import com.chompfooddeliveryapp.service.serviceInterfaces.CartService;
-import com.chompfooddeliveryapp.service.serviceInterfaces.CheckoutService;
+import com.chompfooddeliveryapp.service.serviceInterfaces.ViewOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class CheckoutServiceImpl implements CheckoutService {
+public class ViewOrderServiceImpl implements ViewOrderService {
 
     private final MenuItemRepository menuItemRepository;
     private final OrderRepository orderRepository;
@@ -28,11 +28,11 @@ public class CheckoutServiceImpl implements CheckoutService {
     private final CartService cartService;
 
     @Autowired
-    public CheckoutServiceImpl(MenuItemRepository menuItemRepository,
-                               OrderRepository orderRepository,
-                               OrderDetailsRepository orderDetailsRepository,
-                               ShippingAddressRepository shippingAddressRepository,
-                               UserRepository userRepository, CartService cartService) {
+    public ViewOrderServiceImpl(MenuItemRepository menuItemRepository,
+                                OrderRepository orderRepository,
+                                OrderDetailsRepository orderDetailsRepository,
+                                ShippingAddressRepository shippingAddressRepository,
+                                UserRepository userRepository, CartService cartService) {
         this.menuItemRepository = menuItemRepository;
         this.orderRepository = orderRepository;
         this.orderDetailsRepository = orderDetailsRepository;
