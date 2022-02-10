@@ -3,8 +3,10 @@ package com.chompfooddeliveryapp.controller;
 
 import com.chompfooddeliveryapp.model.meals.FavoriteMeal;
 import com.chompfooddeliveryapp.model.meals.MenuItem;
+import com.chompfooddeliveryapp.payload.response.FavouriteMealResponse;
 import com.chompfooddeliveryapp.service.serviceInterfaces.FavoriteMealService;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +16,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/auth")
 @AllArgsConstructor
+@Slf4j
 public class FavoriteController {
 
     private final FavoriteMealService favoriteMealService;
@@ -37,9 +40,12 @@ public class FavoriteController {
     }
 
     @GetMapping("allfavoritemeals/{userId}")
-    public ResponseEntity<List<FavoriteMeal>> getAllFavoriteMealsByAUser(@PathVariable Long userId) {
+    public ResponseEntity<?> getAllFavoriteMealsByAUser(@PathVariable Long userId) {
         List<FavoriteMeal> favoriteMeals = favoriteMealService.getAllFavoriteMealsByAUser(userId);
-        return new ResponseEntity<>(favoriteMeals, HttpStatus.OK);
+        log.info(">>>>><<<<"+ favoriteMeals);
+        FavouriteMealResponse response = new FavouriteMealResponse();
+        response.setFavoriteMealList(favoriteMeals);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/getparticularfavoritemeal/{userId}/{menuId}")

@@ -68,6 +68,8 @@ public class FavoriteMenuServiceImpl implements FavoriteMealService {
 
         List<FavoriteMeal> allByUserid = favoriteMealRepository.findAllByUserid(user.get().getId());
 
+        System.out.println(allByUserid);
+
         return allByUserid;
     }
 

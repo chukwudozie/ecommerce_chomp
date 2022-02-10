@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.IOException;
 
 @RestController
-@RequestMapping("/admin")
+@RequestMapping("/auth/admin")
 public class ImageController {
 
     private final ImageService imageService;
