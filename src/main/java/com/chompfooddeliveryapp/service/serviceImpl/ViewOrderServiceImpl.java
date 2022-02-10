@@ -118,32 +118,6 @@ public class ViewOrderServiceImpl implements ViewOrderService {
     }
 
     @Override
-    public String saveShippingAddress(long userId, ShippingAddressDTO shippingAddressDTO) {
-        var opUser = userRepository.findById(userId);
-        ShippingAddress shippingAddress = new ShippingAddress();
-        String responseText = "";
-        if (opUser.isPresent()) {
-            shippingAddress.setEmail(shippingAddressDTO.getEmail());
-            shippingAddress.setFullName(shippingAddressDTO.getFullName());
-            shippingAddress.setDefaultAddress(shippingAddressDTO.getDefaultAddress());
-            shippingAddress.setCity(shippingAddressDTO.getCity());
-            shippingAddress.setPhone(shippingAddressDTO.getPhone());
-            shippingAddress.setStreet(shippingAddressDTO.getStreet());
-            shippingAddress.setState(shippingAddressDTO.getState());
-            shippingAddress.setUser(opUser.get());
-
-            var sAddress = shippingAddressRepository.save(shippingAddress);
-
-            responseText = "Address: " + sAddress.getFullName() + " has been saved!";
-        } else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The user with id " + userId + " was not found");
-        }
-
-
-        return responseText;
-    }
-
-    @Override
     public AllCartItems checkoutCartItems(Long userId) {
         List<ViewCartResponse> checkoutDetails = cartService.getAllProductsByUser(userId);
         AllCartItems allCartItems = new AllCartItems();
