@@ -1,5 +1,6 @@
 package com.chompfooddeliveryapp.service.serviceImpl;
 
+import com.chompfooddeliveryapp.exception.BadRequestException;
 import com.chompfooddeliveryapp.exception.FavoriteNotFoundException;
 import com.chompfooddeliveryapp.exception.MenuNotFoundException;
 import com.chompfooddeliveryapp.model.meals.FavoriteMeal;
@@ -31,44 +32,57 @@ public class FavoriteMenuServiceImpl implements FavoriteMealService {
 
 
     @Override
-    public FavoriteMeal createFavoriteMeal(Long userId, Long menuId) {
+    public MenuItem createFavoriteMeal(Long userId, Long menuId) {
         Optional<User> user = userRepository.findUserById(userId);
         Optional<MenuItem> menuItem = menuItemRepository.findMenuItemById(menuId);
         if (user.isEmpty() || menuItem.isEmpty()) {
-            throw new MenuNotFoundException("User or MenuItem not found");
+            throw new BadRequestException("User or MenuItem not found");
         }
 
         Optional<FavoriteMeal> favoriteMeal = favoriteMealRepository.findFavoriteMealByUseridAndMenuid(user.get(), menuItem.get());
         if (favoriteMeal.isPresent()) {
-            throw new MenuNotFoundException("Item is already a favorite");
+            throw new BadRequestException("Item is already a favorite");
         };
         FavoriteMeal newfavoriteMeal = new FavoriteMeal(user.get(), menuItem.get());
-        return favoriteMealRepository.save(newfavoriteMeal);
+         favoriteMealRepository.save(newfavoriteMeal);
+         return menuItem.get();
     }
 
     @Override
     public String removeFromFavoriteMeal(Long userId, Long menuId) {
         Optional<User> user = userRepository.findUserById(userId);
         Optional<MenuItem> menuItem = menuItemRepository.findMenuItemById(menuId);
-        if (user.isEmpty() || menuItem.isEmpty()) throw new MenuNotFoundException("User or MenuItem not found");
+
+        if (user.isEmpty() || menuItem.isEmpty()) throw new BadRequestException("User or MenuItem not found");
+
         FavoriteMeal favoriteMeal = favoriteMealRepository.findFavoriteMealByUseridAndMenuid(user.get(), menuItem.get())
-                .orElseThrow(()->new FavoriteNotFoundException("favorite meal with id: " + menuId + " does not exist"));
+                .orElseThrow(()->new BadRequestException("favorite meal with id: " + menuId + " does not exist"));
         favoriteMealRepository.delete(favoriteMeal);
         return "favorite meal with " + menuId + " has been removed from favorite.";
     }
 
     public List<FavoriteMeal> getAllFavoriteMealsByAUser(Long userId) {
         Optional<User> user = userRepository.findUserById(userId);
-        if (user.isEmpty()) throw new MenuNotFoundException("User or MenuItem not found");
-        return favoriteMealRepository.findByUserid(user.get());
+
+        if (user.isEmpty()) throw new BadRequestException("User or MenuItem not found");
+
+        List<FavoriteMeal> allByUserid = favoriteMealRepository.findAllByUserid(user.get().getId());
+
+        System.out.println(allByUserid);
+
+        return allByUserid;
     }
 
-    public FavoriteMeal getAParticularFavoriteMeal(Long userId, Long menuId){
+    public MenuItem getAParticularFavoriteMeal(Long userId, Long menuId){
         Optional<User> user = userRepository.findUserById(userId);
         Optional<MenuItem> menuItem = menuItemRepository.findMenuItemById(menuId);
-        if (user.isEmpty() || menuItem.isEmpty()) throw new MenuNotFoundException("User or MenuItem not found");
-       return favoriteMealRepository.findFavoriteMealByUseridAndMenuid(user.get(), menuItem.get())
-                .orElseThrow( ()-> new FavoriteNotFoundException("Favorite meal does not exist"));
+
+        if (user.isEmpty() || menuItem.isEmpty()) throw new BadRequestException("User or MenuItem not found");
+
+       FavoriteMeal favMeal =  favoriteMealRepository.findFavoriteMealByUseridAndMenuid(user.get(), menuItem.get())
+                .orElseThrow( ()-> new BadRequestException("Favorite meal does not exist"));
+
+       return menuItemRepository.findMenuItemById(favMeal.getMenuid().getId()).get();
     }
 
 }
