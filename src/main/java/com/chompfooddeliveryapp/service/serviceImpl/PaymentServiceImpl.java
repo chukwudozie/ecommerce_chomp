@@ -54,7 +54,10 @@ public class PaymentServiceImpl implements PaymentService {
             //todo: call the initialize payStack
             PayStackRequestDto requestDto = new PayStackRequestDto();
             requestDto.setAmount(request.getAmount());
-            Optional<Order> userOrder = orderRepository.findOrderByIdAndUserId(orderId,userId);
+            Order userOrder = orderRepository.findOrderByIdAndUserId(orderId,userId)
+                    .orElseThrow(() -> new BadRequestException("This order has not been made"));
+//            userOrder.setStatus;
+
 
           return   payStackService.initializePaystackTransaction(requestDto,userId, TransactionType.DEBIT);
             //todo: If payment is successful, Use the order service to set the status of the order to confirmed
