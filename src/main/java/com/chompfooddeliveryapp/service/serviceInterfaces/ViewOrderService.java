@@ -10,6 +10,5 @@ import java.util.List;
 public interface ViewOrderService {
     List<MenuItem> getOrderSummary(Long userId);
     ResponseViewUserOrdersDTO getAllOrdersByUserId(Long userId);
-    String saveShippingAddress(long userId, ShippingAddressDTO shippingAddressDTO);
     AllCartItems checkoutCartItems(Long userId);
 }
