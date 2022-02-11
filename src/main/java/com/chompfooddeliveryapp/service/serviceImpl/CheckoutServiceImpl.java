@@ -1,6 +1,7 @@
 package com.chompfooddeliveryapp.service.serviceImpl;
 
 
+import com.chompfooddeliveryapp.dto.OrderSummaryDTO;
 import com.chompfooddeliveryapp.dto.ShippingAddressDTO;
 import com.chompfooddeliveryapp.model.carts.Cart;
 import com.chompfooddeliveryapp.model.carts.CartItem;
@@ -10,6 +11,9 @@ import com.chompfooddeliveryapp.model.orders.Order;
 import com.chompfooddeliveryapp.model.orders.OrderDetail;
 import com.chompfooddeliveryapp.model.users.ShippingAddress;
 import com.chompfooddeliveryapp.model.users.User;
+import com.chompfooddeliveryapp.payload.ViewCartResponse;
+import com.chompfooddeliveryapp.payload.response.CheckoutResponse;
+import com.chompfooddeliveryapp.payload.response.ProductSummary;
 import com.chompfooddeliveryapp.repository.*;
 import com.chompfooddeliveryapp.service.serviceInterfaces.CheckoutService;
 import org.springframework.http.HttpStatus;
@@ -30,16 +34,19 @@ public class CheckoutServiceImpl implements CheckoutService {
     private final OrderRepository orderRepository;
     private final OrderDetailsRepository orderDetailsRepository;
     private final CartItemRepository cartItemRepository;
+    private final MenuItemRepository menuItemRepository;
 
     public CheckoutServiceImpl(UserRepository userRepository, ShippingAddressRepository shippingAddressRepository,
                                CartRepository cartRepository, OrderRepository orderRepository,
-                               OrderDetailsRepository orderDetailsRepository, CartItemRepository cartItemRepository) {
+                               OrderDetailsRepository orderDetailsRepository, CartItemRepository cartItemRepository,
+                               MenuItemRepository menuItemRepository) {
         this.userRepository = userRepository;
         this.shippingAddressRepository = shippingAddressRepository;
         this.cartRepository = cartRepository;
         this.orderRepository = orderRepository;
         this.orderDetailsRepository = orderDetailsRepository;
         this.cartItemRepository = cartItemRepository;
+        this.menuItemRepository = menuItemRepository;
     }
 
 
@@ -64,17 +71,15 @@ public class CheckoutServiceImpl implements CheckoutService {
         }
     }
 
-    public Order createOrderFromCartItem(long userId, long cartId) {
+    public CheckoutResponse createOrderFromCartItem(long userId, long cartId) {
 
-        Optional<User> optionalUser = userRepository.findById(userId);
+        User user = getUserCart(userId, cartId);
 
-        User user = optionalUser.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                                                                    "User with Id " + userId + " does not exist"));
+        var list = getAllCartItems(userId, cartId);
 
-        Optional<Cart> optionalUserCart = cartRepository.findByIdAndUser_Id(cartId, userId);
 
-        Cart cart = optionalUserCart.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "cart with id: " + cartId
-        + " cannot be found for userId: " + userId));
+        var userShippingAddress = getDefaultShippingAddress(user);
+
 
         List<CartItem> listOfCartItems = cartItemRepository.findAllByCart_Id(cartId);
 
@@ -83,7 +88,8 @@ public class CheckoutServiceImpl implements CheckoutService {
         }
 
         var amount = listOfCartItems.stream()
-                .map(cartItem -> cartItem.getMenuId().getPrice() * cartItem.getQuantity()).reduce(0L, Long::sum);
+                .map(cartItem -> cartItem.getMenuId().getPrice() * cartItem.getQuantity())
+                .mapToDouble(x -> (double) x).reduce(0L, Double::sum);
 
         Order newOrder = new Order();
 
@@ -103,6 +109,86 @@ public class CheckoutServiceImpl implements CheckoutService {
             return orderDetailsRepository.save(orderDetail);
         }).collect(Collectors.toList());
 
-        return order;
+        return  new CheckoutResponse(list, userShippingAddress);
+    }
+
+
+    private User getUserCart(long userId, long cartId) {
+        Optional<User> optionalUser = userRepository.findById(userId);
+
+        User user = optionalUser.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                                                                    "User with Id " + userId + " does not exist"));
+
+        Optional<Cart> optionalUserCart = cartRepository.findByIdAndUser_Id(cartId, userId);
+
+        Cart cart = optionalUserCart.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "cart with id: " + cartId
+        + " cannot be found for userId: " + userId));
+        return user;
+    }
+
+
+    public List<ProductSummary> getAllCartItems(long userId, long cartId) {
+
+        User user = getUserCart(userId, cartId);
+
+        List<CartItem> listOfCartItems = cartItemRepository.findAllByCart_Id(cartId);
+
+        return listOfCartItems.stream().map(cartItem -> {
+            var optionalMenuItem = menuItemRepository.findById(cartItem.getMenuId().getId());
+            ProductSummary orderSummaryDTO = new ProductSummary();
+
+            if (optionalMenuItem.isPresent()) {
+                MenuItem menuItem = optionalMenuItem.get();
+                orderSummaryDTO.setProductName(menuItem.getName());
+                orderSummaryDTO.setProductPrice(menuItem.getPrice());
+                orderSummaryDTO.setProductQuantity(cartItem.getQuantity());
+                orderSummaryDTO.setProductImage(menuItem.getImage());
+                orderSummaryDTO.setProductOwner(user.getFirstName() + " " + user.getLastName());
+                return orderSummaryDTO;
+            } else {
+                throw new ResponseStatusException(HttpStatus.NO_CONTENT, "cartItem not found for the cartId of this user");
+            }
+        }).collect(Collectors.toList());
+    }
+
+
+    public ShippingAddressDTO getDefaultShippingAddress(User user) {
+        Optional<ShippingAddress> defaultAddress = shippingAddressRepository.findByUserAndDefaultAddress(user, true);
+
+        ShippingAddressDTO shippingAddressDTO =  new ShippingAddressDTO();
+        defaultAddress.ifPresent(shippingAddress -> {
+            shippingAddressDTO.setEmail(shippingAddress.getEmail());
+            shippingAddressDTO.setFullName(shippingAddress.getFullName());
+            shippingAddressDTO.setCity(shippingAddress.getCity());
+            shippingAddressDTO.setState(shippingAddress.getState());
+            shippingAddressDTO.setStreet(shippingAddress.getStreet());
+            shippingAddressDTO.setPhone(shippingAddress.getPhone());
+            shippingAddressDTO.setDefaultAddress(shippingAddress.getDefaultAddress());
+        });
+
+        return shippingAddressDTO;
+    }
+
+    public List<ShippingAddressDTO> getAllAddress(long userId) {
+        Optional<User> optionalUser = userRepository.findById(userId);
+
+        User user =  optionalUser.orElseThrow(() -> new ResponseStatusException(HttpStatus.NO_CONTENT,
+                                  "User with userid " + userId + " does not exist"));
+
+        List<ShippingAddress> usersAddressList = shippingAddressRepository.findAllByUser_Id(userId);
+
+        List<ShippingAddressDTO> usersAddressListDTO = usersAddressList.stream().map(shippingAddress -> {
+            ShippingAddressDTO shippingAddressDTO = new ShippingAddressDTO();
+            shippingAddressDTO.setEmail(shippingAddress.getEmail());
+            shippingAddressDTO.setFullName(shippingAddress.getFullName());
+            shippingAddressDTO.setCity(shippingAddress.getCity());
+            shippingAddressDTO.setState(shippingAddress.getState());
+            shippingAddressDTO.setStreet(shippingAddress.getStreet());
+            shippingAddressDTO.setPhone(shippingAddress.getPhone());
+            shippingAddressDTO.setDefaultAddress(shippingAddress.getDefaultAddress());
+            return shippingAddressDTO;
+        }).collect(Collectors.toList());
+
+        return usersAddressListDTO;
     }
 }
