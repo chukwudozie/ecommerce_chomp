@@ -1,7 +1,6 @@
 package com.chompfooddeliveryapp.service.serviceImpl;
 
 
-import com.chompfooddeliveryapp.dto.OrderSummaryDTO;
 import com.chompfooddeliveryapp.dto.ShippingAddressDTO;
 import com.chompfooddeliveryapp.model.carts.Cart;
 import com.chompfooddeliveryapp.model.carts.CartItem;
@@ -11,7 +10,6 @@ import com.chompfooddeliveryapp.model.orders.Order;
 import com.chompfooddeliveryapp.model.orders.OrderDetail;
 import com.chompfooddeliveryapp.model.users.ShippingAddress;
 import com.chompfooddeliveryapp.model.users.User;
-import com.chompfooddeliveryapp.payload.ViewCartResponse;
 import com.chompfooddeliveryapp.payload.response.CheckoutResponse;
 import com.chompfooddeliveryapp.payload.response.ProductSummary;
 import com.chompfooddeliveryapp.repository.*;
@@ -155,18 +153,7 @@ public class CheckoutServiceImpl implements CheckoutService {
     public ShippingAddressDTO getDefaultShippingAddress(User user) {
         Optional<ShippingAddress> defaultAddress = shippingAddressRepository.findByUserAndDefaultAddress(user, true);
 
-        ShippingAddressDTO shippingAddressDTO =  new ShippingAddressDTO();
-        defaultAddress.ifPresent(shippingAddress -> {
-            shippingAddressDTO.setEmail(shippingAddress.getEmail());
-            shippingAddressDTO.setFullName(shippingAddress.getFullName());
-            shippingAddressDTO.setCity(shippingAddress.getCity());
-            shippingAddressDTO.setState(shippingAddress.getState());
-            shippingAddressDTO.setStreet(shippingAddress.getStreet());
-            shippingAddressDTO.setPhone(shippingAddress.getPhone());
-            shippingAddressDTO.setDefaultAddress(shippingAddress.getDefaultAddress());
-        });
-
-        return shippingAddressDTO;
+        return OrderServiceImplementation.shippinAddresResponse(defaultAddress);
     }
 
     public List<ShippingAddressDTO> getAllAddress(long userId) {
@@ -179,13 +166,7 @@ public class CheckoutServiceImpl implements CheckoutService {
 
         List<ShippingAddressDTO> usersAddressListDTO = usersAddressList.stream().map(shippingAddress -> {
             ShippingAddressDTO shippingAddressDTO = new ShippingAddressDTO();
-            shippingAddressDTO.setEmail(shippingAddress.getEmail());
-            shippingAddressDTO.setFullName(shippingAddress.getFullName());
-            shippingAddressDTO.setCity(shippingAddress.getCity());
-            shippingAddressDTO.setState(shippingAddress.getState());
-            shippingAddressDTO.setStreet(shippingAddress.getStreet());
-            shippingAddressDTO.setPhone(shippingAddress.getPhone());
-            shippingAddressDTO.setDefaultAddress(shippingAddress.getDefaultAddress());
+            OrderServiceImplementation.mapShippingAddress(shippingAddressDTO, shippingAddress);
             return shippingAddressDTO;
         }).collect(Collectors.toList());
 
