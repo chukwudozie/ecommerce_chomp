@@ -17,7 +17,6 @@ public class ViewUserOrdersDTO {
     private Timestamp delivered_date;
     private String status;
     private String deliveryMethod;
-    private ShippingAddressDTO shippingAddress;
 
     @Override
     public String toString() {
@@ -28,7 +27,6 @@ public class ViewUserOrdersDTO {
                 ", delivered_date: " + delivered_date +
                 ", status: " + status +
                 ", deliveryMethod: " + deliveryMethod +
-                ", shippingAddress: " + shippingAddress +
                 "}";
     }
 }
