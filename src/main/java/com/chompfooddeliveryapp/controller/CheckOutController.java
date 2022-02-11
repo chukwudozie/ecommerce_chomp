@@ -2,6 +2,7 @@ package com.chompfooddeliveryapp.controller;
 
 import com.chompfooddeliveryapp.dto.ShippingAddressDTO;
 import com.chompfooddeliveryapp.payload.AllCartItems;
+import com.chompfooddeliveryapp.payload.response.CheckoutResponse;
 import com.chompfooddeliveryapp.service.serviceInterfaces.CheckoutService;
 import com.chompfooddeliveryapp.service.serviceInterfaces.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +38,7 @@ public class CheckOutController {
     }
 
     @GetMapping("/new/order/{userId}/{cartId}")
-    public ResponseEntity<?> createOrder(@PathVariable("userId") long userId, @PathVariable("cartId") long cartId) {
+    public ResponseEntity<CheckoutResponse> createOrder(@PathVariable("userId") long userId, @PathVariable("cartId") long cartId) {
         return ResponseEntity.ok().body(checkoutService.createOrderFromCartItem(userId, cartId));
     }
 }
