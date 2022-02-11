@@ -3,7 +3,7 @@ package com.chompfooddeliveryapp.controller;
 import com.chompfooddeliveryapp.dto.ShippingAddressDTO;
 import com.chompfooddeliveryapp.payload.AllCartItems;
 import com.chompfooddeliveryapp.service.serviceInterfaces.CheckoutService;
-import com.chompfooddeliveryapp.service.serviceInterfaces.ViewOrderService;
+import com.chompfooddeliveryapp.service.serviceInterfaces.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,18 +17,18 @@ import java.util.List;
 @RequestMapping("/user")
 public class CheckOutController {
 
-    private final ViewOrderService viewOrderService;
+    private final OrderService orderService;
     private final CheckoutService checkoutService;
 
     @Autowired
-    public CheckOutController(ViewOrderService viewOrderService, CheckoutService checkoutService) {
-        this.viewOrderService = viewOrderService;
+    public CheckOutController(OrderService orderService, CheckoutService checkoutService) {
+        this.orderService = orderService;
         this.checkoutService = checkoutService;
     }
 
     @GetMapping("/{userId}/checkout")
     public ResponseEntity<AllCartItems> checkoutOrders(@PathVariable("userId") long userId) {
-        var checkoutItems = viewOrderService.checkoutCartItems(userId);
+        var checkoutItems = orderService.checkoutCartItems(userId);
         return ResponseEntity.ok().body(checkoutItems);
     }
 
