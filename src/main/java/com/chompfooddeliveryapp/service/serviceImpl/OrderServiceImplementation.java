@@ -5,6 +5,7 @@ import com.chompfooddeliveryapp.exception.BadRequestException;
 import com.chompfooddeliveryapp.model.meals.MenuItem;
 import com.chompfooddeliveryapp.model.orders.Order;
 import com.chompfooddeliveryapp.model.orders.OrderDetail;
+import com.chompfooddeliveryapp.model.users.ShippingAddress;
 import com.chompfooddeliveryapp.payload.AllCartItems;
 import com.chompfooddeliveryapp.payload.ViewCartResponse;
 import com.chompfooddeliveryapp.repository.*;
@@ -16,7 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -49,7 +50,6 @@ public class OrderServiceImplementation implements OrderService {
 
         List<Order> orderList = orderRepository.findByUserId(userId);
         var order1 = orderRepository.getOrderByIdIsAndUserIdIs(orderId, userId);
-        var ord = orderList.stream().filter(o -> Objects.equals(o.getId(), orderId)).findFirst();
 
         var orders = order1.orElseThrow(() -> new BadRequestException("No order with Order id: " + orderId + " found"));
 
@@ -132,16 +132,7 @@ public class OrderServiceImplementation implements OrderService {
         var userShippingAddress =
                 shippingAddressRepository.findByUserAndDefaultAddress(user, true);
 
-        ShippingAddressDTO shippingAddressDTO = new ShippingAddressDTO();
-        userShippingAddress.ifPresent(shippingAddress -> {
-            shippingAddressDTO.setEmail(shippingAddress.getEmail());
-            shippingAddressDTO.setFullName(shippingAddress.getFullName());
-            shippingAddressDTO.setCity(shippingAddress.getCity());
-            shippingAddressDTO.setState(shippingAddress.getState());
-            shippingAddressDTO.setStreet(shippingAddress.getStreet());
-            shippingAddressDTO.setPhone(shippingAddress.getPhone());
-            shippingAddressDTO.setDefaultAddress(shippingAddress.getDefaultAddress());
-        });
+        ShippingAddressDTO shippingAddressDTO = shippinAddresResponse(userShippingAddress);
 
         List<MenuItem> menuItemsList = getOrderSummary(userId);
 
@@ -156,6 +147,24 @@ public class OrderServiceImplementation implements OrderService {
 
 
         return new ResponseViewUserOrdersDTO(listOfUserOrdersDto, shippingAddressDTO, paymentDetailsDTO);
+    }
+
+    static ShippingAddressDTO shippinAddresResponse(Optional<ShippingAddress> userShippingAddress) {
+        ShippingAddressDTO shippingAddressDTO = new ShippingAddressDTO();
+        userShippingAddress.ifPresent(shippingAddress -> {
+            mapShippingAddress(shippingAddressDTO, shippingAddress);
+        });
+        return shippingAddressDTO;
+    }
+
+    static void mapShippingAddress(ShippingAddressDTO shippingAddressDTO, ShippingAddress shippingAddress) {
+        shippingAddressDTO.setEmail(shippingAddress.getEmail());
+        shippingAddressDTO.setFullName(shippingAddress.getFullName());
+        shippingAddressDTO.setCity(shippingAddress.getCity());
+        shippingAddressDTO.setState(shippingAddress.getState());
+        shippingAddressDTO.setStreet(shippingAddress.getStreet());
+        shippingAddressDTO.setPhone(shippingAddress.getPhone());
+        shippingAddressDTO.setDefaultAddress(shippingAddress.getDefaultAddress());
     }
 
     @Override
