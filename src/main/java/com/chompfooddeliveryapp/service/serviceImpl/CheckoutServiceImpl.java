@@ -1,7 +1,6 @@
 package com.chompfooddeliveryapp.service.serviceImpl;
 
 
-import com.chompfooddeliveryapp.dto.OrderSummaryDTO;
 import com.chompfooddeliveryapp.dto.ShippingAddressDTO;
 import com.chompfooddeliveryapp.model.carts.Cart;
 import com.chompfooddeliveryapp.model.carts.CartItem;
