@@ -164,6 +164,7 @@ public class CartServiceImpl implements CartService {
                 .getLastName() + " " + item.getCart().getUser().getFirstName());
                 cartResponse.setProductPrice(item.getMenuId().getPrice());
                 cartResponse.setProductQuantity(item.getQuantity());
+                cartResponse.setAmount((double) item.getQuantity() * item.getMenuId().getPrice());
                 usersCartItem.add(cartResponse);
 
             }
