@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequestMapping("/user")
@@ -31,8 +33,8 @@ public class OrderController {
     }
 
     @PostMapping("/{userId}/shipping-address")
-    public ResponseEntity<ShippingAddress> saveShippingAddress(@PathVariable("userId") Long userId,
-                                                               @RequestBody ShippingAddressDTO shippingAddress) {
+    public ResponseEntity<List<String>> saveShippingAddress(@PathVariable("userId") Long userId,
+                                                            @RequestBody ShippingAddressDTO shippingAddress) {
         var responseText = checkoutService.saveShippingAddress(userId, shippingAddress);
         return new ResponseEntity<>(responseText, HttpStatus.OK);
     }
