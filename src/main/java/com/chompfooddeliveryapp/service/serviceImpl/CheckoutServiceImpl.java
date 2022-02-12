@@ -92,8 +92,8 @@ public class CheckoutServiceImpl implements CheckoutService {
 
         newOrder.setUser(user);
         newOrder.setStatus(OrderStatus.PENDING);
-        newOrder.setOrder_date(Timestamp.valueOf(LocalDateTime.now()));
-        newOrder.setDelivered_date(Timestamp.valueOf(LocalDateTime.now().plusDays(1)));
+        newOrder.setOrder_date(LocalDateTime.now());
+        newOrder.setDelivered_date(LocalDateTime.now().plusDays(1));
         newOrder.setAmount(amount);
 
         Order order = orderRepository.save(newOrder);

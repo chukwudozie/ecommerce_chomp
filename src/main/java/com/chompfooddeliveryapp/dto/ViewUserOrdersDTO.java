@@ -1,11 +1,10 @@
 package com.chompfooddeliveryapp.dto;
 
-import com.chompfooddeliveryapp.model.enums.OrderStatus;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @Getter
@@ -13,8 +12,8 @@ import java.sql.Timestamp;
 public class ViewUserOrdersDTO {
     private String image;
     private Long quantity;
-    private Timestamp order_date;
-    private Timestamp delivered_date;
+    private LocalDateTime order_date;
+    private LocalDateTime delivered_date;
     private String status;
     private String deliveryMethod;
 
