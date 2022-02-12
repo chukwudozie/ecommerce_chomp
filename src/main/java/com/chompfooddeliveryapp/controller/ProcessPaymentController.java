@@ -52,8 +52,7 @@ public class ProcessPaymentController {
                @PathVariable Long userId, @PathVariable Long orderId)
             throws JsonProcessingException {
     return ResponseEntity.ok(paymentservice.verifyPayStackPayment(transactionDto,userId,orderId));
-         //todo: change the state of the transaction from ur service to successful (done)
-       //todo: change the status of the user's order from ur service to confirmed(not done)
+
 
     }
 }
