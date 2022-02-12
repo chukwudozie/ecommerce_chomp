@@ -67,12 +67,12 @@ public class PaymentServiceImpl implements PaymentService {
             //todo: Important!!! remove amount from ur request object and fetch it from Ifeanyi's Checkout
             if (request.getPaymentMethod().equals(PaymentMethod.PAYSTACK.name())){
                 PayStackRequestDto requestDto = new PayStackRequestDto();
-                requestDto.setAmount(request.getAmount());
+                requestDto.setAmount((long) userOrder.getAmount());
                 return   payStackService.initializePaystackTransaction(requestDto,userId, TransactionType.DEBIT);
             }
             if(request.getPaymentMethod().equals(PaymentMethod.EWALLET.name())){
                 WithdrawalRequest walletWithdraw = new WithdrawalRequest();
-                walletWithdraw.setBill(request.getAmount());
+                walletWithdraw.setBill((long) userOrder.getAmount());
                 walletWithdraw.setUserId(userId);
                 ResponseEntity<WithdrawalDto> output = withdrawService.walletWithdraw(walletWithdraw);
                 if(Objects.equals(Objects.requireNonNull(output.getBody()).getMessageStatus(),"Withdrawal successful!")){
@@ -106,12 +106,12 @@ public class PaymentServiceImpl implements PaymentService {
                 .findById(transactionDto.getTransactionReference())
                 .orElseThrow(() -> new BadRequestException("transaction doesn't exist"));
         transaction.setTransactionStatus(TransactionStatus.SUCCESSFUL);
+
         Order userOrder = orderRepository.findOrderByIdAndUserId(orderId,userId)
                 .orElseThrow(() -> new BadRequestException("This order has not been made"));
         userOrder.setStatus(OrderStatus.CONFIRMED);
         orderRepository.save(userOrder);
         transactionRepository.save(transaction);
-        //todo: change the state of the transaction to successful
 
         //todo: change the status of the user's order to confirmed
         System.out.println(payStack.getData()+" Success");
