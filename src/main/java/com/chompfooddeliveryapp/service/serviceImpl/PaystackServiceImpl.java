@@ -62,8 +62,7 @@ public class PaystackServiceImpl {
                 .retrieve().bodyToMono(String.class).block();
 
         PayStackResponseDto payStackDto = objectMapper.readValue( paystackObject, PayStackResponseDto.class);
-        System.out.println(payStackDto.getData().get("amount"));
-        System.out.println(payStackDto.getData().get("gateway_response"));
+
 
         return payStackDto;
     }

@@ -48,8 +48,8 @@ public class WalletController {
 
     }
 
-    @PostMapping("/verifytransaction")
-    public ResponseEntity<?> PayStackDto(@RequestBody VerifyTransactionDto verifyTransactionDto) throws Exception {
+    @GetMapping ("/verifytransaction")
+    public ResponseEntity<?> verifyWalletTransaction(@RequestBody VerifyTransactionDto verifyTransactionDto) throws Exception {
 
         PayStackResponseDto responseDto = paystackService.verifyPaystackTransaction(verifyTransactionDto);
 
