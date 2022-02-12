@@ -2,10 +2,12 @@ package com.chompfooddeliveryapp.service.serviceImpl;
 
 import com.chompfooddeliveryapp.dto.*;
 import com.chompfooddeliveryapp.exception.BadRequestException;
+import com.chompfooddeliveryapp.model.enums.PaymentMethod;
 import com.chompfooddeliveryapp.model.meals.MenuItem;
 import com.chompfooddeliveryapp.model.orders.Order;
 import com.chompfooddeliveryapp.model.orders.OrderDetail;
 import com.chompfooddeliveryapp.model.users.ShippingAddress;
+import com.chompfooddeliveryapp.model.users.User;
 import com.chompfooddeliveryapp.payload.AllCartItems;
 import com.chompfooddeliveryapp.payload.ViewCartResponse;
 import com.chompfooddeliveryapp.repository.*;
@@ -16,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -132,7 +135,7 @@ public class OrderServiceImplementation implements OrderService {
         var userShippingAddress =
                 shippingAddressRepository.findByUserAndDefaultAddress(user, true);
 
-        ShippingAddressDTO shippingAddressDTO = shippinAddresResponse(userShippingAddress);
+        ShippingAddressDTO shippingAddressDTO = shippingAddressResponse(userShippingAddress);
 
         List<MenuItem> menuItemsList = getOrderSummary(userId);
 
@@ -149,7 +152,7 @@ public class OrderServiceImplementation implements OrderService {
         return new ResponseViewUserOrdersDTO(listOfUserOrdersDto, shippingAddressDTO, paymentDetailsDTO);
     }
 
-    static ShippingAddressDTO shippinAddresResponse(Optional<ShippingAddress> userShippingAddress) {
+    static ShippingAddressDTO shippingAddressResponse(Optional<ShippingAddress> userShippingAddress) {
         ShippingAddressDTO shippingAddressDTO = new ShippingAddressDTO();
         userShippingAddress.ifPresent(shippingAddress -> {
             mapShippingAddress(shippingAddressDTO, shippingAddress);
@@ -175,5 +178,46 @@ public class OrderServiceImplementation implements OrderService {
         return allCartItems;
     }
 
+    public List<AdminViewOrderDTO> fetchAllOrdersToAdminDashboard() {
+
+        List<Order> orderList = orderRepository.findAll();
+        List<List<OrderDetail>> listOfOrderDetailsList = orderList.stream()
+                                                                  .map(order -> orderDetailsRepository.findAllByOrder_Id(order.getId()))
+                                                                  .collect(Collectors.toList());
+        List<AdminViewOrderDTO> adminOrderList = orderList.stream().map(order -> {
+            AdminViewOrderDTO response = new AdminViewOrderDTO();
+            response.setStatus(order.getStatus());
+            response.setAmount(order.getAmount());
+            response.setDateOrdered(LocalDateTime.parse(order.getOrder_date().toString()));
+            response.setCustomerAddress(getShippingAddress(order.getUser()));
+            response.setCustomerEmail(order.getUser().getEmail());
+            response.setCustomerName(order.getUser().getFirstName() + " " + order.getUser().getLastName());
+            response.setPaymentType(PaymentMethod.EWALLET);
+            response.setCustomerOrderQuantity(orderDetailsRepository.findAllByOrder_Id(order.getId())
+                                                                    .stream()
+                                                                    .mapToLong(OrderDetail::getQuantity)
+                                                                    .sum()
+                                             );
+            response.setAmount(order.getAmount());
+            return response;
+        }).collect(Collectors.toList());
+
+        if (adminOrderList.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NO_CONTENT);
+        } else {
+            return adminOrderList;
+        }
+    }
+
+    private String getShippingAddress(User user) {
+        Optional<ShippingAddress> optionalShippingAddress = shippingAddressRepository.findByUserAndDefaultAddress(user, true);
+        if (optionalShippingAddress.isPresent()) {
+            ShippingAddress shippingAddress = optionalShippingAddress.get();
+            return shippingAddress.getStreet() + "\n" +shippingAddress.getCity() + "\n" +shippingAddress.getState();
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "user: " + user.getFirstName() + " " + user.getLastName() +
+                    " does not have a default shipping Address");
+        }
+    }
 
 }
