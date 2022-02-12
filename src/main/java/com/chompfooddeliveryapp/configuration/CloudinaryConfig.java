@@ -37,7 +37,7 @@ public class CloudinaryConfig {
 
 
 
-        File file = new File("images/" + imagename);
+        File file = new File("src/main/resources/images/" + imagename);
         Map uploadResult = cloudinary.uploader().upload(file, ObjectUtils.emptyMap());
         System.out.println(uploadResult.toString());
         System.out.println(uploadResult.get("url"));
