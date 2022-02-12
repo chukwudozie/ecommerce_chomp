@@ -49,7 +49,7 @@ public class CheckoutServiceImpl implements CheckoutService {
 
 
     @Override
-    public ShippingAddress saveShippingAddress(long userId, ShippingAddressDTO shippingAddressDTO) {
+    public List<String> saveShippingAddress(long userId, ShippingAddressDTO shippingAddressDTO) {
         var opUser = userRepository.findById(userId);
         ShippingAddress shippingAddress = new ShippingAddress();
         if (opUser.isPresent()) {
@@ -62,7 +62,8 @@ public class CheckoutServiceImpl implements CheckoutService {
             shippingAddress.setState(shippingAddressDTO.getState());
             shippingAddress.setUser(opUser.get());
 
-            return shippingAddressRepository.save(shippingAddress);
+            ShippingAddress s = shippingAddressRepository.save(shippingAddress);
+            return List.of(s.getFullName(), s.getEmail(), String.format("%s, %s, %s", s.getStreet(), s.getCity(), s.getState()));
 
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The user with id " + userId + " was not found");
@@ -73,11 +74,9 @@ public class CheckoutServiceImpl implements CheckoutService {
 
         User user = getUserCart(userId, cartId);
 
-        var list = getAllCartItems(userId, cartId);
+        List<ProductSummary> list = getAllCartItems(userId, cartId);
 
-
-        var userShippingAddress = getDefaultShippingAddress(user);
-
+        ShippingAddressDTO userShippingAddress = getDefaultShippingAddress(user);
 
         List<CartItem> listOfCartItems = cartItemRepository.findAllByCart_Id(cartId);
 
@@ -164,12 +163,10 @@ public class CheckoutServiceImpl implements CheckoutService {
 
         List<ShippingAddress> usersAddressList = shippingAddressRepository.findAllByUser_Id(userId);
 
-        List<ShippingAddressDTO> usersAddressListDTO = usersAddressList.stream().map(shippingAddress -> {
+        return usersAddressList.stream().map(shippingAddress -> {
             ShippingAddressDTO shippingAddressDTO = new ShippingAddressDTO();
             OrderServiceImplementation.mapShippingAddress(shippingAddressDTO, shippingAddress);
             return shippingAddressDTO;
         }).collect(Collectors.toList());
-
-        return usersAddressListDTO;
     }
 }
