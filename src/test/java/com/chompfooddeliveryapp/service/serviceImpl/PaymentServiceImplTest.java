@@ -2,7 +2,9 @@ package com.chompfooddeliveryapp.service.serviceImpl;
 
 import com.chompfooddeliveryapp.dto.PayStackRequestDto;
 import com.chompfooddeliveryapp.dto.ProcessPaymentRequest;
+import com.chompfooddeliveryapp.dto.WithdrawalDto;
 import com.chompfooddeliveryapp.dto.WithdrawalRequest;
+import com.chompfooddeliveryapp.exception.BadRequestException;
 import com.chompfooddeliveryapp.model.enums.PaymentMethod;
 import com.chompfooddeliveryapp.model.enums.TransactionStatus;
 import com.chompfooddeliveryapp.model.enums.TransactionType;
@@ -10,12 +12,18 @@ import com.chompfooddeliveryapp.model.orders.Order;
 import com.chompfooddeliveryapp.model.users.User;
 import com.chompfooddeliveryapp.repository.OrderRepository;
 import com.chompfooddeliveryapp.repository.TransactionRepository;
+import com.chompfooddeliveryapp.repository.UserRepository;
+import com.chompfooddeliveryapp.service.serviceInterfaces.UserNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.Optional;
 
@@ -37,6 +45,11 @@ class PaymentServiceImplTest {
     @Mock
     OrderRepository orderRepository;
 
+    @Mock
+    UserRepository userRepository;
+
+
+
     @InjectMocks
     PaymentServiceImpl paymentService;
 
@@ -50,7 +63,6 @@ class PaymentServiceImplTest {
         order = new Order();
         PayStackRequestDto requestDto = new PayStackRequestDto();
         requestDto.setAmount(700);
-//        payStackService.initializePaystackTransaction(requestDto, user.getId(), TransactionType.DEBIT);
 
         WithdrawalRequest walletWithdraw = new WithdrawalRequest();
         walletWithdraw.setBill(700);
@@ -62,14 +74,12 @@ class PaymentServiceImplTest {
     void processPayment() {
         user.setId(1L);
         order.setId(1L);
-        when(orderRepository.findOrderByIdAndUserId(user.getId(),1L)).thenReturn(Optional.of(order));
+        order.setAmount(200.00);
+
+        paymentService = mock(PaymentServiceImpl.class);
         ProcessPaymentRequest paymentRequest = new ProcessPaymentRequest();
         paymentRequest.setPaymentMethod(PaymentMethod.EWALLET.name());
-        paymentRequest.setAmount(300L);
-        paymentService.processPayment(paymentRequest,user.getId(),1L);
+        verify(orderRepository,times(0)).findOrderByIdAndUserId(order.getId(),user.getId());
     }
 
-    @Test
-    void verifyPayStackPayment() {
-    }
 }

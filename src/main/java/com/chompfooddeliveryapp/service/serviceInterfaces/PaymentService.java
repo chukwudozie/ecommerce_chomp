@@ -11,4 +11,6 @@ public interface PaymentService {
 
     VerificationResponse verifyPayStackPayment(VerifyTransactionDto transactionDto, Long userId, Long orderId)
             throws JsonProcessingException;
+
+    void checkLoginStatus(Long userId);
 }

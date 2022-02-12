@@ -57,7 +57,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public Object processPayment(ProcessPaymentRequest request, Long userId, Long orderId)
     {
-                checkLoginStatus(userId);
+            checkLoginStatus(userId);
             Order userOrder = orderRepository.findOrderByIdAndUserId(orderId,userId)
                     .orElseThrow(() -> new BadRequestException("This order has not been made by the user"));
             if(Objects.equals(userOrder.getStatus(),OrderStatus.CONFIRMED)|| Objects.equals(userOrder.getStatus(),OrderStatus.DELIVERED)){
@@ -119,7 +119,8 @@ public class PaymentServiceImpl implements PaymentService {
 
     }
 
-    private void checkLoginStatus(Long userId){
+    @Override
+    public void checkLoginStatus(Long userId){
         User user = userRepository.findUserById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User with ID: "+userId+" doesn't exist"));
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
