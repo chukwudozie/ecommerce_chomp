@@ -220,46 +220,6 @@ public class OrderServiceImplementation implements OrderService {
         }
     }
 
-    public List<AdminViewOrderDTO> fetchAllOrdersToAdminDashboard() {
 
-        List<Order> orderList = orderRepository.findAll();
-        List<List<OrderDetail>> listOfOrderDetailsList = orderList.stream()
-                                                                  .map(order -> orderDetailsRepository.findAllByOrder_Id(order.getId()))
-                                                                  .collect(Collectors.toList());
-        List<AdminViewOrderDTO> adminOrderList = orderList.stream().map(order -> {
-            AdminViewOrderDTO response = new AdminViewOrderDTO();
-            response.setStatus(order.getStatus());
-            response.setAmount(order.getAmount());
-            response.setDateOrdered(LocalDateTime.parse(order.getOrder_date().toString()));
-            response.setCustomerAddress(getShippingAddress(order.getUser()));
-            response.setCustomerEmail(order.getUser().getEmail());
-            response.setCustomerName(order.getUser().getFirstName() + " " + order.getUser().getLastName());
-            response.setPaymentType(PaymentMethod.EWALLET);
-            response.setCustomerOrderQuantity(orderDetailsRepository.findAllByOrder_Id(order.getId())
-                                                                    .stream()
-                                                                    .mapToLong(OrderDetail::getQuantity)
-                                                                    .sum()
-                                             );
-            response.setAmount(order.getAmount());
-            return response;
-        }).collect(Collectors.toList());
-
-        if (adminOrderList.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NO_CONTENT);
-        } else {
-            return adminOrderList;
-        }
-    }
-
-    private String getShippingAddress(User user) {
-        Optional<ShippingAddress> optionalShippingAddress = shippingAddressRepository.findByUserAndDefaultAddress(user, true);
-        if (optionalShippingAddress.isPresent()) {
-            ShippingAddress shippingAddress = optionalShippingAddress.get();
-            return shippingAddress.getStreet() + "\n" +shippingAddress.getCity() + "\n" +shippingAddress.getState();
-        } else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "user: " + user.getFirstName() + " " + user.getLastName() +
-                    " does not have a default shipping Address");
-        }
-    }
 
 }
