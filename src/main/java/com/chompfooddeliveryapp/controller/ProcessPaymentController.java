@@ -41,7 +41,6 @@ public class ProcessPaymentController {
     @PostMapping("/process/{userId}/{orderId}")
     public ResponseEntity<?>processPayment(@RequestBody ProcessPaymentRequest processPaymentRequest,
              @PathVariable Long userId, @PathVariable Long orderId){
-        System.out.println("User here with Id "+userId);
     Object output = paymentservice.processPayment(processPaymentRequest,userId, orderId);
     return new ResponseEntity<>(output, HttpStatus.ACCEPTED);
     //todo: Makera's Call back function from PayStack will redirect to the verifyPayStackPayment endpoint
