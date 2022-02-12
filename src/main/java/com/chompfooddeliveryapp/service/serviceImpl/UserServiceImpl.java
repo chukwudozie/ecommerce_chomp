@@ -98,9 +98,9 @@ public class UserServiceImpl implements UserServiceInterface {
                 signupDto.getFirstName(), signupDto.getLastName(),
                 encoder.encode(signupDto.getPassword()));
 
-        Role role = roleRepository.findByName(UserRole.USER).get();
-        System.out.println(role+"....................");
-        user.setRole(role);
+//         Role role = roleRepository.findByName(UserRole.USER).get();
+//         System.out.println(role+"....................");
+//         user.setRole(role);
 
     //addng a wallet to a user by team D
         Wallet wallet = new Wallet();
@@ -112,8 +112,10 @@ public class UserServiceImpl implements UserServiceInterface {
 
         userRepository.save(user);
 
-//        cartService.createCartForUser(user);
-//        userRepository.save(user);
+
+//         cartService.createCartForUser(user);
+//         userRepository.save(user);
+
         // TODO: Send confirmation token
         String token = UUID.randomUUID().toString();
         LocalDateTime createdAt = LocalDateTime.now();
