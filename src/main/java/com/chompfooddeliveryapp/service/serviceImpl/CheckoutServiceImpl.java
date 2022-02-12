@@ -85,8 +85,8 @@ public class CheckoutServiceImpl implements CheckoutService {
         }
 
         var amount = listOfCartItems.stream()
-                .map(cartItem -> cartItem.getMenuId().getPrice() * cartItem.getQuantity())
-                .mapToDouble(x -> (double) x).reduce(0L, Double::sum);
+                .mapToDouble(Item -> Item.getMenuId().getPrice() * Item.getQuantity())
+                .reduce(0L, Double::sum);
 
         Order newOrder = new Order();
 
