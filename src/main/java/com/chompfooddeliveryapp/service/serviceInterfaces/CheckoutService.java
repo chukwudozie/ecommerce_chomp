@@ -1,15 +1,16 @@
 package com.chompfooddeliveryapp.service.serviceInterfaces;
 
-import com.chompfooddeliveryapp.dto.ResponseViewUserOrdersDTO;
 import com.chompfooddeliveryapp.dto.ShippingAddressDTO;
-import com.chompfooddeliveryapp.model.meals.MenuItem;
-import com.chompfooddeliveryapp.payload.AllCartItems;
+import com.chompfooddeliveryapp.model.users.User;
+import com.chompfooddeliveryapp.payload.response.CheckoutResponse;
+import com.chompfooddeliveryapp.payload.response.ProductSummary;
 
 import java.util.List;
 
 public interface CheckoutService {
-    List<MenuItem> getOrderSummary(Long userId);
-    ResponseViewUserOrdersDTO getAllOrdersByUserId(Long userId);
-    String saveShippingAddress(long userId, ShippingAddressDTO shippingAddressDTO);
-    AllCartItems checkoutCartItems(Long userId);
+    List<String> saveShippingAddress(long userId, ShippingAddressDTO shippingAddressDTO);
+    CheckoutResponse createOrderFromCartItem(long userId, long cartId);
+    List<ProductSummary> getAllCartItems(long userId, long cartId);
+    ShippingAddressDTO getDefaultShippingAddress(User user);
+    List<ShippingAddressDTO> getAllAddress(long userId);
 }

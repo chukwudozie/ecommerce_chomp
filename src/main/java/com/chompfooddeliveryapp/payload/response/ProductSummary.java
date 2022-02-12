@@ -1,22 +1,20 @@
-package com.chompfooddeliveryapp.payload;
+package com.chompfooddeliveryapp.payload.response;
 
-import lombok.AllArgsConstructor;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import java.util.List;
+import lombok.ToString;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-public class ViewCartResponse {
-    private Long productId;
-    private Long cartItemId;
+@ToString
+public class ProductSummary {
+
     private String productName;
     private String productOwner;
     private String productImage;
     private Integer productQuantity;
     private Long productPrice;
-    private double amount;
 }
