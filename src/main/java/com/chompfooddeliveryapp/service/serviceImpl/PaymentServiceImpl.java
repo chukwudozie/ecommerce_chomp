@@ -2,20 +2,27 @@ package com.chompfooddeliveryapp.service.serviceImpl;
 
 import com.chompfooddeliveryapp.dto.*;
 import com.chompfooddeliveryapp.exception.BadRequestException;
+import com.chompfooddeliveryapp.exception.UserNotAuthorizedException;
 import com.chompfooddeliveryapp.model.enums.OrderStatus;
 import com.chompfooddeliveryapp.model.enums.PaymentMethod;
 import com.chompfooddeliveryapp.model.enums.TransactionStatus;
 import com.chompfooddeliveryapp.model.enums.TransactionType;
 import com.chompfooddeliveryapp.model.orders.Order;
+import com.chompfooddeliveryapp.model.users.User;
 import com.chompfooddeliveryapp.model.wallets.Transaction;
 import com.chompfooddeliveryapp.repository.OrderRepository;
 import com.chompfooddeliveryapp.repository.TransactionRepository;
+import com.chompfooddeliveryapp.repository.UserRepository;
+import com.chompfooddeliveryapp.security.service.UserDetailsServiceImpl;
 import com.chompfooddeliveryapp.service.serviceInterfaces.PaymentService;
+import com.chompfooddeliveryapp.service.serviceInterfaces.UserNotFoundException;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 
@@ -25,49 +32,61 @@ import java.util.Objects;
 @Service
 public class PaymentServiceImpl implements PaymentService {
     private final PaystackServiceImpl payStackService;
+    private final UserDetailsServiceImpl userDetailsService;
     private final WalletWithdrawServiceImpl withdrawService;
     private final TransactionRepository transactionRepository;
     private final OrderRepository orderRepository;
+    private final UserRepository userRepository;
+    private final UserServiceImpl userService;
+    private final AuthenticationManager authenticationManager;
 
     @Autowired
-    public PaymentServiceImpl(PaystackServiceImpl payStackService, WalletWithdrawServiceImpl withdrawService,
-             TransactionRepository transactionRepository,OrderRepository orderRepository) {
+    public PaymentServiceImpl(PaystackServiceImpl payStackService, UserDetailsServiceImpl userDetailsService, WalletWithdrawServiceImpl withdrawService,
+                              TransactionRepository transactionRepository, OrderRepository orderRepository, UserRepository userRepository, UserServiceImpl userService, AuthenticationManager authenticationManager) {
 
         this.payStackService = payStackService;
+        this.userDetailsService = userDetailsService;
         this.withdrawService = withdrawService;
         this.transactionRepository = transactionRepository;
         this.orderRepository = orderRepository;
+        this.userRepository = userRepository;
+        this.userService = userService;
+        this.authenticationManager = authenticationManager;
     }
 
-    //todo: Makera has refused to convert the Object type to Paystack custom class
     @Override
-    public Object processPayment(ProcessPaymentRequest request, Long userId, Long orderId /**paymentDTO to contain the amount to be paid and the payment method**/)
+    public Object processPayment(ProcessPaymentRequest request, Long userId, Long orderId)
     {
-
-        //todo: Check the incoming request to see if the user wants to pay by card or wallet
-        if (request.getPaymentMethod().equals(PaymentMethod.PAYSTACK.name())){
-            PayStackRequestDto requestDto = new PayStackRequestDto();
-            requestDto.setAmount(request.getAmount());
-          return   payStackService.initializePaystackTransaction(requestDto,userId, TransactionType.DEBIT);
-            //todo: Makera will add callback URL in front end to redirect user to verification and order confirmation
-
-        }
-
-        //todo: check if the payment method from the dto is for paystack by comparing it with the dto
-        if(request.getPaymentMethod().equals(PaymentMethod.EWALLET.name())){
-            WithdrawalRequest walletWithdraw = new WithdrawalRequest();
-            walletWithdraw.setBill(request.getAmount());
-            walletWithdraw.setUserId(userId);
-           ResponseEntity<WithdrawalDto> output = withdrawService.walletWithdraw(walletWithdraw);
-            if(Objects.equals(Objects.requireNonNull(output.getBody()).getMessageStatus(),"Withdrawal successful!")){
-                Order userOrder = orderRepository.findOrderByIdAndUserId(orderId,userId)
-                        .orElseThrow(() -> new BadRequestException("This order has not been made"));
-                userOrder.setStatus(OrderStatus.CONFIRMED);
+                checkLoginStatus(userId);
+            Order userOrder = orderRepository.findOrderByIdAndUserId(orderId,userId)
+                    .orElseThrow(() -> new BadRequestException("This order has not been made by the user"));
+            if(Objects.equals(userOrder.getStatus(),OrderStatus.CONFIRMED)|| Objects.equals(userOrder.getStatus(),OrderStatus.DELIVERED)){
+                throw new BadRequestException("This order has already been confirmed or delivered!");
             }
-            return withdrawService.walletWithdraw(walletWithdraw);
-        }
 
-        return null;
+            //todo: Important!!! remove amount from ur request object and fetch it from Ifeanyi's Checkout
+            if (request.getPaymentMethod().equals(PaymentMethod.PAYSTACK.name())){
+                PayStackRequestDto requestDto = new PayStackRequestDto();
+                requestDto.setAmount(request.getAmount());
+                return   payStackService.initializePaystackTransaction(requestDto,userId, TransactionType.DEBIT);
+            }
+            if(request.getPaymentMethod().equals(PaymentMethod.EWALLET.name())){
+                WithdrawalRequest walletWithdraw = new WithdrawalRequest();
+                walletWithdraw.setBill(request.getAmount());
+                walletWithdraw.setUserId(userId);
+                ResponseEntity<WithdrawalDto> output = withdrawService.walletWithdraw(walletWithdraw);
+                if(Objects.equals(Objects.requireNonNull(output.getBody()).getMessageStatus(),"Withdrawal successful!")){
+                    userOrder.setStatus(OrderStatus.CONFIRMED);
+                    orderRepository.save(userOrder);
+                    return output;
+                }
+                throw new BadRequestException("Withdrawal not successful");
+            }
+            else {
+                throw new BadRequestException("Invalid payment method selected");
+            }
+
+
     }
 
     @Override
@@ -90,6 +109,7 @@ public class PaymentServiceImpl implements PaymentService {
         Order userOrder = orderRepository.findOrderByIdAndUserId(orderId,userId)
                 .orElseThrow(() -> new BadRequestException("This order has not been made"));
         userOrder.setStatus(OrderStatus.CONFIRMED);
+        orderRepository.save(userOrder);
         transactionRepository.save(transaction);
         //todo: change the state of the transaction to successful
 
@@ -97,5 +117,14 @@ public class PaymentServiceImpl implements PaymentService {
         System.out.println(payStack.getData()+" Success");
         return response;
 
+    }
+
+    private void checkLoginStatus(Long userId){
+        User user = userRepository.findUserById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User with ID: "+userId+" doesn't exist"));
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (!(user.getEmail().equals(authentication.getName()))){
+            throw new UserNotAuthorizedException("User Not logged in");
+        }
     }
 }
