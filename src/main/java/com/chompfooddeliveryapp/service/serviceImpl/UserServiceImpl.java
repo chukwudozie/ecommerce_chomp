@@ -112,8 +112,10 @@ public class UserServiceImpl implements UserServiceInterface {
 
         userRepository.save(user);
 
-//        cartService.createCartForUser(user);
-//        userRepository.save(user);
+
+//         cartService.createCartForUser(user);
+//         userRepository.save(user);
+
         // TODO: Send confirmation token
         String token = UUID.randomUUID().toString();
         LocalDateTime createdAt = LocalDateTime.now();
