@@ -18,4 +18,5 @@ public class ViewCartResponse {
     private String productImage;
     private Integer productQuantity;
     private Long productPrice;
+    private double amount;
 }
