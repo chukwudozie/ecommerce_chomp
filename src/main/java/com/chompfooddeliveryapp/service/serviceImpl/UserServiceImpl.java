@@ -98,9 +98,9 @@ public class UserServiceImpl implements UserServiceInterface {
                 signupDto.getFirstName(), signupDto.getLastName(),
                 encoder.encode(signupDto.getPassword()));
 
-        Role role = roleRepository.findByName(UserRole.USER).get();
-        System.out.println(role+"....................");
-        user.setRole(role);
+//         Role role = roleRepository.findByName(UserRole.USER).get();
+//         System.out.println(role+"....................");
+//         user.setRole(role);
 
     //addng a wallet to a user by team D
         Wallet wallet = new Wallet();
