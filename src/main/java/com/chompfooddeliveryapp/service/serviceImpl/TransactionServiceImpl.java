@@ -27,6 +27,7 @@ public class TransactionServiceImpl {
         this.transactionRepository = transactionRepository;
     }
 
+
     public String getTransactionRefence (long userId, TransactionType type, PaymentMethod paymentMethod){
         Optional<User> user = Optional.ofNullable(userRepository.findById(userId).
                 orElseThrow(() -> new BadRequestException("the user cannot be null")));

@@ -2,6 +2,7 @@ package com.chompfooddeliveryapp.model.meals;
 
 import com.chompfooddeliveryapp.model.users.User;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -12,6 +13,7 @@ import javax.persistence.*;
 @Entity
 @Data
 @NoArgsConstructor
+@Getter
 @Table(name = "favorite_meals")
 public class FavoriteMeal {
     @Id
