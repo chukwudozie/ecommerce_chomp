@@ -152,7 +152,7 @@ public class CheckoutServiceImpl implements CheckoutService {
     public ShippingAddressDTO getDefaultShippingAddress(User user) {
         Optional<ShippingAddress> defaultAddress = shippingAddressRepository.findByUserAndDefaultAddress(user, true);
 
-        return OrderServiceImplementation.shippinAddresResponse(defaultAddress);
+        return OrderServiceImplementation.shippingAddressResponse(defaultAddress);
     }
 
     public List<ShippingAddressDTO> getAllAddress(long userId) {
