@@ -12,5 +12,5 @@ import lombok.Setter;
 public class ProcessPaymentRequest {
 
     private String paymentMethod;
-    private Long amount;
+//    private Long amount;
 }
