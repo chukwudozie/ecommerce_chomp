@@ -10,4 +10,6 @@ import java.util.Optional;
 public interface ShippingAddressRepository extends JpaRepository<ShippingAddress, Long> {
     Optional<ShippingAddress> findByUserAndDefaultAddress(User user, boolean defaultAddress);
     List<ShippingAddress> findAllByUser_Id(long userId);
+    ShippingAddress findByUser_Id(Long userId);
+
 }
