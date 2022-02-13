@@ -1,5 +1,5 @@
 package com.chompfooddeliveryapp.model.enums;
 
 public enum OrderStatus {
-    PENDING, DELIVERED, CANCELED
+    PENDING, DELIVERED, CANCELED, CONFIRMED
 }
