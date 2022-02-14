@@ -107,7 +107,6 @@ public class UserServiceImpl implements UserServiceInterface {
                 encoder.encode(signupDto.getPassword()));
 
         Role role = roleRepository.findByName(UserRole.USER).get();
-        System.out.println(role+"....................");
         user.setRole(role);
 
 
@@ -121,9 +120,8 @@ public class UserServiceImpl implements UserServiceInterface {
 
 
         userRepository.save(user);
-
+        // add cart to user saved with USER Role
         cartService.createCartForUser(user);
-        userRepository.save(user);
         // TODO: Send confirmation token
         return ResponseEntity.ok(getResponseEntity(user, signupDto.getEmail()));
     }

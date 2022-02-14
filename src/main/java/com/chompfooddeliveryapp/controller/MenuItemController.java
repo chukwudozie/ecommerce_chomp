@@ -15,7 +15,6 @@ import com.chompfooddeliveryapp.model.meals.MenuItem;
 
 
 @RestController
-//@PreAuthorize("hasRole('ROLE_ADMIN')")
 @RequestMapping("/admin")
 public class MenuItemController{
 
@@ -35,7 +34,6 @@ public class MenuItemController{
     }
 
     @PostMapping("/additem")
-//    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> addItem(@RequestBody MenuItem menuItem) throws MenuException {
 
          menuServiceImplementation.addMenuItem(menuItem);
