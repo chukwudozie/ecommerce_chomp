@@ -32,7 +32,7 @@ public class StartUpService {
     }
 
     public void createAdmin(){
-        Optional<User> existingAdmin = userRepository.findByEmail("admin@chompaap.com");
+        Optional<User> existingAdmin = userRepository.findByRole_Name(UserRole.ADMIN);
         if(existingAdmin.isEmpty()){
             User user = new User();
             user.setEmail("admin@chompapp.com");
