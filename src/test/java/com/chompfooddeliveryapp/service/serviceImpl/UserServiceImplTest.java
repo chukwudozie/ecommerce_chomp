@@ -7,6 +7,7 @@ import com.chompfooddeliveryapp.dto.token.ConfirmationTokenService;
 import com.chompfooddeliveryapp.dto.ChangePasswordDto;
 import com.chompfooddeliveryapp.dto.EditUserDetailsDto;
 import com.chompfooddeliveryapp.repository.CartRepository;
+import com.chompfooddeliveryapp.security.PasswordValidator;
 import com.chompfooddeliveryapp.service.serviceInterfaces.CartService;
 import com.chompfooddeliveryapp.model.enums.UserGender;
 import com.chompfooddeliveryapp.model.enums.UserRole;
@@ -71,11 +72,11 @@ class UserServiceImplTest {
 
     void setUp() {
         userService = new UserServiceImpl(utils, authenticationManager, userDetailsService, userRepository, encoder,
-                confirmationTokenService, mailService, walletRepository, walletService, roleRepository, cartService);
+                confirmationTokenService, mailService, walletRepository, walletService, roleRepository, cartService, new PasswordValidator());
     }
 
     @Test
-    public void testCreateUserIsFalse(){
+    public void testCreateUserIsFalse() throws Exception {
 
         SignupDto signupDto = new SignupDto();
         signupDto.setEmail("blah@gmail.com");
