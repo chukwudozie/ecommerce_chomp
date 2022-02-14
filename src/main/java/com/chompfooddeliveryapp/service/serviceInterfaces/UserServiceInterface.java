@@ -21,4 +21,6 @@ public interface UserServiceInterface {
     void changePassword(ChangePasswordDto changePasswordDto, Long id);
 
     void updateUser(EditUserDetailsDto editUserDetailsDto, Long id);
+
+    ResponseEntity<?> resendToVerifyEmail(UserDto loginRequest);
 }

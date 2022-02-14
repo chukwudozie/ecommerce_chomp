@@ -117,6 +117,11 @@
             <artifactId>spring-context-support</artifactId>
             <version>5.3.15</version>
         </dependency>
+        <dependency>
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>6.0.7.Final</version>
+        </dependency>
 
 
         <!--        ends here-->
