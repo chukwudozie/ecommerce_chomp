@@ -5,6 +5,7 @@ import com.chompfooddeliveryapp.model.users.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,5 +25,9 @@ public interface  UserRepository  extends JpaRepository<User, Long> {
 
     Optional<User> getUserByPassword(String password);
 
+    Long countUsersBySubscribedTrue();
+
+    @Query(value="SELECT count(id) FROM users u WHERE UPPER(u.gender) =  :gender", nativeQuery = true)
+    Long countUsersByUserGenderIs(@Param("gender") String gender);
 
 }
