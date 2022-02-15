@@ -230,7 +230,7 @@ public class UserServiceImpl implements UserServiceInterface {
     private MessageResponse getResponseEntity(User user, String email) {
         String token = UUID.randomUUID().toString();
         LocalDateTime createdAt = LocalDateTime.now();
-        LocalDateTime expiresAt = createdAt.plusMinutes(2) ;
+        LocalDateTime expiresAt = createdAt.plusMinutes(24) ;
         ConfirmationToken confirmationToken = new ConfirmationToken(
                 token,
                 createdAt,
