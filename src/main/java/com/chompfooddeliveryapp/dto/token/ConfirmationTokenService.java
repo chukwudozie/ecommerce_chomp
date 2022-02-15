@@ -1,5 +1,6 @@
 package com.chompfooddeliveryapp.dto.token;
 
+import io.netty.handler.codec.socks.SocksRequestType;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +25,10 @@ public class ConfirmationTokenService {
     public int setConfirmedAt(String token) {
         return confirmationTokenRepository.updateConfirmedAt(
                 token, LocalDateTime.now());
+    }
+
+    public Optional<ConfirmationToken> getTokenByUserEmail(String email){
+        return confirmationTokenRepository.findByUser_Email(email);
     }
 
 }

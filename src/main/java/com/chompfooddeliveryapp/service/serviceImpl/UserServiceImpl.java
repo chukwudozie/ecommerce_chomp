@@ -11,6 +11,7 @@ import com.chompfooddeliveryapp.dto.UserDto;
 import com.chompfooddeliveryapp.dto.token.ConfirmationToken;
 import com.chompfooddeliveryapp.dto.token.ConfirmationTokenService;
 
+import com.chompfooddeliveryapp.security.PasswordValidator;
 import com.chompfooddeliveryapp.service.serviceInterfaces.CartService;
 
 import com.chompfooddeliveryapp.exception.BadRequestException;
@@ -65,6 +66,7 @@ public class UserServiceImpl implements UserServiceInterface {
     private final ConfirmationTokenService confirmationTokenService;
     private final MailService mailService;
     private final WalletRepository walletRepository;
+    private final PasswordValidator passwordValidator;
 
     @Autowired
     private final WalletServiceImpl walletService;
@@ -74,7 +76,7 @@ public class UserServiceImpl implements UserServiceInterface {
                            UserDetailsService userDetailsService, UserRepository userRepository,
                            PasswordEncoder encoder, ConfirmationTokenService confirmationTokenService,
                            MailService mailService, WalletRepository walletRepository, WalletServiceImpl walletService,
-                           RoleRepository roleRepository,CartService cartService) {
+                           RoleRepository roleRepository,CartService cartService, PasswordValidator passwordValidator) {
         this.utils = utils;
         this.authenticationManager = authenticationManager;
         this.userDetailsService = userDetailsService;
@@ -86,6 +88,7 @@ public class UserServiceImpl implements UserServiceInterface {
         this.walletRepository = walletRepository;
         this.walletService = walletService;
         this.roleRepository = roleRepository;
+        this.passwordValidator=passwordValidator;
 
     }
 
@@ -94,13 +97,19 @@ public class UserServiceImpl implements UserServiceInterface {
         if (userRepository.existsByEmail(signupDto.getEmail().toLowerCase(Locale.ROOT))) {
             return ResponseEntity.ok(new MessageResponse("User already exists!", null,null,null));
         }
+        boolean passwordValue = passwordValidator.validate(signupDto.getPassword());
+        if (!passwordValue){
+
+            return ResponseEntity.ok(new MessageResponse("Invalid password!", null,null,null));
+        }
         User user = new User(signupDto.getEmail(),
                 signupDto.getFirstName(), signupDto.getLastName(),
                 encoder.encode(signupDto.getPassword()));
 
         Role role = roleRepository.findByName(UserRole.USER).get();
-        System.out.println(role+"....................");
         user.setRole(role);
+
+
 
     //addng a wallet to a user by team D
         Wallet wallet = new Wallet();
@@ -111,63 +120,47 @@ public class UserServiceImpl implements UserServiceInterface {
 
 
         userRepository.save(user);
-
+        // add cart to user saved with USER Role
         cartService.createCartForUser(user);
-        userRepository.save(user);
         // TODO: Send confirmation token
-        String token = UUID.randomUUID().toString();
-        LocalDateTime createdAt = LocalDateTime.now();
-        LocalDateTime expiresAt = createdAt.plusHours(24) ;
-        ConfirmationToken confirmationToken = new ConfirmationToken(
-                token,
-                LocalDateTime.now(),
-                LocalDateTime.now().plusHours(24),
-                user
-        );
-
-        confirmationTokenService.saveConfirmationToken(confirmationToken);
-        String link = "http://localhost:808/confirm?token=" + token;
-        String content = "<p>Hello,</p>"
-                + "<p>Please verify your email with the link below.</p>"
-                + "<p>Click the link below activate your account:</p>"
-                + "<p><a href=\"" + link + "\">Verify Email</a></p>"
-                + "<br>"
-                + "<p> Ignore this email if you have verified your email, "
-                + "or you have not made the request.</p>";
-
-        try {
-            mailService.sendMail(signupDto.getEmail(), content, "Here is your confirmation email. ");
-        } catch (MailjetException | MailjetSocketTimeoutException e) {
-            e.printStackTrace();
-        }
-        return ResponseEntity.ok(new MessageResponse("Complete your registration with the token", token, createdAt, expiresAt));
+        return ResponseEntity.ok(getResponseEntity(user, signupDto.getEmail()));
     }
 
 
 
     @Transactional
-    public String confirmToken(String token) {
+    public ResponseEntity<?> confirmToken(String token) {
         ConfirmationToken confirmationToken = confirmationTokenService
                 .getToken(token)
                 .orElseThrow(() ->
                         new IllegalStateException("token not found"));
         if (confirmationToken.getConfirmedAt() != null) {
-            throw new IllegalStateException("email already confirmed");
+            System.out.println("Already confirmed");
+            throw new BadRequestException("email already confirmed");
         }
         LocalDateTime expiredAt = confirmationToken.getExpiresAt();
         if(expiredAt.isBefore(LocalDateTime.now())) {
-            throw new IllegalStateException("token expired");
+            System.out.println("expired");
+           return ResponseEntity.ok(getResponseEntity(confirmationToken.getUser(), confirmationToken.getUser().getEmail()));
         }
         confirmationTokenService.setConfirmedAt(token);
         userRepository.enableAppUser(confirmationToken.getUser().getEmail());
 
-        return "Confirmed!!";
+        return ResponseEntity.ok("Registration verified");
 
     }
 
     @Override
     public ResponseEntity<?> loginUser(@RequestBody UserDto loginRequest, HttpServletResponse response) throws Exception {
         try {
+            System.out.println(" I am here");
+            Optional<ConfirmationToken> userConfirmation = confirmationTokenService.getTokenByUserEmail(loginRequest.getEmail());
+            if(userConfirmation.isPresent() && userConfirmation.get().getConfirmedAt() == null){
+                System.out.println("No token");
+                throw new BadRequestException("Please confirm your token before login");
+
+            }
+            System.out.println("Cant pass here");
             Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
 
             final UserDetails userDetails = userDetailsService.loadUserByUsername(loginRequest.getEmail());
@@ -226,5 +219,40 @@ public class UserServiceImpl implements UserServiceInterface {
             userRepository.save(loggedInUser.get());
             System.out.println("User updated "+loggedInUser.get().getEmail());
         }
+    }
+
+    @Override
+    public ResponseEntity<?> resendToVerifyEmail(UserDto loginRequest) {
+        User user = userRepository.findByEmail(loginRequest.getEmail()).get();
+        return ResponseEntity.ok(getResponseEntity(user, loginRequest.getEmail()));
+    }
+
+    private MessageResponse getResponseEntity(User user, String email) {
+        String token = UUID.randomUUID().toString();
+        LocalDateTime createdAt = LocalDateTime.now();
+        LocalDateTime expiresAt = createdAt.plusMinutes(24) ;
+        ConfirmationToken confirmationToken = new ConfirmationToken(
+                token,
+                createdAt,
+                expiresAt,
+                user
+        );
+
+        confirmationTokenService.saveConfirmationToken(confirmationToken);
+        String link = "http://localhost:808/confirm?token=" + token;
+        String content = "<p>Hello,</p>"
+                + "<p>Please verify your email with the link below.</p>"
+                + "<p>Click the link below activate your account:</p>"
+                + "<p><a href=\"" + link + "\">Verify Email</a></p>"
+                + "<br>"
+                + "<p> Ignore this email if you have verified your email, "
+                + "or you have not made the request.</p>";
+
+        try {
+            mailService.sendMail(email, content, "Here is your confirmation email. ");
+        } catch (MailjetException | MailjetSocketTimeoutException e) {
+            e.printStackTrace();
+        }
+        return new MessageResponse("Complete your registration with the token", token, createdAt, expiresAt);
     }
 }

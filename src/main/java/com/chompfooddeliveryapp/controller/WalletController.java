@@ -14,6 +14,7 @@ import com.chompfooddeliveryapp.service.serviceImpl.TransactionServiceImpl;
 import com.chompfooddeliveryapp.service.serviceImpl.WalletServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,6 +34,7 @@ public class WalletController {
     private final WalletServiceImpl walletService;
     private final PaystackServiceImpl paystackService;
 
+    @Autowired
     public WalletController( WalletServiceImpl walletService, PaystackServiceImpl paystackService) {
 
         this.walletService = walletService;

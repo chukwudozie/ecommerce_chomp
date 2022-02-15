@@ -9,7 +9,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Entity
 @Data
@@ -26,9 +26,11 @@ public class Order {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
-    private Timestamp order_date;
+    private double amount;
 
-    private Timestamp delivered_date;
+    private LocalDateTime order_date;
+
+    private LocalDateTime delivered_date;
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
