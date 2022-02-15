@@ -1,8 +1,8 @@
 package com.chompfooddeliveryapp.service.serviceImpl;
 
 
-import com.chompfooddeliveryapp.dto.PayStackRequestDto;
-import com.chompfooddeliveryapp.dto.PayStackResponseDto;
+import com.chompfooddeliveryapp.dto.PayStackRequest;
+import com.chompfooddeliveryapp.payload.PayStackResponse;
 import com.chompfooddeliveryapp.dto.VerifyTransactionDto;
 import com.chompfooddeliveryapp.model.enums.PaymentMethod;
 import com.chompfooddeliveryapp.model.enums.TransactionType;
@@ -35,7 +35,7 @@ public class PaystackServiceImpl {
     }
 
 
-    public Object initializePaystackTransaction (PayStackRequestDto payStackRequestDto,
+    public Object initializePaystackTransaction (PayStackRequest payStackRequestDto,
                                                  long userId, TransactionType type ){
         String transactionReference = transactionService.getTransactionRefence(userId, type, PaymentMethod.PAYSTACK);
 
@@ -55,13 +55,13 @@ public class PaystackServiceImpl {
                 .retrieve().bodyToMono(Object.class).block();
     }
 
-    public PayStackResponseDto verifyPaystackTransaction(VerifyTransactionDto verifyTransactionDto) throws JsonProcessingException {
+    public PayStackResponse verifyPaystackTransaction(VerifyTransactionDto verifyTransactionDto) throws JsonProcessingException {
         String paystackObject =  webClient.build().get().
                 uri("https://api.paystack.co/transaction/verify/" + verifyTransactionDto.getTransactionReference()).
                 header("Authorization", "Bearer " + secret)
                 .retrieve().bodyToMono(String.class).block();
 
-        PayStackResponseDto payStackDto = objectMapper.readValue( paystackObject, PayStackResponseDto.class);
+        PayStackResponse payStackDto = objectMapper.readValue( paystackObject, PayStackResponse.class);
 
 
         return payStackDto;

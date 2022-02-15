@@ -1,4 +1,4 @@
-package com.chompfooddeliveryapp.payload.response;
+package com.chompfooddeliveryapp.payload;
 
 
 import lombok.Getter;

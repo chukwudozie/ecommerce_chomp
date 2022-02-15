@@ -11,7 +11,7 @@ import com.chompfooddeliveryapp.repository.MenuItemRepository;
 import com.chompfooddeliveryapp.repository.OrderRepository;
 import com.chompfooddeliveryapp.repository.UserRepository;
 import com.chompfooddeliveryapp.service.serviceInterfaces.AdminService;
-import com.chompfooddeliveryapp.service.serviceInterfaces.UserNotFoundException;
+import com.chompfooddeliveryapp.exception.UserNotFoundException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;

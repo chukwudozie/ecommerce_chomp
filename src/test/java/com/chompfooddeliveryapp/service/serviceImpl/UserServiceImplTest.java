@@ -3,15 +3,11 @@ package com.chompfooddeliveryapp.service.serviceImpl;
 
 import com.chompfooddeliveryapp.Mail.MailService;
 import com.chompfooddeliveryapp.dto.SignupDto;
-import com.chompfooddeliveryapp.dto.token.ConfirmationTokenService;
 import com.chompfooddeliveryapp.dto.ChangePasswordDto;
 import com.chompfooddeliveryapp.dto.EditUserDetailsDto;
-import com.chompfooddeliveryapp.repository.CartRepository;
 import com.chompfooddeliveryapp.security.PasswordValidator;
 import com.chompfooddeliveryapp.service.serviceInterfaces.CartService;
 import com.chompfooddeliveryapp.model.enums.UserGender;
-import com.chompfooddeliveryapp.model.enums.UserRole;
-import com.chompfooddeliveryapp.model.users.User;
 import com.chompfooddeliveryapp.repository.RoleRepository;
 import com.chompfooddeliveryapp.repository.UserRepository;
 import com.chompfooddeliveryapp.repository.WalletRepository;

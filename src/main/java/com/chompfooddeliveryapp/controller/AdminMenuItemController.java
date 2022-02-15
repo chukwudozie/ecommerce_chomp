@@ -4,7 +4,6 @@ import com.chompfooddeliveryapp.dto.ChangePasswordDto;
 import com.chompfooddeliveryapp.exception.MenuException;
 import com.chompfooddeliveryapp.exception.MenuNotFoundException;
 import com.chompfooddeliveryapp.service.serviceImpl.MenuServiceImplementation;
-import com.chompfooddeliveryapp.service.serviceImpl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,15 +15,14 @@ import com.chompfooddeliveryapp.model.meals.MenuItem;
 
 @RestController
 @RequestMapping("/admin")
-public class MenuItemController{
+public class AdminMenuItemController {
 
     private final MenuServiceImplementation menuServiceImplementation;
-    private final UserServiceImpl userService;
 
     @Autowired
-    public MenuItemController(MenuServiceImplementation menuServiceImplementation, UserServiceImpl userService) {
+    public AdminMenuItemController(MenuServiceImplementation menuServiceImplementation) {
         this.menuServiceImplementation = menuServiceImplementation;
-        this.userService = userService;
+
     }
 
 
@@ -54,9 +52,5 @@ public class MenuItemController{
         return new ResponseEntity<>("Menu item has deleted", HttpStatus.OK);
     }
 
-    @PostMapping("/change_password/{id}")
-    public ResponseEntity<?> updatePassword(@RequestBody ChangePasswordDto changePasswordDto, @PathVariable Long id){
-        userService.changePassword(changePasswordDto, id);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
+
 }

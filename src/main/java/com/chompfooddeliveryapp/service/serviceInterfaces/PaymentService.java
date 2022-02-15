@@ -1,7 +1,7 @@
 package com.chompfooddeliveryapp.service.serviceInterfaces;
 
 import com.chompfooddeliveryapp.dto.ProcessPaymentRequest;
-import com.chompfooddeliveryapp.dto.VerificationResponse;
+import com.chompfooddeliveryapp.payload.VerificationResponse;
 import com.chompfooddeliveryapp.dto.VerifyTransactionDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 

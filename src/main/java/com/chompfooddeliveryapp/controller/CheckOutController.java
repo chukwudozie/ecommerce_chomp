@@ -2,7 +2,7 @@ package com.chompfooddeliveryapp.controller;
 
 import com.chompfooddeliveryapp.dto.ShippingAddressDTO;
 import com.chompfooddeliveryapp.payload.AllCartItems;
-import com.chompfooddeliveryapp.payload.response.CheckoutResponse;
+import com.chompfooddeliveryapp.payload.CheckoutResponse;
 import com.chompfooddeliveryapp.service.serviceInterfaces.CheckoutService;
 import com.chompfooddeliveryapp.service.serviceInterfaces.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
