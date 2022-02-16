@@ -1,10 +1,10 @@
-package com.chompfooddeliveryapp.dto;
+package com.chompfooddeliveryapp.payload;
 
 import lombok.Data;
 
 import java.util.Map;
 @Data
-public class PayStackResponseDto {
+public class PayStackResponse {
     String status;
     String message;
     Map<String, Object> data;

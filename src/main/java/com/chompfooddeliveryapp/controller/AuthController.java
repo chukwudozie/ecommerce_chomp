@@ -16,7 +16,6 @@ import javax.validation.Valid;
 
 @RestController
 @CrossOrigin(origins = "*",maxAge = 3600)
-@Slf4j
 @RequestMapping("/auth")
 public class AuthController {
 
@@ -31,8 +30,6 @@ public class AuthController {
 
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupDto signupDto, BindingResult result) {
-        log.info("I got into signup");
-        System.out.println("auth controller");
         ResponseEntity<?> errorMap = validationService.validate(result);
         if(errorMap != null) return errorMap;
         return userServiceImpl.createUser(signupDto);

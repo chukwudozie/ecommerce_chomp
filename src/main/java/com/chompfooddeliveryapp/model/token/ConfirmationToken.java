@@ -1,4 +1,4 @@
-package com.chompfooddeliveryapp.dto.token;
+package com.chompfooddeliveryapp.model.token;
 
 import com.chompfooddeliveryapp.model.users.User;
 import lombok.Getter;

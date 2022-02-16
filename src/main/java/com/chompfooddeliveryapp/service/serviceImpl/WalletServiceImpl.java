@@ -1,8 +1,6 @@
 package com.chompfooddeliveryapp.service.serviceImpl;
 
-import com.chompfooddeliveryapp.dto.PayStackResponseDto;
 import com.chompfooddeliveryapp.exception.BadRequestException;
-import com.chompfooddeliveryapp.model.enums.TransactionStatus;
 import com.chompfooddeliveryapp.model.users.User;
 import com.chompfooddeliveryapp.model.wallets.Transaction;
 import com.chompfooddeliveryapp.model.wallets.Wallet;
@@ -10,10 +8,7 @@ import com.chompfooddeliveryapp.payload.WalletPayload;
 import com.chompfooddeliveryapp.repository.TransactionRepository;
 import com.chompfooddeliveryapp.repository.UserRepository;
 import com.chompfooddeliveryapp.repository.WalletRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;

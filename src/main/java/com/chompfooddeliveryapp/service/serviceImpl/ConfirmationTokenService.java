@@ -1,6 +1,7 @@
-package com.chompfooddeliveryapp.dto.token;
+package com.chompfooddeliveryapp.service.serviceImpl;
 
-import io.netty.handler.codec.socks.SocksRequestType;
+import com.chompfooddeliveryapp.model.token.ConfirmationToken;
+import com.chompfooddeliveryapp.repository.ConfirmationTokenRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 

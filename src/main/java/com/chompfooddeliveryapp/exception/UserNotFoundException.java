@@ -1,4 +1,4 @@
-package com.chompfooddeliveryapp.service.serviceInterfaces;
+package com.chompfooddeliveryapp.exception;
 
 public class UserNotFoundException extends RuntimeException {
     public UserNotFoundException(String message) {

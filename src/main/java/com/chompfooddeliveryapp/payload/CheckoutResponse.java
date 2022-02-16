@@ -1,8 +1,6 @@
-package com.chompfooddeliveryapp.payload.response;
+package com.chompfooddeliveryapp.payload;
 
-import com.chompfooddeliveryapp.dto.PaymentDetailsDTO;
 import com.chompfooddeliveryapp.dto.ShippingAddressDTO;
-import com.chompfooddeliveryapp.payload.ViewCartResponse;
 import lombok.*;
 
 import java.util.List;

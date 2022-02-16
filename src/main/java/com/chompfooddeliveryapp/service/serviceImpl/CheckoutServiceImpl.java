@@ -10,15 +10,14 @@ import com.chompfooddeliveryapp.model.orders.Order;
 import com.chompfooddeliveryapp.model.orders.OrderDetail;
 import com.chompfooddeliveryapp.model.users.ShippingAddress;
 import com.chompfooddeliveryapp.model.users.User;
-import com.chompfooddeliveryapp.payload.response.CheckoutResponse;
-import com.chompfooddeliveryapp.payload.response.ProductSummary;
+import com.chompfooddeliveryapp.payload.CheckoutResponse;
+import com.chompfooddeliveryapp.payload.ProductSummary;
 import com.chompfooddeliveryapp.repository.*;
 import com.chompfooddeliveryapp.service.serviceInterfaces.CheckoutService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;

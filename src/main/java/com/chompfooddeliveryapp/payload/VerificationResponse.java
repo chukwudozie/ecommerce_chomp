@@ -1,4 +1,4 @@
-package com.chompfooddeliveryapp.dto;
+package com.chompfooddeliveryapp.payload;
 
 import lombok.Getter;
 import lombok.Setter;

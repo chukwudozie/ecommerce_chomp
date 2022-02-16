@@ -10,16 +10,17 @@ import com.chompfooddeliveryapp.model.enums.TransactionType;
 import com.chompfooddeliveryapp.model.orders.Order;
 import com.chompfooddeliveryapp.model.users.User;
 import com.chompfooddeliveryapp.model.wallets.Transaction;
+import com.chompfooddeliveryapp.payload.PayStackResponse;
+import com.chompfooddeliveryapp.payload.VerificationResponse;
 import com.chompfooddeliveryapp.repository.OrderRepository;
 import com.chompfooddeliveryapp.repository.TransactionRepository;
 import com.chompfooddeliveryapp.repository.UserRepository;
 import com.chompfooddeliveryapp.security.service.UserDetailsServiceImpl;
 import com.chompfooddeliveryapp.service.serviceInterfaces.PaymentService;
-import com.chompfooddeliveryapp.service.serviceInterfaces.UserNotFoundException;
+import com.chompfooddeliveryapp.exception.UserNotFoundException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -66,7 +67,7 @@ public class PaymentServiceImpl implements PaymentService {
 
             //todo: Important!!! remove amount from ur request object and fetch it from Ifeanyi's Checkout
             if (request.getPaymentMethod().equals(PaymentMethod.PAYSTACK.name())){
-                PayStackRequestDto requestDto = new PayStackRequestDto();
+                PayStackRequest requestDto = new PayStackRequest();
                 requestDto.setAmount((long) userOrder.getAmount());
                 return   payStackService.initializePaystackTransaction(requestDto,userId, TransactionType.DEBIT);
             }
@@ -92,7 +93,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public VerificationResponse verifyPayStackPayment(VerifyTransactionDto transactionDto, Long userId, Long orderId)
             throws JsonProcessingException {
-        PayStackResponseDto payStack =  payStackService.verifyPaystackTransaction(transactionDto);
+        PayStackResponse payStack =  payStackService.verifyPaystackTransaction(transactionDto);
         VerificationResponse response = new VerificationResponse();
         response.setStatus(payStack.getStatus());
         response.setMessage(payStack.getMessage());
