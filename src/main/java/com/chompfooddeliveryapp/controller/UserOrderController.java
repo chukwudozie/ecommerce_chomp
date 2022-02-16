@@ -2,7 +2,6 @@ package com.chompfooddeliveryapp.controller;
 
 import com.chompfooddeliveryapp.dto.ResponseViewUserOrdersDTO;
 import com.chompfooddeliveryapp.dto.ShippingAddressDTO;
-import com.chompfooddeliveryapp.model.users.ShippingAddress;
 import com.chompfooddeliveryapp.service.serviceInterfaces.CheckoutService;
 import com.chompfooddeliveryapp.service.serviceInterfaces.OrderService;
 import lombok.extern.slf4j.Slf4j;
@@ -16,12 +15,12 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/user")
-public class OrderController {
+public class UserOrderController {
 
     private final OrderService orderService;
     private final CheckoutService checkoutService;
     @Autowired
-    public OrderController(OrderService orderService, CheckoutService checkoutService) {
+    public UserOrderController(OrderService orderService, CheckoutService checkoutService) {
         this.orderService = orderService;
         this.checkoutService = checkoutService;
     }

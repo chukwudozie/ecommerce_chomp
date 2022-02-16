@@ -1,6 +1,6 @@
 package com.chompfooddeliveryapp;
 
-import com.chompfooddeliveryapp.dto.token.ConfirmationTokenRepository;
+import com.chompfooddeliveryapp.repository.ConfirmationTokenRepository;
 import com.chompfooddeliveryapp.repository.CartRepository;
 import com.chompfooddeliveryapp.repository.UserRepository;
 import lombok.RequiredArgsConstructor;

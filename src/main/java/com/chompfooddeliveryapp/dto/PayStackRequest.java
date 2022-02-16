@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PayStackRequestDto {
+public class PayStackRequest {
     private String email;
     private long amount;
     private String[] channels;

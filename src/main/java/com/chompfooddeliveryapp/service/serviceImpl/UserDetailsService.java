@@ -4,7 +4,7 @@ import com.chompfooddeliveryapp.dto.UserDetailsDTO;
 import com.chompfooddeliveryapp.repository.ShippingAddressRepository;
 import com.chompfooddeliveryapp.repository.UserRepository;
 import com.chompfooddeliveryapp.service.serviceInterfaces.OrderService;
-import com.chompfooddeliveryapp.service.serviceInterfaces.UserNotFoundException;
+import com.chompfooddeliveryapp.exception.UserNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service

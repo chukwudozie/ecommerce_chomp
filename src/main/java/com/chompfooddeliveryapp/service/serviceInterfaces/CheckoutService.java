@@ -2,8 +2,8 @@ package com.chompfooddeliveryapp.service.serviceInterfaces;
 
 import com.chompfooddeliveryapp.dto.ShippingAddressDTO;
 import com.chompfooddeliveryapp.model.users.User;
-import com.chompfooddeliveryapp.payload.response.CheckoutResponse;
-import com.chompfooddeliveryapp.payload.response.ProductSummary;
+import com.chompfooddeliveryapp.payload.CheckoutResponse;
+import com.chompfooddeliveryapp.payload.ProductSummary;
 
 import java.util.List;
 
