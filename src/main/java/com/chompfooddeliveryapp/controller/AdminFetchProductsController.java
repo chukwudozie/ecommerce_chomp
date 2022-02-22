@@ -2,12 +2,14 @@ package com.chompfooddeliveryapp.controller;
 
 import com.chompfooddeliveryapp.dto.AdminViewOrderDTO;
 import com.chompfooddeliveryapp.exception.ProductNotFoundException;
+import com.chompfooddeliveryapp.model.enums.MenuCategory;
 import com.chompfooddeliveryapp.model.meals.MenuItem;
 import com.chompfooddeliveryapp.payload.UserFetchAllMealsResponse;
 import com.chompfooddeliveryapp.repository.MenuItemRepository;
 import com.chompfooddeliveryapp.service.serviceImpl.OrderServiceImplementation;
 import com.chompfooddeliveryapp.service.serviceInterfaces.MenuItemService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -43,6 +45,16 @@ public class AdminFetchProductsController {
 
         UserFetchAllMealsResponse mealsPage = service.fetchAllMeals(page, size, "name");
         return ResponseEntity.ok(mealsPage);
+    }
+
+    @GetMapping("/products/category")
+    public ResponseEntity<UserFetchAllMealsResponse> getProductsByCategory(
+            @RequestParam("category") MenuCategory category,
+            @RequestParam(name = "pageNo") int page,
+            @RequestParam(name = "pageSize") int size){
+
+        UserFetchAllMealsResponse mealResponse = service.fetchMealsByCategory(category, page, size);
+        return ResponseEntity.ok(mealResponse);
     }
 
     @GetMapping("/orders")
