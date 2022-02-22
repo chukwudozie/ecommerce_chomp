@@ -1,5 +1,6 @@
 package com.chompfooddeliveryapp.controller;
 
+import com.chompfooddeliveryapp.model.enums.MenuCategory;
 import com.chompfooddeliveryapp.payload.UserFetchAllMealsResponse;
 import com.chompfooddeliveryapp.service.serviceInterfaces.MenuItemService;
 import lombok.RequiredArgsConstructor;
@@ -28,5 +29,23 @@ public class UserMenuItemController {
     @GetMapping("/{menuId}")
     public ResponseEntity<?> fetchOneProduct(@PathVariable(name = "menuId") Long menuId){
         return ResponseEntity.ok(menuItemService.getMenuItemById(menuId));
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<UserFetchAllMealsResponse> fetchByKeyword(
+            @RequestParam("searchKey") String keyword,
+            @RequestParam("pageNo") int pageNo,
+            @RequestParam("pageSize") int pageSize) {
+        UserFetchAllMealsResponse mealsResponse = menuItemService.fetchMealsByKeyWord(keyword, pageNo, pageSize);
+        return ResponseEntity.ok(mealsResponse);
+    }
+
+    @GetMapping("/category")
+    public ResponseEntity<UserFetchAllMealsResponse> fetchProductsByCategory(
+            @RequestParam("category") MenuCategory category,
+            @RequestParam("pageNo") int pageNo,
+            @RequestParam("pageSize") int pageSize) {
+        UserFetchAllMealsResponse userFetchAllMealsResponse = menuItemService.fetchMealsByCategory(category, pageNo, pageSize);
+        return ResponseEntity.ok(userFetchAllMealsResponse);
     }
 }

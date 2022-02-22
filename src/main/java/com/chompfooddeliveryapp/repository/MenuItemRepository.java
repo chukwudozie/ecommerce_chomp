@@ -1,5 +1,6 @@
 package com.chompfooddeliveryapp.repository;
 
+import com.chompfooddeliveryapp.model.enums.MenuCategory;
 import com.chompfooddeliveryapp.model.meals.MenuItem;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,4 +18,6 @@ public interface MenuItemRepository extends JpaRepository<MenuItem, Long>{
     boolean existsByName(String name);
     @Query("SELECT m.name FROM MenuItem m WHERE m.id = :id")
     Optional<String> findNameById(@Param("id")Long id);
+    Page<MenuItem> findAllByNameContains(String keyword, Pageable pageable);
+    Page<MenuItem> findAllByCategory(MenuCategory category, Pageable pageable);
 }
