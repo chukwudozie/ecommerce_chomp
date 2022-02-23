@@ -1,6 +1,7 @@
 package com.chompfooddeliveryapp.service.serviceImpl;
 
 import com.chompfooddeliveryapp.exception.MenuException;
+import com.chompfooddeliveryapp.model.enums.MenuCategory;
 import com.chompfooddeliveryapp.payload.UserFetchAllMealsResponse;
 import com.chompfooddeliveryapp.repository.MenuItemRepository;
 import com.chompfooddeliveryapp.service.serviceInterfaces.MenuItemService;
@@ -84,6 +85,20 @@ public class MenuServiceImplementation implements MenuItemService {
         Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
         Page<MenuItem> menuItems = menuItemRepository.findAll(paging);
         if(!menuItems.hasContent()) return new UserFetchAllMealsResponse("No menu Item", menuItems.getContent());
+        return new UserFetchAllMealsResponse("Success", menuItems.getContent());
+    }
+
+    @Override
+    public UserFetchAllMealsResponse fetchMealsByKeyWord(String keyword, int pageNo, int pageSize) {
+        Page<MenuItem> menuItems = menuItemRepository.findAllByNameContains(keyword, PageRequest.of(pageNo, pageSize));
+        if (!menuItems.hasContent()) return new UserFetchAllMealsResponse("No match found", menuItems.getContent());
+        return new UserFetchAllMealsResponse("Match found", menuItems.getContent());
+    }
+
+    @Override
+    public UserFetchAllMealsResponse fetchMealsByCategory(MenuCategory category, int pageNo, int pageSize) {
+        Page<MenuItem> menuItems = menuItemRepository.findAllByCategory(category, PageRequest.of(pageNo, pageSize));
+        if (!menuItems.hasContent()) return new UserFetchAllMealsResponse("Category does not exist or No items in Category", menuItems.getContent());
         return new UserFetchAllMealsResponse("Success", menuItems.getContent());
     }
 }
