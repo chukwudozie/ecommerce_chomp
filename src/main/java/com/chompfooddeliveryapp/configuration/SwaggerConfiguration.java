@@ -14,65 +14,57 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.plugins.Docket;
 
+import springfox.documentation.service.*;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+
 @Configuration
-public class SwaggerConfiguration implements WebMvcConfigurer {
+public class SwaggerConfiguration {
+
+    public static final String AUTHORIZATION_HEADER = "Authorization";
+
+    private ApiInfo apiInfo() {
+        return new ApiInfo("Chomp Food Delivery App",
+                "Food Delivery App",
+                "1.0",
+                "Free to use",
+                new Contact("Decagon", "www.chomp-app.com", "chompfood@gmail.com"),
+                "License of API",
+                "http://chompfood.com",
+                Collections.emptyList());
+    }
 
     @Bean
-    public Docket swaggerConfig() {
-        //Return a prepared Docket Instance
+    public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
-                .apiInfo(apiDetails())
-                .securityContexts(List.of(securityContext()))
-                .securitySchemes(List.of(apiKey()))
-                .useDefaultResponseMessages(false)
+                .apiInfo(apiInfo())
+                .securityContexts(Arrays.asList(securityContext()))
+                .securitySchemes(Arrays.asList(apiKey()))
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("com.chompfooddeliveryapp"))
                 .paths(PathSelectors.any())
                 .build();
     }
 
-    @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry
-                .addResourceHandler("swagger-ui/")
-                .addResourceLocations("classpath:/META-INF/resources/");
-        registry
-                .addResourceHandler("/webjars/**")
-                .addResourceLocations("classpath:/META-INF/resources/webjars/");
+    private ApiKey apiKey() {
+        return new ApiKey("Bearer", AUTHORIZATION_HEADER, "header");
     }
+
     private SecurityContext securityContext() {
-        return SecurityContext.builder().securityReferences(defaultAuth()).build();
+        return SecurityContext.builder()
+                .securityReferences(defaultAuth())
+                .build();
     }
 
-
-    private SecurityReference bearerAuthReference() {
-        return new SecurityReference("Bearer", new AuthorizationScope[0]);
-    }
-    private List<SecurityReference> defaultAuth() {
-        AuthorizationScope authorizationScope = new AuthorizationScope("global", "accessEverything");
+    List<SecurityReference> defaultAuth() {
+        AuthorizationScope authorizationScope
+                = new AuthorizationScope("global", "accessEverything");
         AuthorizationScope[] authorizationScopes = new AuthorizationScope[1];
         authorizationScopes[0] = authorizationScope;
         return Arrays.asList(new SecurityReference("Bearer", authorizationScopes));
     }
 
-    private ApiInfo apiDetails(){
-        return new ApiInfo(
-                "Chomp Food Delivery App",
-                "Food delivery app, Group A",
-                "1.0",
-                "Free to use",
-                new springfox.documentation.service.Contact("Group A", " ", "chompfood@gmail.com"),
-                "API Licence",
-                "http://chompfood.com",
-                Collections.emptyList()
-        );
-    }
-
-    private ApiKey apiKey() {
-        return new ApiKey("Bearer", "Authorization", "header");
-    }
 }

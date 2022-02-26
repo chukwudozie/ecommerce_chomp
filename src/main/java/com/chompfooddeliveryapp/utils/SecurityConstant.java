@@ -17,7 +17,8 @@ public class SecurityConstant {
             "/swagger-ui/#/**",
             //swagger ends
            "/api/auth/**",
-            "/auth/**"
+            "/auth/**",
+            "/**",
 
     };
 }
