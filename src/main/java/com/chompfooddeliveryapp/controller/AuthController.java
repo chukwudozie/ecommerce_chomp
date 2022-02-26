@@ -4,6 +4,7 @@ import com.chompfooddeliveryapp.dto.SignupDto;
 import com.chompfooddeliveryapp.dto.UserDto;
 import com.chompfooddeliveryapp.service.serviceImpl.SignupErrorValidationService;
 import com.chompfooddeliveryapp.service.serviceImpl.UserServiceImpl;
+import com.chompfooddeliveryapp.service.serviceInterfaces.UserServiceInterface;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,11 +20,11 @@ import javax.validation.Valid;
 @RequestMapping("/auth")
 public class AuthController {
 
-    private final UserServiceImpl userServiceImpl;
+    private final UserServiceInterface userServiceImpl;
     private final SignupErrorValidationService validationService;
 
     @Autowired
-    public AuthController(UserServiceImpl userServiceImpl, SignupErrorValidationService validationService) {
+    public AuthController(UserServiceInterface userServiceImpl, SignupErrorValidationService validationService) {
         this.userServiceImpl = userServiceImpl;
         this.validationService = validationService;
     }

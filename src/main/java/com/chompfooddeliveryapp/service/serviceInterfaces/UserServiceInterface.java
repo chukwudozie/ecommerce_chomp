@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.servlet.http.HttpServletResponse;
 
-@Service
+
 public interface UserServiceInterface {
 
     public ResponseEntity<MessageResponse> createUser(SignupDto signupDto);
@@ -23,4 +23,8 @@ public interface UserServiceInterface {
     void updateUser(EditUserDetailsDto editUserDetailsDto, Long id);
 
     ResponseEntity<?> resendToVerifyEmail(UserDto loginRequest);
+
+    Long getUserIDFromSecurityContext();
+
+    ResponseEntity<?> confirmToken(String token);
 }

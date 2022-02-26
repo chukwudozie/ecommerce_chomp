@@ -5,7 +5,9 @@ import com.chompfooddeliveryapp.dto.VerifyTransactionDto;
 import com.chompfooddeliveryapp.dto.PayStackRequest;
 import com.chompfooddeliveryapp.payload.WalletPayload;
 import com.chompfooddeliveryapp.service.serviceImpl.PaystackServiceImpl;
+import com.chompfooddeliveryapp.service.serviceImpl.UserServiceImpl;
 import com.chompfooddeliveryapp.service.serviceImpl.WalletServiceImpl;
+import com.chompfooddeliveryapp.service.serviceInterfaces.UserServiceInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,20 +22,22 @@ public class WalletController {
 
     private final WalletServiceImpl walletService;
     private final PaystackServiceImpl paystackService;
+    private final UserServiceInterface userService;
 
     @Autowired
-    public WalletController( WalletServiceImpl walletService, PaystackServiceImpl paystackService) {
+    public WalletController(WalletServiceImpl walletService, PaystackServiceImpl paystackService, UserServiceInterface userService) {
 
         this.walletService = walletService;
         this.paystackService = paystackService;
+        this.userService = userService;
     }
 
 
-    @PostMapping("/fundwallet/{userId}")
-    public Object initializeWalletTransaction(@RequestBody PayStackRequest payStackRequestDto,
-                                              @PathVariable long userId){
+    @PostMapping("/fundwallet")
+    public Object initializeWalletTransaction(@RequestBody PayStackRequest payStackRequestDto)
+                                              {
 
-        return paystackService.initializePaystackTransaction(payStackRequestDto, userId, CREDIT);
+        return paystackService.initializePaystackTransaction(payStackRequestDto, userService.getUserIDFromSecurityContext(), CREDIT);
 
     }
 
@@ -51,10 +55,10 @@ public class WalletController {
 
     }
 
-    @GetMapping("/walletBalance/{userId}")
-    public String checkWalletBalance(@PathVariable Long userId) {
+    @GetMapping("/walletBalance")
+    public String checkWalletBalance() {
 
-        return walletService.getWalletBalance(userId);
+        return walletService.getWalletBalance(userService.getUserIDFromSecurityContext());
     }
 
 
