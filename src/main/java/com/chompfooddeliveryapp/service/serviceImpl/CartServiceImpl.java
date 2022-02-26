@@ -111,6 +111,36 @@ public class CartServiceImpl implements CartService {
                 +cartItem.get().getQuantity()));
     }
 
+
+    @Override
+    public ResponseEntity<CartResponse> updateCartQuantity(Long userId, Long menuId, Integer qty){
+        MenuItem product = menuItemRepository.findMenuItemById(menuId)
+                .orElseThrow((() -> new BadRequestException("Product not available, "+menuId+" invalid")));
+        Cart cart = cartRepository.getByUser_Id(userId)
+                .orElseThrow(() -> new BadRequestException("Only users can add to cart"));
+        List<CartItem> userCartItems = cartItemRepository.findAllByCart(cart);
+        if(userCartItems.isEmpty()){
+            int total = getTotalProduct(cart);
+            return  ResponseEntity.ok(new CartResponse(total,"No item In cart"));
+        }
+
+        Optional<CartItem> cartItem = cartItemRepository.findByMenuIdAndCart(product, cart);
+        if(cartItem.isPresent()){
+            if(cartItem.get().getQuantity() == 1){
+                cartItemRepository.delete(cartItem.get());
+                int total = getTotalProduct(cart);
+                return  ResponseEntity.ok(new CartResponse(total,product.getName()+" deleted!"));
+            }
+            cartItem.get().setQuantity(qty);
+            cartItemRepository.save(cartItem.get());
+        } else{
+            throw new BadRequestException("Product not in cart");
+        }
+        int total = getTotalProduct(cart);
+        return  ResponseEntity.ok(new CartResponse(total,product.getName()+" updated to!"
+                +cartItem.get().getQuantity()));
+    }
+
     @Override
     public ResponseEntity<CartResponse> deleteCartItem(Long userId, Long menuId){
         MenuItem product = menuItemRepository.findMenuItemById(menuId)
