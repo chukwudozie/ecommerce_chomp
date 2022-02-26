@@ -5,6 +5,7 @@ import com.chompfooddeliveryapp.payload.AllCartItems;
 import com.chompfooddeliveryapp.payload.CheckoutResponse;
 import com.chompfooddeliveryapp.service.serviceInterfaces.CheckoutService;
 import com.chompfooddeliveryapp.service.serviceInterfaces.OrderService;
+import com.chompfooddeliveryapp.service.serviceInterfaces.UserServiceInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,25 +21,27 @@ public class CheckOutController {
 
     private final OrderService orderService;
     private final CheckoutService checkoutService;
+    private final UserServiceInterface userServiceInterface;
 
     @Autowired
-    public CheckOutController(OrderService orderService, CheckoutService checkoutService) {
+    public CheckOutController(OrderService orderService, CheckoutService checkoutService, UserServiceInterface userServiceInterface) {
         this.orderService = orderService;
         this.checkoutService = checkoutService;
+        this.userServiceInterface = userServiceInterface;
     }
 
-    @GetMapping("/{userId}/checkout")
-    public ResponseEntity<AllCartItems> checkoutOrders(@PathVariable("userId") long userId) {
-        var checkoutItems = orderService.checkoutCartItems(userId);
+    @GetMapping("/checkout")
+    public ResponseEntity<AllCartItems> checkoutOrders() {
+        var checkoutItems = orderService.checkoutCartItems(userServiceInterface.getUserIDFromSecurityContext());
         return ResponseEntity.ok().body(checkoutItems);
     }
 
-    public ResponseEntity<List<ShippingAddressDTO>> getUserAddress(@PathVariable long userId) {
-        return ResponseEntity.ok().body(checkoutService.getAllAddress(userId));
+    public ResponseEntity<List<ShippingAddressDTO>> getUserAddress() {
+        return ResponseEntity.ok().body(checkoutService.getAllAddress(userServiceInterface.getUserIDFromSecurityContext()));
     }
 
-    @GetMapping("/new/order/{userId}/{cartId}")
-    public ResponseEntity<CheckoutResponse> createOrder(@PathVariable("userId") long userId, @PathVariable("cartId") long cartId) {
-        return ResponseEntity.ok().body(checkoutService.createOrderFromCartItem(userId, cartId));
+    @GetMapping("/new/order/{cartId}")
+    public ResponseEntity<CheckoutResponse> createOrder( @PathVariable("cartId") long cartId) {
+        return ResponseEntity.ok().body(checkoutService.createOrderFromCartItem(userServiceInterface.getUserIDFromSecurityContext(), cartId));
     }
 }

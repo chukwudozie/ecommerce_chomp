@@ -2,6 +2,7 @@ package com.chompfooddeliveryapp.service.serviceInterfaces;
 
 
 import com.chompfooddeliveryapp.dto.CartDTO;
+import com.chompfooddeliveryapp.payload.CartResponse;
 import com.chompfooddeliveryapp.payload.ViewCartResponse;
 import com.chompfooddeliveryapp.dto.CartDTO;
 import com.chompfooddeliveryapp.model.users.User;
@@ -24,6 +25,8 @@ public interface CartService {
     ResponseEntity<?> deleteCartItem(Long userId, Long menuId);
     ResponseEntity<AllCartItems> findAllProductsByUser(Long userId);
     List<ViewCartResponse> getAllProductsByUser( Long userId);
+
+    ResponseEntity<CartResponse> updateCartQuantity(Long userId, Long menuId, Integer qty);
 
 //    public ResponseEntity<List<CartItem>> findAllProductsByUser(Long cartId);
 }

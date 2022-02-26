@@ -5,6 +5,7 @@ import com.chompfooddeliveryapp.payload.AdminInfoResponse;
 import com.chompfooddeliveryapp.repository.UserRepository;
 import com.chompfooddeliveryapp.service.serviceImpl.UserServiceImpl;
 import com.chompfooddeliveryapp.service.serviceInterfaces.AdminService;
+import com.chompfooddeliveryapp.service.serviceInterfaces.UserServiceInterface;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,9 +16,9 @@ public class AdminController {
 
     private final UserRepository repo;
     private final AdminService adminService;
-    private final UserServiceImpl userService;
+    private final UserServiceInterface userService;
 
-    public AdminController(UserRepository repo, AdminService adminService, UserServiceImpl userService) {
+    public AdminController(UserRepository repo, AdminService adminService, UserServiceInterface userService) {
         this.repo = repo;
         this.adminService = adminService;
         this.userService = userService;
@@ -49,9 +50,9 @@ public class AdminController {
         return ResponseEntity.ok(adminService.allUsersByGender(gender));
     }
 
-    @PostMapping("/change_password/{id}")
-    public ResponseEntity<?> updatePassword(@RequestBody ChangePasswordDto changePasswordDto, @PathVariable Long id){
-        userService.changePassword(changePasswordDto, id);
+    @PostMapping("/change_password")
+    public ResponseEntity<?> updatePassword(@RequestBody ChangePasswordDto changePasswordDto){
+        userService.changePassword(changePasswordDto, userService.getUserIDFromSecurityContext());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
