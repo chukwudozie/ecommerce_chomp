@@ -2,10 +2,8 @@ package com.chompfooddeliveryapp.configuration.security;
 
 import com.chompfooddeliveryapp.security.jwt.AuthEntryPointJwt;
 import com.chompfooddeliveryapp.security.jwt.AuthTokenFilter;
-import com.chompfooddeliveryapp.security.jwt.JwtUtils;
 import com.chompfooddeliveryapp.security.service.UserDetailsServiceImpl;
 import com.chompfooddeliveryapp.utils.SecurityConstant;
-import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
