@@ -27,14 +27,14 @@ public class MenuItem extends BaseModel {
     private String description;
 
     @NotNull
-    private Long price;
+    private Double price;
 
     @Column(name = "category")
     @Enumerated(EnumType.STRING)
     private MenuCategory category;
 
 
-    public MenuItem(String name, String image, String description, Long price, MenuCategory category) {
+    public MenuItem(String name, String image, String description, Double price, MenuCategory category) {
         this.name = name;
         this.image = image;
         this.description = description;

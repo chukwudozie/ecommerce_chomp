@@ -139,9 +139,9 @@ public class OrderServiceImplementation implements OrderService {
 
         List<MenuItem> menuItemsList = getOrderSummary(userId);
 
-        long itemsTotal = menuItemsList.stream().mapToLong(MenuItem::getPrice).reduce(0L, Long::sum);
-        long VAT = 10L;
-        long deliveryFee = VAT * menuItemsList.size() * 300;
+        double itemsTotal = menuItemsList.stream().mapToDouble(MenuItem::getPrice).reduce(0L, Double::sum);
+        double VAT = 10L;
+        double deliveryFee = VAT * menuItemsList.size() * 300;
 
         PaymentDetailsDTO paymentDetailsDTO = new PaymentDetailsDTO();
         paymentDetailsDTO.setItemsTotal(itemsTotal);

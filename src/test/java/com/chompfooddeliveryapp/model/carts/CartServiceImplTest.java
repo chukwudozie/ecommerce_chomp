@@ -94,7 +94,7 @@ class CartServiceImplTest {
         product.setId(2L);
         product.setName("malt");
         product.setCategory(MenuCategory.DRINKS);
-        product.setPrice(300L);
+        product.setPrice(300.0);
         product.setDescription("Nice drink");
         product.setImage("malt.jpeg");
 

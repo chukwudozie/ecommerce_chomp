@@ -41,7 +41,7 @@ public class MenuItemServiceTest {
 
     @Test
     void shouldAddMenuItemToProductsList() {
-        MenuItemDto menuItemDto = new MenuItemDto("burger", 3L, "nice burger",MenuCategory.BURGER,"images");
+        MenuItemDto menuItemDto = new MenuItemDto("burger", 3.0, "nice burger",MenuCategory.BURGER,"images");
         MenuItem menuItem = new MenuItem();
         menuItem.setName(menuItemDto.getName());
         menuItem.setPrice(menuItemDto.getPrice());
@@ -55,15 +55,15 @@ public class MenuItemServiceTest {
     @Test
     public void shouldGetTheListOfMenuItemsAvailable() {
         List<MenuItem> menuItemList = new ArrayList<>();
-        menuItemList.add(new MenuItem("big bugger", "image1.com", "for breakfast", 3L, MenuCategory.SNACKS));
-        menuItemList.add(new MenuItem("meet Pie", "image2.com", "for dinner", 5L, MenuCategory.SIDES));
+        menuItemList.add(new MenuItem("big bugger", "image1.com", "for breakfast", 3.0, MenuCategory.SNACKS));
+        menuItemList.add(new MenuItem("meet Pie", "image2.com", "for dinner", 5.0, MenuCategory.SIDES));
         when(menuItemRepository.findAll()).thenReturn(menuItemList);
         assertEquals(2, menuItemService.getAllMenuItems().size());
     }
 
     @Test
     public void shouldUpdateAnMenuItemById() {
-        MenuItemDto menuItemDto = new MenuItemDto( "burger", 2L, "for lunch", MenuCategory.BURGER,"Burger");
+        MenuItemDto menuItemDto = new MenuItemDto( "burger", 2.0, "for lunch", MenuCategory.BURGER,"Burger");
         MenuItem menuItem = new MenuItem();
         menuItem.setName(menuItemDto.getName());
         menuItem.setPrice(menuItemDto.getPrice());
@@ -89,8 +89,8 @@ public class MenuItemServiceTest {
     void shouldGetAParticularItemById() {
         List<MenuItem> menuItemList = new ArrayList<>();
         Long menuItemId = 1L;
-       menuItemList.add( new MenuItem("big bugger", "image1.com", "for breakfast", 3L, MenuCategory.SNACKS));
-        menuItemList.add(new MenuItem("meet Pie", "image2.com", "for dinner", 5L, MenuCategory.SIDES));
+       menuItemList.add( new MenuItem("big bugger", "image1.com", "for breakfast", 3.0, MenuCategory.SNACKS));
+        menuItemList.add(new MenuItem("meet Pie", "image2.com", "for dinner", 5.0, MenuCategory.SIDES));
         when(menuItemRepository.findMenuItemById(menuItemId)).thenReturn(java.util.Optional.ofNullable(menuItemList.get(0)));
 
         assertEquals(menuItemId, menuItemService.getMenuItemById(menuItemList.get(0).getId()).getId());

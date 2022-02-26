@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
     public class MenuItemDto {
 
         private String name;
-        private Long price;
+        private Double price;
         private String description;
         private MenuCategory category;
         private String image;
