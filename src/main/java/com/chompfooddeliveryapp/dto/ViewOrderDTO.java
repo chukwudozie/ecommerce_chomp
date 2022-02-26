@@ -16,7 +16,7 @@ public class ViewOrderDTO {
     private OrderStatus status;
     private String name;
     private String image;
-    private Long price;
+    private Double price;
     private LocalDateTime orderDate;
     private LocalDateTime deliveredDate;
     private String description;

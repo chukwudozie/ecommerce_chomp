@@ -12,6 +12,6 @@ import lombok.ToString;
 public class OrderSummaryDTO {
     private String name;
     private String image;
-    private Long price;
+    private Double price;
     private Long quantity;
 }

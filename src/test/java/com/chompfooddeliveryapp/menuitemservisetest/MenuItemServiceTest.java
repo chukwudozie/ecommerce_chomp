@@ -1,6 +1,7 @@
 package com.chompfooddeliveryapp.menuitemservisetest;
 
 
+import com.chompfooddeliveryapp.dto.MenuItemDto;
 import com.chompfooddeliveryapp.model.enums.MenuCategory;
 import com.chompfooddeliveryapp.model.meals.MenuItem;
 import com.chompfooddeliveryapp.repository.MenuItemRepository;
@@ -40,25 +41,38 @@ public class MenuItemServiceTest {
 
     @Test
     void shouldAddMenuItemToProductsList() {
-        MenuItem menuItem = new MenuItem(1L, "burger", "image.com", "for lunch", 2L, MenuCategory.BURGER, timestamp);
+        MenuItemDto menuItemDto = new MenuItemDto("burger", 3.0, "nice burger",MenuCategory.BURGER,"images");
+        MenuItem menuItem = new MenuItem();
+        menuItem.setName(menuItemDto.getName());
+        menuItem.setPrice(menuItemDto.getPrice());
+        menuItem.setDescription(menuItemDto.getDescription());
+        menuItem.setCategory(menuItemDto.getCategory());
+        menuItem.setImage(menuItemDto.getImage());
         when(menuItemRepository.save(menuItem)).thenReturn(menuItem);
-        assertEquals(menuItem, menuItemService.addMenuItem(menuItem));
+        assertEquals(menuItem, menuItemService.addMenuItem(menuItemDto));
     }
 
     @Test
     public void shouldGetTheListOfMenuItemsAvailable() {
         List<MenuItem> menuItemList = new ArrayList<>();
-        menuItemList.add(new MenuItem(1L, "big bugger", "image1.com", "for breakfast", 3L, MenuCategory.SNACKS, timestamp));
-        menuItemList.add(new MenuItem(2L, "meet Pie", "image2.com", "for dinner", 5L, MenuCategory.SIDES, timestamp));
+        menuItemList.add(new MenuItem("big bugger", "image1.com", "for breakfast", 3.0, MenuCategory.SNACKS));
+        menuItemList.add(new MenuItem("meet Pie", "image2.com", "for dinner", 5.0, MenuCategory.SIDES));
         when(menuItemRepository.findAll()).thenReturn(menuItemList);
         assertEquals(2, menuItemService.getAllMenuItems().size());
     }
 
     @Test
     public void shouldUpdateAnMenuItemById() {
-        MenuItem menuItem = new MenuItem(1L, "burger", "image.com", "for lunch", 2L, MenuCategory.BURGER, timestamp);
+        MenuItemDto menuItemDto = new MenuItemDto( "burger", 2.0, "for lunch", MenuCategory.BURGER,"Burger");
+        MenuItem menuItem = new MenuItem();
+        menuItem.setName(menuItemDto.getName());
+        menuItem.setPrice(menuItemDto.getPrice());
+        menuItem.setDescription(menuItemDto.getDescription());
+        menuItem.setCategory(menuItemDto.getCategory());
+        menuItem.setImage(menuItemDto.getImage());
+
         when(menuItemRepository.save(menuItem)).thenReturn(menuItem);
-        assertEquals(menuItem, menuItemService.updateMenuItem(menuItem.getId(),menuItem));
+        assertEquals(menuItem, menuItemService.updateMenuItem(menuItem.getId(),menuItemDto));
     }
 
     @Test
@@ -75,8 +89,8 @@ public class MenuItemServiceTest {
     void shouldGetAParticularItemById() {
         List<MenuItem> menuItemList = new ArrayList<>();
         Long menuItemId = 1L;
-       menuItemList.add( new MenuItem(1L, "big bugger", "image1.com", "for breakfast", 3L, MenuCategory.SNACKS, timestamp));
-        menuItemList.add(new MenuItem(2L, "meet Pie", "image2.com", "for dinner", 5L, MenuCategory.SIDES, timestamp));
+       menuItemList.add( new MenuItem("big bugger", "image1.com", "for breakfast", 3.0, MenuCategory.SNACKS));
+        menuItemList.add(new MenuItem("meet Pie", "image2.com", "for dinner", 5.0, MenuCategory.SIDES));
         when(menuItemRepository.findMenuItemById(menuItemId)).thenReturn(java.util.Optional.ofNullable(menuItemList.get(0)));
 
         assertEquals(menuItemId, menuItemService.getMenuItemById(menuItemList.get(0).getId()).getId());

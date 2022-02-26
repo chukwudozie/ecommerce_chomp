@@ -1,7 +1,10 @@
 package com.chompfooddeliveryapp.service.serviceImpl;
 
+import com.chompfooddeliveryapp.dto.MenuItemDto;
+import com.chompfooddeliveryapp.exception.BadRequestException;
 import com.chompfooddeliveryapp.exception.MenuException;
 import com.chompfooddeliveryapp.model.enums.MenuCategory;
+import com.chompfooddeliveryapp.payload.MenuResponse;
 import com.chompfooddeliveryapp.payload.UserFetchAllMealsResponse;
 import com.chompfooddeliveryapp.repository.MenuItemRepository;
 import com.chompfooddeliveryapp.service.serviceInterfaces.MenuItemService;
@@ -28,39 +31,42 @@ public class MenuServiceImplementation implements MenuItemService {
     }
 
 
-    Date date = new Date();
-    Long time = date.getTime();
-    Timestamp timestamp = new Timestamp(time);
-
-
     @Override
-    public MenuItem addMenuItem(MenuItem menuItem) {
-        if(menuItemRepository.existsByName(menuItem.getName())){
-            throw new MenuException("Menu already exists");
+    public MenuResponse addMenuItem(MenuItemDto menuItemDto) {
+        if(menuItemRepository.existsByName(menuItemDto.getName())){
+            throw new BadRequestException("Menu already exists");
         }
-        menuItem.setDateCreated(timestamp);
-        return menuItemRepository.save(menuItem);
+        MenuItem menuItem = new MenuItem();
+        menuItem.setName(menuItemDto.getName());
+        menuItem.setCategory(menuItemDto.getCategory());
+        menuItem.setPrice(menuItemDto.getPrice());
+        menuItem.setDescription(menuItemDto.getDescription());
+        menuItem.setImage(menuItemDto.getImage());
+        menuItemRepository.save(menuItem);
+        return new MenuResponse("Menu item has been added", menuItem.getName(), menuItem.getPrice(),
+                menuItem.getDescription(), menuItem.getCategory().name());
     }
 
     @Override
-    public MenuItem updateMenuItem(Long id, MenuItem menuItem) {
+    public MenuResponse updateMenuItem(Long id, MenuItemDto menuItemDto) {
 
-        MenuItem menuItem2 = getMenuItemById(id);
-        if(menuItem2 == null){
-            throw new MenuNotFoundException("menu not found");
+        MenuItem menuItem = getMenuItemById(id);
+        if(menuItem == null){
+            throw new BadRequestException("menu not found");
         }
-        menuItem2.setName(menuItem.getName());
-        menuItem2.setDescription(menuItem.getDescription());
-        menuItem2.setCategory(menuItem.getCategory());
-        menuItem2.setImage(menuItem.getImage());
-        menuItem2.setPrice(menuItem.getPrice());
-        return menuItemRepository.save(menuItem2);
-
+        menuItem.setName(menuItemDto.getName());
+        menuItem.setDescription(menuItemDto.getDescription());
+        menuItem.setCategory(menuItemDto.getCategory());
+        menuItem.setImage(menuItemDto.getImage());
+        menuItem.setPrice(menuItemDto.getPrice());
+        menuItemRepository.save(menuItem);
+        return new MenuResponse("Menu item has been updated", menuItem.getName(), menuItem.getPrice(),
+                menuItem.getDescription(), menuItem.getCategory().name());
     }
 
     @Override
     public MenuItem getMenuItemById(Long id) {
-        return menuItemRepository.findMenuItemById(id).orElseThrow(()->new MenuNotFoundException("item by " +  id + "was not found"));
+        return menuItemRepository.findMenuItemById(id).orElseThrow(()->new BadRequestException("Item " +  id + " was not found"));
     }
 
     @Override

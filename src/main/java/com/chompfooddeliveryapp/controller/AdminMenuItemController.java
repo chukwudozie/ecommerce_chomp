@@ -1,6 +1,7 @@
 package com.chompfooddeliveryapp.controller;
 
-import com.chompfooddeliveryapp.dto.ChangePasswordDto;
+
+import com.chompfooddeliveryapp.dto.MenuItemDto;
 import com.chompfooddeliveryapp.exception.MenuException;
 import com.chompfooddeliveryapp.exception.MenuNotFoundException;
 import com.chompfooddeliveryapp.service.serviceImpl.MenuServiceImplementation;
@@ -32,18 +33,15 @@ public class AdminMenuItemController {
     }
 
     @PostMapping("/additem")
-    public ResponseEntity<?> addItem(@RequestBody MenuItem menuItem) throws MenuException {
-
-         menuServiceImplementation.addMenuItem(menuItem);
-
-        return new ResponseEntity<>("Menu item has been created", HttpStatus.CREATED);
+    public ResponseEntity<?> addItem(@RequestBody MenuItemDto menuItem) throws MenuException {
+        return new ResponseEntity<>(menuServiceImplementation.addMenuItem(menuItem), HttpStatus.CREATED);
     }
 
     @PutMapping("/updateitem/{id}")
-    public ResponseEntity<?> updateItem(@RequestBody MenuItem menuItem, @PathVariable ("id") Long id) throws MenuNotFoundException{
-        MenuItem upDatedMenuItem = menuServiceImplementation.updateMenuItem(id, menuItem);
+    public ResponseEntity<?> updateItem(@RequestBody MenuItemDto menuItemDto, @PathVariable ("id") Long id) throws MenuNotFoundException{
 
-        return new ResponseEntity<>("Menu item has been updated", HttpStatus.CREATED);
+
+        return new ResponseEntity<>(menuServiceImplementation.updateMenuItem(id, menuItemDto), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/deleteitem/{id}")

@@ -7,9 +7,9 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 public class PaymentDetailsDTO {
-    Long itemsTotal;
-    Long deliveryFee;
-    Long total;
+    Double itemsTotal;
+    Double deliveryFee;
+    Double total;
 
 
     @Override
