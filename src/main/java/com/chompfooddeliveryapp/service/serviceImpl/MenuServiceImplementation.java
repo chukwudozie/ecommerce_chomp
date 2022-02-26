@@ -1,5 +1,6 @@
 package com.chompfooddeliveryapp.service.serviceImpl;
 
+import com.chompfooddeliveryapp.dto.MenuItemDto;
 import com.chompfooddeliveryapp.exception.MenuException;
 import com.chompfooddeliveryapp.model.enums.MenuCategory;
 import com.chompfooddeliveryapp.payload.UserFetchAllMealsResponse;
@@ -28,33 +29,33 @@ public class MenuServiceImplementation implements MenuItemService {
     }
 
 
-    Date date = new Date();
-    Long time = date.getTime();
-    Timestamp timestamp = new Timestamp(time);
-
-
     @Override
-    public MenuItem addMenuItem(MenuItem menuItem) {
-        if(menuItemRepository.existsByName(menuItem.getName())){
+    public MenuItem addMenuItem(MenuItemDto menuItemDto) {
+        if(menuItemRepository.existsByName(menuItemDto.getName())){
             throw new MenuException("Menu already exists");
         }
-        menuItem.setDateCreated(timestamp);
+        MenuItem menuItem = new MenuItem();
+        menuItem.setName(menuItemDto.getName());
+        menuItem.setCategory(menuItemDto.getCategory());
+        menuItem.setPrice(menuItemDto.getPrice());
+        menuItem.setDescription(menuItemDto.getDescription());
+        menuItem.setImage(menuItemDto.getImage());
         return menuItemRepository.save(menuItem);
     }
 
     @Override
-    public MenuItem updateMenuItem(Long id, MenuItem menuItem) {
+    public MenuItem updateMenuItem(Long id, MenuItemDto menuItemDto) {
 
-        MenuItem menuItem2 = getMenuItemById(id);
-        if(menuItem2 == null){
+        MenuItem menuItem = getMenuItemById(id);
+        if(menuItem == null){
             throw new MenuNotFoundException("menu not found");
         }
-        menuItem2.setName(menuItem.getName());
-        menuItem2.setDescription(menuItem.getDescription());
-        menuItem2.setCategory(menuItem.getCategory());
-        menuItem2.setImage(menuItem.getImage());
-        menuItem2.setPrice(menuItem.getPrice());
-        return menuItemRepository.save(menuItem2);
+        menuItem.setName(menuItemDto.getName());
+        menuItem.setDescription(menuItemDto.getDescription());
+        menuItem.setCategory(menuItemDto.getCategory());
+        menuItem.setImage(menuItemDto.getImage());
+        menuItem.setPrice(menuItemDto.getPrice());
+        return menuItemRepository.save(menuItem);
 
     }
 

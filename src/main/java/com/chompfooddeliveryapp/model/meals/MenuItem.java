@@ -1,5 +1,6 @@
 package com.chompfooddeliveryapp.model.meals;
 
+import com.chompfooddeliveryapp.model.basemodel.BaseModel;
 import com.chompfooddeliveryapp.model.enums.MenuCategory;
 import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
@@ -12,12 +13,8 @@ import java.sql.Timestamp;
 @Entity
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 @Table(name = "menu_items")
-public class MenuItem {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class MenuItem extends BaseModel {
 
     @NotNull
     private String name;
@@ -36,15 +33,12 @@ public class MenuItem {
     @Enumerated(EnumType.STRING)
     private MenuCategory category;
 
-    @NotNull
-    private Timestamp dateCreated;
 
-    public MenuItem(String name, String image, String description, Long price, MenuCategory category, Timestamp dateCreated) {
+    public MenuItem(String name, String image, String description, Long price, MenuCategory category) {
         this.name = name;
         this.image = image;
         this.description = description;
         this.price = price;
         this.category = category;
-        this.dateCreated = dateCreated;
     }
 }
