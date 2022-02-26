@@ -135,7 +135,7 @@ public class UserServiceImpl implements UserServiceInterface {
                 return ResponseEntity.badRequest().body("Email has not been verified");
             }
         } catch (BadCredentialsException e) {
-            throw new Exception("incorrect username or password!");
+            throw new BadRequestException("incorrect username or password!");
         }
     }
     @Override

@@ -22,6 +22,7 @@ public class ChompExceptionHandler {
     @ExceptionHandler(value = UserNotAuthorizedException.class)
     public ResponseEntity<Object> apiUnauthorizedRequestHandler(UserNotAuthorizedException e){
         HttpStatus badRequest = HttpStatus.UNAUTHORIZED;
+
         ExceptionPayLoad exception =  new ExceptionPayLoad(e.getMessage(),
                 e,
                 badRequest,

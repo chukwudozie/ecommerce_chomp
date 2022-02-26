@@ -7,6 +7,8 @@ import com.chompfooddeliveryapp.utils.SecurityConstant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -53,15 +55,21 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
-        http.cors().and().csrf().disable()
-                .exceptionHandling().authenticationEntryPoint(authEntryPointJwt).and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-
+        http
+                .cors().and()
+                .csrf()
+                .disable()
                 .authorizeRequests()
+                .antMatchers("/auth-dependent-routes").hasAnyRole("USER", "ADMIN")
+                .antMatchers(SecurityConstant.PUBLIC_URI).permitAll()
                 .antMatchers("/user/**").hasRole("USER")
                 .antMatchers("/admin/**").hasRole("ADMIN")
-                .antMatchers(SecurityConstant.PUBLIC_URI).permitAll()
-                .anyRequest().authenticated();
+                .anyRequest()
+                .authenticated()
+                .and().sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and().headers().frameOptions().disable();
+
         http.addFilterBefore(authenticationJwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
