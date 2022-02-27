@@ -1,7 +1,6 @@
 package com.chompfooddeliveryapp.service.serviceImpl;
 
 import com.chompfooddeliveryapp.dto.*;
-import com.chompfooddeliveryapp.exception.BadRequestException;
 import com.chompfooddeliveryapp.model.enums.PaymentMethod;
 import com.chompfooddeliveryapp.model.meals.MenuItem;
 import com.chompfooddeliveryapp.model.orders.Order;
@@ -10,6 +9,7 @@ import com.chompfooddeliveryapp.model.users.ShippingAddress;
 import com.chompfooddeliveryapp.model.users.User;
 import com.chompfooddeliveryapp.payload.AllCartItems;
 import com.chompfooddeliveryapp.payload.ViewCartResponse;
+import com.chompfooddeliveryapp.payload.ViewOrderDetailsResponse;
 import com.chompfooddeliveryapp.repository.*;
 import com.chompfooddeliveryapp.service.serviceInterfaces.CartService;
 import com.chompfooddeliveryapp.service.serviceInterfaces.OrderService;
@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -44,43 +45,29 @@ public class OrderServiceImplementation implements OrderService {
     }
 
     @Override
-    public List<ViewOrderDTO> getOrderDetails(Long userId, Long orderId) {
-        var userOp = userRepository.findUserById(userId);
+    public ViewOrderDetailsResponse getOrderDetails(Long userId, Long orderId) {
 
-        var user = userOp.orElseThrow(() -> new BadRequestException("No Such User"));
+        List<OrderDetail> orderDetail = orderDetailsRepository.findAllByOrderId(orderId);
 
-        System.out.println(user.toString());
+        List<ViewOrderDTO> viewOrderDTOS = new ArrayList<>();
+        for (OrderDetail order:orderDetail) {
+            MenuItem menuItem = menuItemRepository.findById(order.getMenu().getId()).get();
+            Order orders = orderRepository.findById(order.getOrder().getId()).get();
+            ViewOrderDTO viewOrderDetails = new ViewOrderDTO();
+            viewOrderDetails.setImage(menuItem.getImage());
+            viewOrderDetails.setName(menuItem.getName());
+            viewOrderDetails.setDescription(menuItem.getDescription());
+            viewOrderDetails.setPrice(menuItem.getPrice());
+            viewOrderDetails.setOrderDate(orders.getOrder_date());
+            viewOrderDetails.setDeliveredDate(orders.getDelivered_date());
+            viewOrderDetails.setStatus(orders.getStatus());
+            viewOrderDetails.setQuantity(order.getQuantity());
+            viewOrderDTOS.add(viewOrderDetails);
+        }
+        ViewOrderDetailsResponse viewOrderDetailsResponse = new ViewOrderDetailsResponse();
+       viewOrderDetailsResponse.setViewOrderDtoList(viewOrderDTOS);
 
-        List<Order> orderList = orderRepository.findByUserId(userId);
-        var order1 = orderRepository.getOrderByIdIsAndUserIdIs(orderId, userId);
-
-        var orders = order1.orElseThrow(() -> new BadRequestException("No order with Order id: " + orderId + " found"));
-
-        var orderDetail = orderDetailsRepository
-                .findAllByOrderId(orders.getId());
-        var listOfMenuIds = orderDetail.stream()
-                .map(x -> x.getMenu().getId())
-                .collect(Collectors.toList());
-        var listOfMenuItems = menuItemRepository.findAllById(listOfMenuIds);
-
-        System.out.println(listOfMenuIds);
-
-        var listViewOrderDTO = listOfMenuItems.stream()
-                .map(menuItem -> {
-                    ViewOrderDTO viewOrderDetails = new ViewOrderDTO();
-                    viewOrderDetails.setImage(menuItem.getImage());
-                    viewOrderDetails.setName(menuItem.getName());
-                    viewOrderDetails.setDescription(menuItem.getDescription());
-                    viewOrderDetails.setPrice(menuItem.getPrice());
-                    viewOrderDetails.setOrderDate(orders.getOrder_date());
-                    viewOrderDetails.setDeliveredDate(orders.getDelivered_date());
-                    viewOrderDetails.setStatus(orders.getStatus());
-                    viewOrderDetails.setQuantity(0L);
-                    return viewOrderDetails;
-                })
-                .collect(Collectors.toList());
-
-        return listViewOrderDTO;
+        return viewOrderDetailsResponse;
     }
 
 
