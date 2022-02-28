@@ -1,6 +1,8 @@
 package com.chompfooddeliveryapp.service.serviceImpl;
 
 import com.chompfooddeliveryapp.dto.*;
+import com.chompfooddeliveryapp.exception.BadRequestException;
+import com.chompfooddeliveryapp.model.enums.OrderStatus;
 import com.chompfooddeliveryapp.model.enums.PaymentMethod;
 import com.chompfooddeliveryapp.model.meals.MenuItem;
 import com.chompfooddeliveryapp.model.orders.Order;
@@ -8,6 +10,7 @@ import com.chompfooddeliveryapp.model.orders.OrderDetail;
 import com.chompfooddeliveryapp.model.users.ShippingAddress;
 import com.chompfooddeliveryapp.model.users.User;
 import com.chompfooddeliveryapp.payload.AllCartItems;
+import com.chompfooddeliveryapp.payload.UpdatePayLoad;
 import com.chompfooddeliveryapp.payload.ViewCartResponse;
 import com.chompfooddeliveryapp.payload.ViewOrderDetailsResponse;
 import com.chompfooddeliveryapp.repository.*;
@@ -21,6 +24,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -207,6 +211,19 @@ public class OrderServiceImplementation implements OrderService {
         }
     }
 
+    @Override
+    public UpdatePayLoad updateOrderStatus(Long orderId) {
 
+        var order = orderRepository.findOrderById(orderId)
+                .orElseThrow(()-> new BadRequestException("Order not found"));
+        UpdatePayLoad orderStatusUpdateMessage = new UpdatePayLoad();
 
+        if( Objects.equals(order.getStatus(), OrderStatus.PENDING)) {
+
+            order.setStatus(OrderStatus.DELIVERED); orderRepository.save(order); orderStatusUpdateMessage.setMessage(order.getStatus().toString());
+        } else {
+            throw new BadRequestException("Order already updated"); }
+        return orderStatusUpdateMessage;
+    }
 }
+
