@@ -7,6 +7,7 @@ import com.chompfooddeliveryapp.model.users.User;
 import com.chompfooddeliveryapp.security.service.UserDetailsImpl;
 import com.chompfooddeliveryapp.service.serviceInterfaces.CheckoutService;
 import com.chompfooddeliveryapp.service.serviceInterfaces.OrderService;
+import com.chompfooddeliveryapp.service.serviceInterfaces.UserServiceInterface;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,12 +27,15 @@ public class UserOrderController {
 
     private final OrderService orderService;
     private final CheckoutService checkoutService;
-    private final AuthenticationManager authenticationManager;
+    private final UserServiceInterface userService;
     @Autowired
-    public UserOrderController(OrderService orderService, CheckoutService checkoutService, AuthenticationManager authenticationManager) {
+    public UserOrderController(OrderService orderService,
+                               CheckoutService checkoutService,
+                               UserServiceInterface userService) {
         this.orderService = orderService;
         this.checkoutService = checkoutService;
-        this.authenticationManager=authenticationManager;
+        this.userService = userService;
+
     }
 
 
@@ -43,16 +47,16 @@ public class UserOrderController {
         return new ResponseEntity<>(orderService.getOrderDetails(user.getId(), orderId), HttpStatus.OK);
     }
 
-    @PostMapping("/{userId}/shipping-address")
-    public ResponseEntity<List<String>> saveShippingAddress(@PathVariable("userId") Long userId,
+    @PostMapping("/shipping-address")
+    public ResponseEntity<List<String>> saveShippingAddress(
                                                             @RequestBody ShippingAddressDTO shippingAddress) {
-        var responseText = checkoutService.saveShippingAddress(userId, shippingAddress);
+        var responseText = checkoutService.saveShippingAddress(userService.getUserIDFromSecurityContext(), shippingAddress);
         return new ResponseEntity<>(responseText, HttpStatus.OK);
     }
 
-    @GetMapping("/{userId}/view-all-orders")
-    public ResponseEntity<ResponseViewUserOrdersDTO> viewAllOrders(@PathVariable("userId") long userId) {
-        var allUserOrders = orderService.getAllOrdersByUserId(userId);
+    @GetMapping("/view-all-orders")
+    public ResponseEntity<ResponseViewUserOrdersDTO> viewAllOrders( ) {
+        var allUserOrders = orderService.getAllOrdersByUserId(userService.getUserIDFromSecurityContext());
         return new ResponseEntity<>(allUserOrders, HttpStatus.OK);
     }
 

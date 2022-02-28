@@ -6,6 +6,7 @@ import com.chompfooddeliveryapp.dto.SignupDto;
 import com.chompfooddeliveryapp.dto.UserDto;
 import com.chompfooddeliveryapp.model.token.ConfirmationToken;
 import com.chompfooddeliveryapp.security.PasswordValidator;
+import com.chompfooddeliveryapp.security.service.UserDetailsImpl;
 import com.chompfooddeliveryapp.service.serviceInterfaces.CartService;
 import com.chompfooddeliveryapp.exception.BadRequestException;
 import com.chompfooddeliveryapp.model.enums.UserRole;
@@ -27,6 +28,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -39,6 +42,7 @@ import java.time.LocalDateTime;
 import java.util.Locale;
 import java.util.UUID;
 import java.util.Optional;
+
 @Service
 public class UserServiceImpl implements UserServiceInterface {
     private final JwtUtils utils;
@@ -135,7 +139,7 @@ public class UserServiceImpl implements UserServiceInterface {
                 return ResponseEntity.badRequest().body("Email has not been verified");
             }
         } catch (BadCredentialsException e) {
-            throw new Exception("incorrect username or password!");
+            throw new BadRequestException("incorrect username or password!");
         }
     }
     @Override
@@ -199,4 +203,11 @@ public class UserServiceImpl implements UserServiceInterface {
         }
         return new MessageResponse("Complete your registration with the token", token, createdAt, expiresAt);
     }
+
+    @Override
+    public Long getUserIDFromSecurityContext(){
+        UserDetailsImpl user = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return user.getId();
+    }
+
 }

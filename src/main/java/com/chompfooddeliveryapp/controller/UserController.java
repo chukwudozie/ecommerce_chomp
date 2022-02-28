@@ -21,26 +21,26 @@ public class UserController {
     private final UserDetailsService userDetailsService;
 
 
-    @PostMapping("/edit/{id}")
+    @PostMapping("/edit")
 
-    public ResponseEntity<?> updateUserDetails(@RequestBody EditUserDetailsDto userDetailsDto, @PathVariable Long id){
-        userService.updateUser(userDetailsDto, id);
+    public ResponseEntity<?> updateUserDetails(@RequestBody EditUserDetailsDto userDetailsDto){
+        userService.updateUser(userDetailsDto, userService.getUserIDFromSecurityContext());
            return new ResponseEntity<>(HttpStatus.OK);
 
     }
 
 
-    @PostMapping("/change_password/{id}")
-    public ResponseEntity<?> updatePassword(@RequestBody ChangePasswordDto changePasswordDto, @PathVariable Long id){
-         userService.changePassword(changePasswordDto, id);
+    @PostMapping("/change_password")
+    public ResponseEntity<?> updatePassword(@RequestBody ChangePasswordDto changePasswordDto){
+         userService.changePassword(changePasswordDto, userService.getUserIDFromSecurityContext());
             return new ResponseEntity<>(HttpStatus.OK);
     }
 
 
-    @GetMapping("/details/{userId}")
-    public ResponseEntity<?> getAllUserDetails(@PathVariable Long userId) throws Exception{
+    @GetMapping("/details")
+    public ResponseEntity<?> getAllUserDetails() throws Exception{
         System.out.println("into method");
-        UserDetailsDTO userDetailsDTO = userDetailsService.getUserDetails(userId);
+        UserDetailsDTO userDetailsDTO = userDetailsService.getUserDetails(userService.getUserIDFromSecurityContext());
         return new ResponseEntity<>(userDetailsDTO,HttpStatus.OK);
     }
 
