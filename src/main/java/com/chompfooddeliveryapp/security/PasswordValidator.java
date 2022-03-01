@@ -10,7 +10,7 @@ public class PasswordValidator {
     private Pattern pattern;
     private Matcher matcher;
 
-    private static final String PASSWORD_REGEX = "((?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%]).{6,20})";
+    private static final String PASSWORD_REGEX = "((?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%.!^&*()]).{6,20})";
 
     public PasswordValidator()
     {

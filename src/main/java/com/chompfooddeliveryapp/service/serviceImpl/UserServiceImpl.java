@@ -1,5 +1,4 @@
 package com.chompfooddeliveryapp.service.serviceImpl;
-import com.chompfooddeliveryapp.Mail.MailService;
 import com.chompfooddeliveryapp.dto.ChangePasswordDto;
 import com.chompfooddeliveryapp.dto.EditUserDetailsDto;
 import com.chompfooddeliveryapp.dto.SignupDto;
@@ -28,7 +27,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -53,16 +51,17 @@ public class UserServiceImpl implements UserServiceInterface {
     private final CartService cartService;
     private final PasswordEncoder encoder;
     private final ConfirmationTokenService confirmationTokenService;
-    private final MailService mailService;
+    private final EmailSenderService senderService;
     private final WalletRepository walletRepository;
     private final PasswordValidator passwordValidator;
+
     @Autowired
     private final WalletServiceImpl walletService;
     @Autowired
     public UserServiceImpl(JwtUtils utils, AuthenticationManager authenticationManager,
                            UserDetailsService userDetailsService, UserRepository userRepository,
                            PasswordEncoder encoder, ConfirmationTokenService confirmationTokenService,
-                           MailService mailService, WalletRepository walletRepository, WalletServiceImpl walletService,
+                           EmailSenderService senderService, WalletRepository walletRepository, WalletServiceImpl walletService,
                            RoleRepository roleRepository,CartService cartService, PasswordValidator passwordValidator) {
         this.utils = utils;
         this.authenticationManager = authenticationManager;
@@ -71,7 +70,7 @@ public class UserServiceImpl implements UserServiceInterface {
         this.cartService = cartService;
         this.encoder = encoder;
         this.confirmationTokenService = confirmationTokenService;
-        this.mailService = mailService;
+        this.senderService = senderService;
         this.walletRepository = walletRepository;
         this.walletService = walletService;
         this.roleRepository = roleRepository;
@@ -117,7 +116,9 @@ public class UserServiceImpl implements UserServiceInterface {
             return ResponseEntity.ok(getResponseEntity(confirmationToken.getUser(), confirmationToken.getUser().getEmail()));
         }
         confirmationTokenService.setConfirmedAt(token);
+        confirmationToken.setConfirmedAt(LocalDateTime.now());
         userRepository.enableAppUser(confirmationToken.getUser().getEmail());
+
         return ResponseEntity.ok("Registration verified");
     }
     @Override
@@ -188,7 +189,8 @@ public class UserServiceImpl implements UserServiceInterface {
                 user
         );
         confirmationTokenService.saveConfirmationToken(confirmationToken);
-        String link = "http://localhost:808/confirm?token=" + token;
+
+        String link = "https://chomp-food.herokuapp.com/auth/confirm?token=" + token;
         String content = "<p>Hello,</p>"
                 + "<p>Please verify your email with the link below.</p>"
                 + "<p>Click the link below activate your account:</p>"
@@ -196,11 +198,10 @@ public class UserServiceImpl implements UserServiceInterface {
                 + "<br>"
                 + "<p> Ignore this email if you have verified your email, "
                 + "or you have not made the request.</p>";
-        try {
-            mailService.sendMail(email, content, "Here is your confirmation email. ");
-        } catch (MailjetException | MailjetSocketTimeoutException e) {
-            e.printStackTrace();
-        }
+
+            senderService.sendMail(email, "Here is your confirmation email.", content);
+
+//        mailService.secondMailTrial(email, content);
         return new MessageResponse("Complete your registration with the token", token, createdAt, expiresAt);
     }
 
