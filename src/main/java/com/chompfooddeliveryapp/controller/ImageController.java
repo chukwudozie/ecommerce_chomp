@@ -23,9 +23,9 @@ public class ImageController {
     }
     @PostMapping("/addimage")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Images> addAndSaveImages(@RequestBody ImageDTO imageDTO) throws IOException {
+    public ResponseEntity<String> addAndSaveImages(@RequestBody ImageDTO imageDTO) throws IOException {
 
-        final Images image = imageService.saveImages(imageDTO);
+        final String image = imageService.saveImages(imageDTO.getImageName());
         return new ResponseEntity<>(image, HttpStatus.OK);
     }
 }

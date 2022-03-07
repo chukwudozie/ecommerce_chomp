@@ -19,4 +19,6 @@ public class MenuResponse {
 
     private String category;
 
+    private String image;
+
 }

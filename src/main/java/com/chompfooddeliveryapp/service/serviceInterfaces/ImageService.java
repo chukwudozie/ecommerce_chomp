@@ -9,5 +9,5 @@ import java.io.IOException;
 @Service
 public interface ImageService {
 
-    Images saveImages (ImageDTO imageDTO) throws IOException;
+    String saveImages (String imageName) throws IOException;
 }
