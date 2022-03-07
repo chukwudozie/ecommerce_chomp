@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.chompfooddeliveryapp.model.meals.MenuItem;
 
-
+import java.io.IOException;
 
 
 @RestController
@@ -33,12 +33,12 @@ public class AdminMenuItemController {
     }
 
     @PostMapping("/additem")
-    public ResponseEntity<?> addItem(@RequestBody MenuItemDto menuItem) throws MenuException {
+    public ResponseEntity<?> addItem(@RequestBody MenuItemDto menuItem) throws MenuException, IOException {
         return new ResponseEntity<>(menuServiceImplementation.addMenuItem(menuItem), HttpStatus.CREATED);
     }
 
     @PutMapping("/updateitem/{id}")
-    public ResponseEntity<?> updateItem(@RequestBody MenuItemDto menuItemDto, @PathVariable ("id") Long id) throws MenuNotFoundException{
+    public ResponseEntity<?> updateItem(@RequestBody MenuItemDto menuItemDto, @PathVariable ("id") Long id) throws MenuNotFoundException, IOException {
 
 
         return new ResponseEntity<>(menuServiceImplementation.updateMenuItem(id, menuItemDto), HttpStatus.CREATED);

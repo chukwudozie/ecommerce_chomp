@@ -24,20 +24,8 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
-    public Images saveImages(ImageDTO imageDTO) throws IOException {
-            String imageURL = cloudinaryConfig.createImage(imageDTO.getImageName());
-
-
-        Optional<Images> image = imageRepository.findImagesByImageURL(imageDTO.getImageName());
-
-        if(image.isPresent()){
-            throw new BadRequestException("Image already exists");
-        }else{
-
-            Images newImage = new Images(imageDTO.getImageName(), imageURL, imageDTO.getProduct());
-
-            return imageRepository.save(newImage);
-        }
-
+    public String saveImages(String imageName) throws IOException {
+            String imageURL = cloudinaryConfig.createImage(imageName);
+            return imageURL;
     }
 }
