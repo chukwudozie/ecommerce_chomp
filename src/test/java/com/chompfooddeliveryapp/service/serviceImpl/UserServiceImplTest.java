@@ -50,7 +50,7 @@ class UserServiceImplTest {
     @Mock
     ConfirmationTokenService confirmationTokenService;
     @Mock
-    MailService mailService;
+    EmailSenderService senderService;
     @Mock
     WalletRepository walletRepository;
     @Mock
@@ -68,7 +68,7 @@ class UserServiceImplTest {
 
     void setUp() {
         userService = new UserServiceImpl(utils, authenticationManager, userDetailsService, userRepository, encoder,
-                confirmationTokenService, mailService, walletRepository, walletService, roleRepository, cartService, new PasswordValidator());
+                confirmationTokenService, senderService, walletRepository, walletService, roleRepository, cartService, new PasswordValidator());
     }
 
     @Test
