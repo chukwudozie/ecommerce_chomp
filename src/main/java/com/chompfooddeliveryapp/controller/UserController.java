@@ -3,6 +3,7 @@ package com.chompfooddeliveryapp.controller;
 import com.chompfooddeliveryapp.dto.ChangePasswordDto;
 import com.chompfooddeliveryapp.dto.EditUserDetailsDto;
 import com.chompfooddeliveryapp.dto.UserDetailsDTO;
+import com.chompfooddeliveryapp.payload.UpdatePayLoad;
 import com.chompfooddeliveryapp.service.serviceImpl.UserDetailsService;
 import com.chompfooddeliveryapp.service.serviceInterfaces.UserServiceInterface;
 import lombok.RequiredArgsConstructor;
@@ -21,19 +22,21 @@ public class UserController {
     private final UserDetailsService userDetailsService;
 
 
-    @PostMapping("/edit")
+    @PostMapping("/edit_user_details")
 
     public ResponseEntity<?> updateUserDetails(@RequestBody EditUserDetailsDto userDetailsDto){
-        userService.updateUser(userDetailsDto, userService.getUserIDFromSecurityContext());
-           return new ResponseEntity<>(HttpStatus.OK);
+       userService.updateUser(userDetailsDto, userService.getUserIDFromSecurityContext());
+
+           return new ResponseEntity<>(userDetailsDto, HttpStatus.OK);
 
     }
 
 
     @PostMapping("/change_password")
     public ResponseEntity<?> updatePassword(@RequestBody ChangePasswordDto changePasswordDto){
-         userService.changePassword(changePasswordDto, userService.getUserIDFromSecurityContext());
-            return new ResponseEntity<>(HttpStatus.OK);
+         UpdatePayLoad update = userService.changePassword(changePasswordDto, userService.getUserIDFromSecurityContext());
+
+            return new ResponseEntity<>(update, HttpStatus.OK);
     }
 
 

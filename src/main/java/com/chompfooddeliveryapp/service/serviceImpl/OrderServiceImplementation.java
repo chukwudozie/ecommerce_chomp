@@ -51,9 +51,11 @@ public class OrderServiceImplementation implements OrderService {
     @Override
     public ViewOrderDetailsResponse getOrderDetails(Long userId, Long orderId) {
 
-        List<OrderDetail> orderDetail = orderDetailsRepository.findAllByOrderId(orderId);
+        var orderRepo = orderRepository.findOrderByIdAndUserId(orderId, userId).orElseThrow(()-> new BadRequestException("User or order not in the in the database"));
+        List<OrderDetail> orderDetail = orderDetailsRepository.findAllByOrderId(orderRepo.getId());
 
         List<ViewOrderDTO> viewOrderDTOS = new ArrayList<>();
+
         for (OrderDetail order:orderDetail) {
             MenuItem menuItem = menuItemRepository.findById(order.getMenu().getId()).get();
             Order orders = orderRepository.findById(order.getOrder().getId()).get();
@@ -66,15 +68,23 @@ public class OrderServiceImplementation implements OrderService {
             viewOrderDetails.setDeliveredDate(orders.getDelivered_date());
             viewOrderDetails.setStatus(orders.getStatus());
             viewOrderDetails.setQuantity(order.getQuantity());
+            viewOrderDetails.setAmount(order.getOrder().getAmount());
             viewOrderDTOS.add(viewOrderDetails);
         }
+        var shippingAddress = shippingAddressRepository.findById(userId);
+
+
         ViewOrderDetailsResponse viewOrderDetailsResponse = new ViewOrderDetailsResponse();
-       viewOrderDetailsResponse.setViewOrderDtoList(viewOrderDTOS);
+
+        viewOrderDetailsResponse.setViewOrderDtoList(viewOrderDTOS);
+
+        viewOrderDetailsResponse.setShippingAddress(shippingAddress);
+
+
 
         return viewOrderDetailsResponse;
+
     }
-
-
 
     @Override
     public List<MenuItem> getOrderSummary(Long userId) {
@@ -216,11 +226,16 @@ public class OrderServiceImplementation implements OrderService {
 
         var order = orderRepository.findOrderById(orderId)
                 .orElseThrow(()-> new BadRequestException("Order not found"));
+
         UpdatePayLoad orderStatusUpdateMessage = new UpdatePayLoad();
 
         if( Objects.equals(order.getStatus(), OrderStatus.PENDING)) {
 
-            order.setStatus(OrderStatus.DELIVERED); orderRepository.save(order); orderStatusUpdateMessage.setMessage(order.getStatus().toString());
+            order.setStatus(OrderStatus.DELIVERED);
+            orderRepository.save(order);
+
+            orderStatusUpdateMessage.setMessage(order.getStatus().toString());
+
         } else {
             throw new BadRequestException("Order already updated"); }
         return orderStatusUpdateMessage;

@@ -1,14 +1,17 @@
 package com.chompfooddeliveryapp.payload;
 
-import com.chompfooddeliveryapp.dto.ViewOrderDTO;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.Optional;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class ViewOrderDetailsResponse {
-    List<ViewOrderDTO> viewOrderDtoList;
+    private List<?> viewOrderDtoList;
+    private Optional<?> shippingAddress;
 }
