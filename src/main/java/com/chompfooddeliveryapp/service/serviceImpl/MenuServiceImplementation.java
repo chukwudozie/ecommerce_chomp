@@ -2,11 +2,11 @@ package com.chompfooddeliveryapp.service.serviceImpl;
 
 import com.chompfooddeliveryapp.dto.MenuItemDto;
 import com.chompfooddeliveryapp.exception.BadRequestException;
-import com.chompfooddeliveryapp.exception.MenuException;
 import com.chompfooddeliveryapp.model.enums.MenuCategory;
 import com.chompfooddeliveryapp.payload.MenuResponse;
 import com.chompfooddeliveryapp.payload.UserFetchAllMealsResponse;
 import com.chompfooddeliveryapp.repository.MenuItemRepository;
+import com.chompfooddeliveryapp.service.serviceInterfaces.ImageService;
 import com.chompfooddeliveryapp.service.serviceInterfaces.MenuItemService;
 import com.chompfooddeliveryapp.exception.MenuNotFoundException;
 import org.springframework.data.domain.Page;
@@ -17,22 +17,24 @@ import org.springframework.stereotype.Service;
 import com.chompfooddeliveryapp.model.meals.MenuItem;
 
 
-import java.sql.Timestamp;
-import java.util.Date;
+import java.io.IOException;
 import java.util.List;
 
 @Service
 public class MenuServiceImplementation implements MenuItemService {
 
-    private MenuItemRepository menuItemRepository;
+    private final MenuItemRepository menuItemRepository;
+    private final ImageService imageService;
 
-    public MenuServiceImplementation(MenuItemRepository menuItemRepository) {
+
+    public MenuServiceImplementation(MenuItemRepository menuItemRepository, ImageService imageService) {
         this.menuItemRepository = menuItemRepository;
+        this.imageService = imageService;
     }
 
 
     @Override
-    public MenuResponse addMenuItem(MenuItemDto menuItemDto) {
+    public MenuResponse addMenuItem(MenuItemDto menuItemDto) throws IOException {
         if(menuItemRepository.existsByName(menuItemDto.getName())){
             throw new BadRequestException("Menu already exists");
         }
@@ -41,14 +43,14 @@ public class MenuServiceImplementation implements MenuItemService {
         menuItem.setCategory(menuItemDto.getCategory());
         menuItem.setPrice(menuItemDto.getPrice());
         menuItem.setDescription(menuItemDto.getDescription());
-        menuItem.setImage(menuItemDto.getImage());
-        menuItemRepository.save(menuItem);
+        menuItem.setImage(imageService.saveImages(menuItemDto.getImage()));
+        MenuItem savedmenu = menuItemRepository.save(menuItem);
         return new MenuResponse("Menu item has been added", menuItem.getName(), menuItem.getPrice(),
-                menuItem.getDescription(), menuItem.getCategory().name());
+                menuItem.getDescription(), menuItem.getCategory().name(), savedmenu.getImage());
     }
 
     @Override
-    public MenuResponse updateMenuItem(Long id, MenuItemDto menuItemDto) {
+    public MenuResponse updateMenuItem(Long id, MenuItemDto menuItemDto) throws IOException {
 
         MenuItem menuItem = getMenuItemById(id);
         if(menuItem == null){
@@ -57,11 +59,11 @@ public class MenuServiceImplementation implements MenuItemService {
         menuItem.setName(menuItemDto.getName());
         menuItem.setDescription(menuItemDto.getDescription());
         menuItem.setCategory(menuItemDto.getCategory());
-        menuItem.setImage(menuItemDto.getImage());
+        menuItem.setImage(imageService.saveImages(menuItemDto.getImage()));
         menuItem.setPrice(menuItemDto.getPrice());
-        menuItemRepository.save(menuItem);
+        MenuItem updatedMenuitem = menuItemRepository.save(menuItem);
         return new MenuResponse("Menu item has been updated", menuItem.getName(), menuItem.getPrice(),
-                menuItem.getDescription(), menuItem.getCategory().name());
+                menuItem.getDescription(), menuItem.getCategory().name(),updatedMenuitem.getImage());
     }
 
     @Override

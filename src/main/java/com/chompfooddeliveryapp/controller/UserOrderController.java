@@ -39,12 +39,9 @@ public class UserOrderController {
     }
 
 
-    @GetMapping("/viewOrderDetails/{orderId}")
-    public ResponseEntity<?> viewOrderDetails(@PathVariable("orderId") Long orderId){
-        var authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDetailsImpl user = (UserDetailsImpl) authentication.getPrincipal();
-
-        return new ResponseEntity<>(orderService.getOrderDetails(user.getId(), orderId), HttpStatus.OK);
+    @GetMapping("/view_order_details/{orderId}")
+    public ResponseEntity<?> viewOrderDetails( @PathVariable("orderId") Long orderId){
+        return new ResponseEntity<>(orderService.getOrderDetails(userService.getUserIDFromSecurityContext(), orderId), HttpStatus.OK);
     }
 
     @PostMapping("/shipping-address")

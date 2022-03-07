@@ -11,6 +11,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -40,7 +42,7 @@ public class MenuItemServiceTest {
     Timestamp timestamp = new Timestamp(time);
 
     @Test
-    void shouldAddMenuItemToProductsList() {
+    void shouldAddMenuItemToProductsList() throws IOException {
         MenuItemDto menuItemDto = new MenuItemDto("burger", 3.0, "nice burger",MenuCategory.BURGER,"images");
         MenuItem menuItem = new MenuItem();
         menuItem.setName(menuItemDto.getName());
@@ -62,7 +64,7 @@ public class MenuItemServiceTest {
     }
 
     @Test
-    public void shouldUpdateAnMenuItemById() {
+    public void shouldUpdateAnMenuItemById() throws IOException {
         MenuItemDto menuItemDto = new MenuItemDto( "burger", 2.0, "for lunch", MenuCategory.BURGER,"Burger");
         MenuItem menuItem = new MenuItem();
         menuItem.setName(menuItemDto.getName());
