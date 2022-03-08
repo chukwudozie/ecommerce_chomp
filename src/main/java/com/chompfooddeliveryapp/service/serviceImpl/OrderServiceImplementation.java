@@ -2,6 +2,7 @@ package com.chompfooddeliveryapp.service.serviceImpl;
 
 import com.chompfooddeliveryapp.dto.*;
 import com.chompfooddeliveryapp.exception.BadRequestException;
+import com.chompfooddeliveryapp.model.enums.OrderStatus;
 import com.chompfooddeliveryapp.model.enums.PaymentMethod;
 import com.chompfooddeliveryapp.model.meals.MenuItem;
 import com.chompfooddeliveryapp.model.orders.Order;
@@ -9,7 +10,9 @@ import com.chompfooddeliveryapp.model.orders.OrderDetail;
 import com.chompfooddeliveryapp.model.users.ShippingAddress;
 import com.chompfooddeliveryapp.model.users.User;
 import com.chompfooddeliveryapp.payload.AllCartItems;
+import com.chompfooddeliveryapp.payload.UpdatePayLoad;
 import com.chompfooddeliveryapp.payload.ViewCartResponse;
+import com.chompfooddeliveryapp.payload.ViewOrderDetailsResponse;
 import com.chompfooddeliveryapp.repository.*;
 import com.chompfooddeliveryapp.service.serviceInterfaces.CartService;
 import com.chompfooddeliveryapp.service.serviceInterfaces.OrderService;
@@ -19,7 +22,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -44,46 +49,42 @@ public class OrderServiceImplementation implements OrderService {
     }
 
     @Override
-    public List<ViewOrderDTO> getOrderDetails(Long userId, Long orderId) {
-        var userOp = userRepository.findUserById(userId);
+    public ViewOrderDetailsResponse getOrderDetails(Long userId, Long orderId) {
 
-        var user = userOp.orElseThrow(() -> new BadRequestException("No Such User"));
+        var orderRepo = orderRepository.findOrderByIdAndUserId(orderId, userId).orElseThrow(()-> new BadRequestException("User or order not in the in the database"));
+        List<OrderDetail> orderDetail = orderDetailsRepository.findAllByOrderId(orderRepo.getId());
 
-        System.out.println(user.toString());
+        List<ViewOrderDTO> viewOrderDTOS = new ArrayList<>();
 
-        List<Order> orderList = orderRepository.findByUserId(userId);
-        var order1 = orderRepository.getOrderByIdIsAndUserIdIs(orderId, userId);
+        for (OrderDetail order:orderDetail) {
+            MenuItem menuItem = menuItemRepository.findById(order.getMenu().getId()).get();
+            Order orders = orderRepository.findById(order.getOrder().getId()).get();
+            ViewOrderDTO viewOrderDetails = new ViewOrderDTO();
+            viewOrderDetails.setImage(menuItem.getImage());
+            viewOrderDetails.setName(menuItem.getName());
+            viewOrderDetails.setDescription(menuItem.getDescription());
+            viewOrderDetails.setPrice(menuItem.getPrice());
+            viewOrderDetails.setOrderDate(orders.getOrder_date());
+            viewOrderDetails.setDeliveredDate(orders.getDelivered_date());
+            viewOrderDetails.setStatus(orders.getStatus());
+            viewOrderDetails.setQuantity(order.getQuantity());
+            viewOrderDetails.setAmount(order.getOrder().getAmount());
+            viewOrderDTOS.add(viewOrderDetails);
+        }
+        var shippingAddress = shippingAddressRepository.findById(userId);
 
-        var orders = order1.orElseThrow(() -> new BadRequestException("No order with Order id: " + orderId + " found"));
 
-        var orderDetail = orderDetailsRepository
-                .findAllByOrderId(orders.getId());
-        var listOfMenuIds = orderDetail.stream()
-                .map(x -> x.getMenu().getId())
-                .collect(Collectors.toList());
-        var listOfMenuItems = menuItemRepository.findAllById(listOfMenuIds);
+        ViewOrderDetailsResponse viewOrderDetailsResponse = new ViewOrderDetailsResponse();
 
-        System.out.println(listOfMenuIds);
+        viewOrderDetailsResponse.setViewOrderDtoList(viewOrderDTOS);
 
-        var listViewOrderDTO = listOfMenuItems.stream()
-                .map(menuItem -> {
-                    ViewOrderDTO viewOrderDetails = new ViewOrderDTO();
-                    viewOrderDetails.setImage(menuItem.getImage());
-                    viewOrderDetails.setName(menuItem.getName());
-                    viewOrderDetails.setDescription(menuItem.getDescription());
-                    viewOrderDetails.setPrice(menuItem.getPrice());
-                    viewOrderDetails.setOrderDate(orders.getOrder_date());
-                    viewOrderDetails.setDeliveredDate(orders.getDelivered_date());
-                    viewOrderDetails.setStatus(orders.getStatus());
-                    viewOrderDetails.setQuantity(0L);
-                    return viewOrderDetails;
-                })
-                .collect(Collectors.toList());
+        viewOrderDetailsResponse.setShippingAddress(shippingAddress);
 
-        return listViewOrderDTO;
+
+
+        return viewOrderDetailsResponse;
+
     }
-
-
 
     @Override
     public List<MenuItem> getOrderSummary(Long userId) {
@@ -220,6 +221,24 @@ public class OrderServiceImplementation implements OrderService {
         }
     }
 
+    @Override
+    public UpdatePayLoad updateOrderStatus(Long orderId) {
 
+        var order = orderRepository.findOrderById(orderId)
+                .orElseThrow(()-> new BadRequestException("Order not found"));
 
+        UpdatePayLoad orderStatusUpdateMessage = new UpdatePayLoad();
+
+        if( Objects.equals(order.getStatus(), OrderStatus.PENDING)) {
+
+            order.setStatus(OrderStatus.DELIVERED);
+            orderRepository.save(order);
+
+            orderStatusUpdateMessage.setMessage(order.getStatus().toString());
+
+        } else {
+            throw new BadRequestException("Order already updated"); }
+        return orderStatusUpdateMessage;
+    }
 }
+
