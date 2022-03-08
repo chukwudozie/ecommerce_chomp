@@ -24,12 +24,12 @@ import java.util.List;
 public class MenuServiceImplementation implements MenuItemService {
 
     private final MenuItemRepository menuItemRepository;
-    private final ImageService imageService;
+
 
 
     public MenuServiceImplementation(MenuItemRepository menuItemRepository, ImageService imageService) {
         this.menuItemRepository = menuItemRepository;
-        this.imageService = imageService;
+
     }
 
 
@@ -43,7 +43,7 @@ public class MenuServiceImplementation implements MenuItemService {
         menuItem.setCategory(menuItemDto.getCategory());
         menuItem.setPrice(menuItemDto.getPrice());
         menuItem.setDescription(menuItemDto.getDescription());
-        menuItem.setImage(imageService.saveImages(menuItemDto.getImage()));
+        menuItem.setImage(menuItemDto.getImage());
         MenuItem savedmenu = menuItemRepository.save(menuItem);
         return new MenuResponse("Menu item has been added", menuItem.getName(), menuItem.getPrice(),
                 menuItem.getDescription(), menuItem.getCategory().name(), savedmenu.getImage());
@@ -59,7 +59,7 @@ public class MenuServiceImplementation implements MenuItemService {
         menuItem.setName(menuItemDto.getName());
         menuItem.setDescription(menuItemDto.getDescription());
         menuItem.setCategory(menuItemDto.getCategory());
-        menuItem.setImage(imageService.saveImages(menuItemDto.getImage()));
+        menuItem.setImage(menuItemDto.getImage());
         menuItem.setPrice(menuItemDto.getPrice());
         MenuItem updatedMenuitem = menuItemRepository.save(menuItem);
         return new MenuResponse("Menu item has been updated", menuItem.getName(), menuItem.getPrice(),
