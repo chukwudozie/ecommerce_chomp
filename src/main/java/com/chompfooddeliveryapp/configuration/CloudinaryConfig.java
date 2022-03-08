@@ -16,39 +16,37 @@ import java.util.Map;
 @Configuration
 public class CloudinaryConfig {
 
-    private final Logger log = LoggerFactory.getLogger(CloudinaryConfig.class);
-
-    @Value("${cloudinary_api_key}")
-    private String cloudinary_api_key;
-
-    @Value("${cloudinary_api_secret}")
-    private String cloudinary_api_secret;
-
-    @Value("${cloud_name}")
-    private String cloud_name;
-
+//    private final Logger log = LoggerFactory.getLogger(CloudinaryConfig.class);
+//
+//    @Value("${cloudinary_api_key}")
+//    private String cloudinary_api_key;
+//
+//    @Value("${cloudinary_api_secret}")
+//    private String cloudinary_api_secret;
+//
+//    @Value("${cloud_name}")
+//    private String cloud_name;
 
 
     public String createImage(String imagename) throws IOException {
 
-        Map uploadResult = null;
+        Map uploadResult;
 
+        Cloudinary cloudinary;
+        Map<String, Object> config = new HashMap<>();
+        config.put("cloud_name", "chomp-food-app");
+        config.put("api_key", "957191478298491");
+        config.put("api_secret", "XSgjbMDGMFmkPwgraPQUKfj2Ubs");
+        cloudinary = new Cloudinary(config);
         try {
-           Cloudinary cloudinary;
-           Map<String, Object> config = new HashMap<>();
-           config.put("cloud_name", "chomp-food-app");
-           config.put("api_key", "957191478298491");
-           config.put("api_secret", "XSgjbMDGMFmkPwgraPQUKfj2Ubs");
-           cloudinary = new Cloudinary(config);
-
-           File file = new File( imagename);
+            File file = new File(imagename);
             uploadResult = cloudinary.uploader().upload(file, ObjectUtils.emptyMap());
-           System.out.println(uploadResult.toString());
-           System.out.println(uploadResult.get("url"));
-       }
-       catch (Exception exception){
-            throw new BadRequestException(exception.getMessage());
-       }
+            System.out.println(uploadResult.toString());
+            System.out.println(uploadResult.get("url"));
+        } catch (Exception exception) {
+            throw new BadRequestException("Something went wrong: " + exception.getMessage());
+        }
         return uploadResult.get("url").toString();
     }
+
 }
