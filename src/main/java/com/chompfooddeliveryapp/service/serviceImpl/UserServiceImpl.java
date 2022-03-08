@@ -4,6 +4,7 @@ import com.chompfooddeliveryapp.dto.EditUserDetailsDto;
 import com.chompfooddeliveryapp.dto.SignupDto;
 import com.chompfooddeliveryapp.dto.UserDto;
 import com.chompfooddeliveryapp.model.token.ConfirmationToken;
+import com.chompfooddeliveryapp.payload.UpdatePayLoad;
 import com.chompfooddeliveryapp.security.PasswordValidator;
 import com.chompfooddeliveryapp.security.service.UserDetailsImpl;
 import com.chompfooddeliveryapp.service.serviceInterfaces.CartService;
@@ -144,7 +145,7 @@ public class UserServiceImpl implements UserServiceInterface {
         }
     }
     @Override
-    public void changePassword(ChangePasswordDto changePasswordDto, Long id) {
+    public UpdatePayLoad changePassword(ChangePasswordDto changePasswordDto, Long id) {
         User currentUser = userRepository.findUserById(id).orElseThrow(
                 ()-> new BadRequestException("User Not Found")
         );
@@ -159,7 +160,11 @@ public class UserServiceImpl implements UserServiceInterface {
         } else {
             throw new BadRequestException("Incorrect password");
         }
+        UpdatePayLoad changePasswordMessage = new UpdatePayLoad();
+         changePasswordMessage.setMessage("Password changed successfully");
+         return changePasswordMessage;
     }
+
     @Override
     public void updateUser(EditUserDetailsDto editUserDetailsDto, Long id) {
         Optional<User> loggedInUser = userRepository.findUserById(id);
@@ -170,7 +175,7 @@ public class UserServiceImpl implements UserServiceInterface {
             loggedInUser.get().setUserGender(editUserDetailsDto.getGender());
             loggedInUser.get().setDob(editUserDetailsDto.getDateOfBirth());
             userRepository.save(loggedInUser.get());
-            System.out.println("User updated "+loggedInUser.get().getEmail());
+
         }
     }
     @Override

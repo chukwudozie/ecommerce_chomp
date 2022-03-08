@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ViewOrderDTO {
-    //    private Long orderId;
     private Long quantity;
     private OrderStatus status;
     private String name;
@@ -20,6 +19,7 @@ public class ViewOrderDTO {
     private LocalDateTime orderDate;
     private LocalDateTime deliveredDate;
     private String description;
+    private Double amount;
 
     @Override
     public String toString() {
@@ -32,6 +32,7 @@ public class ViewOrderDTO {
                 ", orderDate=" + orderDate +
                 ", deliveredDate=" + deliveredDate +
                 ", description='" + description + '\'' +
+                ", amount='" + amount + '\'' +
                 '}';
     }
 }
