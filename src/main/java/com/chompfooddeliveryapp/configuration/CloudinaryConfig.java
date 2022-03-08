@@ -31,25 +31,24 @@ public class CloudinaryConfig {
 
     public String createImage(String imagename) throws IOException {
 
-        log.info("This is the cloud name " + cloud_name);
-        log.info("This is the cloudinary_api_key " + cloudinary_api_key);
-        log.info("This is the cloud cloudinary_api_secret " + cloudinary_api_secret);
+        Map uploadResult = null;
 
-        Cloudinary cloudinary;
-        Map<String, Object> config = new HashMap<>();
-        config.put("cloud_name", cloud_name);
-        config.put("api_key", cloudinary_api_key);
-        config.put("api_secret", cloudinary_api_secret);
-        cloudinary = new Cloudinary(config);
+        try {
+           Cloudinary cloudinary;
+           Map<String, Object> config = new HashMap<>();
+           config.put("cloud_name", "chomp-food-app");
+           config.put("api_key", "957191478298491");
+           config.put("api_secret", "XSgjbMDGMFmkPwgraPQUKfj2Ubs");
+           cloudinary = new Cloudinary(config);
 
-
-
-
-
-        File file = new File( imagename);
-        Map uploadResult = cloudinary.uploader().upload(file, ObjectUtils.emptyMap());
-        System.out.println(uploadResult.toString());
-        System.out.println(uploadResult.get("url"));
+           File file = new File( imagename);
+            uploadResult = cloudinary.uploader().upload(file, ObjectUtils.emptyMap());
+           System.out.println(uploadResult.toString());
+           System.out.println(uploadResult.get("url"));
+       }
+       catch (Exception exception){
+            throw new BadRequestException(exception.getMessage());
+       }
         return uploadResult.get("url").toString();
     }
 }
