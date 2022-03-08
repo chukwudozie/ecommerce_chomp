@@ -63,7 +63,9 @@ public class MenuServiceImplementation implements MenuItemService {
         menuItem.setCategory(menuItemDto.getCategory());
         menuItem.setPrice(menuItemDto.getPrice());
         menuItem.setDescription(menuItemDto.getDescription());
-        menuItem.setImage(imageService.saveImages(menuItemDto.getImage()));
+        if (!menuItemDto.getName().isEmpty()){
+            menuItem.setImage(imageService.saveImages(menuItemDto.getImage()));
+        }
         MenuItem savedmenu = menuItemRepository.save(menuItem);
 
         log.info("This is the cloud name " + cloud_name);

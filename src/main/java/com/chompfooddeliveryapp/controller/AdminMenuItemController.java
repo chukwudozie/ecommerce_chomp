@@ -58,7 +58,7 @@ public class AdminMenuItemController {
         logger.info("This is the cloud name " + cloud_name);
         logger.info("This is the cloudinary_api_key " + cloudinary_api_key);
         logger.info("This is the cloud cloudinary_api_secret " + cloudinary_api_secret);
-        System.out.println("d>>>>>>>>>>>>>" + cloudinary_api_secret);
+        System.out.println(">>>>>>>>>>>>" + cloudinary_api_secret);
 
         return new ResponseEntity<>(menuServiceImplementation.addMenuItem(menuItem), HttpStatus.CREATED);
     }
