@@ -58,26 +58,42 @@ public class CartServiceImpl implements CartService {
                 .orElseThrow((() -> new BadRequestException("Product not available")));
         Cart cart = cartRepository.getByUser_Id(userId)
                 .orElseThrow(() -> new BadRequestException("Only users can add to cart"));
-        List<CartItem> userCartItems = cartItemRepository.findAllByCart(cart);
 
-        if(userCartItems.isEmpty()){
-            addNewCartItem(cart,product, cartDTO.getQty());
-            int total = getTotalProduct(cart);
-            return  ResponseEntity.ok(new CartResponse(total,product.getName()+" added!"));
+        try {
+            List<CartItem> userCartItems = cartItemRepository.findAllByCart(cart);
+            if(userCartItems.isEmpty()){
+                addNewCartItem(cart,product, cartDTO.getQty());
+                int total = getTotalProduct(cart);
+                return  ResponseEntity.ok(new CartResponse(total,product.getName()+" added!"));
+            }
+        }
+        catch (Exception exception){
+            throw new BadRequestException(exception.getMessage());
         }
 
-        Optional<CartItem> cartItem = cartItemRepository.findByMenuIdAndCart(product, cart);
-        if(cartItem.isPresent()){
+        try{
+            Optional<CartItem> cartItem = cartItemRepository.findByMenuIdAndCart(product, cart);
+            if(cartItem.isPresent()){
 //             increase qty
-            cartItem.get().setQuantity(cartDTO.getQty() + cartItem.get().getQuantity());
-            cartItemRepository.save(cartItem.get());
-            int total = getTotalProduct(cart);
-            return  ResponseEntity.ok(new CartResponse(total,product.getName()+" increased"));
+                cartItem.get().setQuantity(cartDTO.getQty() + cartItem.get().getQuantity());
+                cartItemRepository.save(cartItem.get());
+                int total = getTotalProduct(cart);
+                return  ResponseEntity.ok(new CartResponse(total,product.getName()+" increased"));
+            }
+        }catch(Exception exception){
+            throw new BadRequestException(exception.getMessage());
+
         }
 
         //saving a new cartItem
-        addNewCartItem(cart,product,cartDTO.getQty());
-        int total = getTotalProduct(cart);
+        int total = 0;
+        try{
+            addNewCartItem(cart,product,cartDTO.getQty());
+             total = getTotalProduct(cart);
+
+        }catch (Exception exception){
+            throw new BadRequestException(exception.getMessage());
+        }
         return  ResponseEntity.ok(new CartResponse(total,product.getName()+" added!"));
 
     }
