@@ -58,7 +58,6 @@ public class CartServiceImpl implements CartService {
                 .orElseThrow((() -> new BadRequestException("Product not available")));
         Cart cart = cartRepository.getByUser_Id(userId)
                 .orElseThrow(() -> new BadRequestException("Only users can add to cart"));
-
         try {
             List<CartItem> userCartItems = cartItemRepository.findAllByCart(cart);
             if(userCartItems.isEmpty()){
@@ -77,7 +76,9 @@ public class CartServiceImpl implements CartService {
 //             increase qty
                 cartItem.get().setQuantity(cartDTO.getQty() + cartItem.get().getQuantity());
                 cartItemRepository.save(cartItem.get());
+                System.out.println("Got here");
                 int total = getTotalProduct(cart);
+                System.out.println("Didn't get here");
                 return  ResponseEntity.ok(new CartResponse(total,product.getName()+" increased"));
             }
         }catch(Exception exception){
@@ -222,10 +223,12 @@ public class CartServiceImpl implements CartService {
     private int getTotalProduct(Cart cart){
         int totalQuantity = 0;
        List<CartItem> cartItems =  cartItemRepository.findAllByCart_Id(cart.getId());
+        System.out.println(">>>>>>>>>>>>>>"+cartItems);
        for(CartItem cartItem: cartItems){
-           totalQuantity += cartItem.getQuantity();
+           if(cartItem.getQuantity() != null){
+               totalQuantity += cartItem.getQuantity();
+           }
        }
         return totalQuantity;
     }
-
 }
